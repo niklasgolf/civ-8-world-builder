@@ -1,18 +1,34 @@
 
-# 🌍 Civilization 8 — World Builder
+## 🧭 Development Phases
 
-## 🎯 Project Vision
+### Chapter 1 — Recreate the Experiment
 
-Civilization 8 World Builder is the first step toward creating a complete Civilization-inspired strategy game. Every civilization needs a world in which to exist, and the World Builder will provide that foundation.
+The first development phase focuses on faithfully recreating the existing experimental `civilization-8` application.
 
-The application is primarily a **smart, manually controlled drawing editor** for creating beautiful hexagonal world maps.
+The goal is to preserve its appearance, styling, graphics, layout, and existing behavior while improving the internal organization of the code.
 
-Our design philosophy rests on three principles:
+- Reproduce the original CSS rules without visual changes.
+- Recreate the existing editor, tool panels, buttons, and navigation.
+- Recreate the hexagonal map, SVG terrain graphics, and minimap.
+- Preserve existing zoom, navigation, and database behavior.
+- Organize all reusable SVG graphics in `src/library-svg-graphics/`.
+- Keep application logic separate from graphical assets.
+- Introduce no additional editor functionality during this phase.
 
-- 🧠 **Intelligence** — Smart tools and thoughtful automation should produce impressive results with minimal effort.
-- 🖱️ **Ease of Use** — Creating a world should be intuitive, efficient, creative, and enjoyable.
-- ✨ **Beauty** — Both the interface and the maps should be visually exceptional, making the application a pleasure to use for hours.
+**Completion criterion:** The new application looks and behaves like the original experiment.
 
-The user remains in creative control, while the application handles much of the repetitive and complicated work.
+### Chapter 2 — Develop the World Builder
 
-**Our guiding philosophy: Create a masterpiece with just a few choices and clicks.**
+Once the experimental application has been successfully recreated, development will focus on implementing new functionality.
+
+Planned features include:
+
+- Selecting different terrain types.
+- Painting terrain onto individual hexagons.
+- Creating intelligent drawing tools.
+- Saving and restoring edited maps.
+- Expanding the editor with additional features.
+
+The guiding philosophy remains:
+
+**Create a masterpiece with just a few choices and clicks.**
