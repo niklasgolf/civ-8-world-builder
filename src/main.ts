@@ -1,6 +1,7 @@
 import './style.css'
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
+import { EditorLayout } from './application/editor/editor-layout.ts'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -18,10 +19,9 @@ const worldBuilder = document.createElement('section')
 worldBuilder.className = 'world-builder'
 worldBuilder.setAttribute('aria-label', 'World Builder')
 
-const worldBuilderTitle = document.createElement('p')
-worldBuilderTitle.className = 'world-builder__title'
-worldBuilderTitle.textContent = 'Civilization 8 — World Builder'
-worldBuilder.append(worldBuilderTitle)
+const editorLayout = new EditorLayout()
+
+worldBuilder.append(editorLayout.element)
 
 const wiki = new CivWiki()
 
