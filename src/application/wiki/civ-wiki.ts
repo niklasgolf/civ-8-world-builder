@@ -1,3 +1,4 @@
+import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
 import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 
 type TerrainEntry = {
@@ -11,6 +12,11 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
     name: 'Ocean',
     description: 'Deep water terrain.',
     createGraphic: createOcean,
+  },
+  {
+    name: 'Coast',
+    description: 'Shallow coastal water.',
+    createGraphic: createCoast,
   },
 ]
 
