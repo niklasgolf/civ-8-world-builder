@@ -1,4 +1,5 @@
 import { ToolSection } from './tool-section'
+import { ToolButton } from './tool-button'
 
 export class LeftPanel {
   readonly element: HTMLDivElement
@@ -14,6 +15,10 @@ export class LeftPanel {
       new ToolSection('Features'),
       new ToolSection('Objects'),
     ]
+    const undoButton = new ToolButton('undo', 'Undo', 'undo')
+    const redoButton = new ToolButton('redo', 'Redo', 'redo')
+    toolSections[0].addButton(undoButton)
+    toolSections[0].addButton(redoButton)
     toolSections.forEach(section => this.element.append(section.element))
   }
 }

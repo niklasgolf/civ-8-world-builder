@@ -1,9 +1,11 @@
+import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons'
+
 export class ToolButton {
   readonly element: HTMLButtonElement
   readonly id: string
   readonly group: string | undefined
 
-  constructor(id: string, label: string, group?: string) {
+  constructor(id: string, label: string, icon: IconName, group?: string) {
     this.element = document.createElement('button')
     this.element.className = 'tool-button'
     this.element.type = 'button'
@@ -14,6 +16,7 @@ export class ToolButton {
     if (this.group) {
       this.element.setAttribute('aria-pressed', 'false')
     }
+    this.element.append(createIcon(icon))
   }
 
   public setSelected(selected: boolean): void {

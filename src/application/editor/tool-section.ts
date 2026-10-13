@@ -1,7 +1,13 @@
+import { ToolButton } from './tool-button'
+
 export class ToolSection {
   readonly element: HTMLElement
+  readonly buttons: ToolButton[]
+  readonly body: HTMLElement
 
   constructor(title: string) {
+    this.buttons = []
+    this.body = document.createElement('div')
     this.element = document.createElement('section')
     this.element.className = 'tool-section'
 
@@ -10,8 +16,12 @@ export class ToolSection {
     titleElement.textContent = title
     this.element.append(titleElement)
 
-    const toolsElement = document.createElement('div')
-    toolsElement.className = 'tool-section__body'
-    this.element.append(toolsElement)
+    this.body.className = 'tool-section__body'
+    this.element.append(this.body)
+  }
+
+  public addButton(button: ToolButton): void {
+    this.buttons.push(button)
+    this.body.append(button.element)
   }
 }

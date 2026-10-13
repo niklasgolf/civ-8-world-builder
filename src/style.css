@@ -470,3 +470,8 @@ button {
   margin: 0;
   font-size: 16px;
 }
+
+.tool-icon {
+  width: 24px;
+  height: 24px;
+}
