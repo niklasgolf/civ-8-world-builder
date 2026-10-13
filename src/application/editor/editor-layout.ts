@@ -1,5 +1,6 @@
 import { LeftPanel } from './left-panel'
 import { RightPanel } from './right-panel'
+import { MapArea } from './map-area'
 
 export class EditorLayout {
     readonly element: HTMLDivElement
@@ -9,11 +10,10 @@ export class EditorLayout {
 
         const leftPanel = new LeftPanel()
 
-        const mapArea = document.createElement('div')
-        mapArea.className = 'editor-layout__map-area'
+        const mapArea = new MapArea()
 
         const rightPanel = new RightPanel()
         
-        this.element.append(leftPanel.element, mapArea, rightPanel.element)
+        this.element.append(leftPanel.element, mapArea.element, rightPanel.element)
     }
 }
