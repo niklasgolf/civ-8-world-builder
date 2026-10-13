@@ -1,5 +1,14 @@
+import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons.ts'
 import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
 import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
+import {
+  DEFAULT_CATEGORY,
+  WIKI_GROUPS,
+  iconsFor,
+  iconTitle,
+  type WikiCategory,
+  type WikiCategoryId,
+} from './catalog.ts'
 
 type TerrainEntry = {
   readonly name: string
@@ -23,6 +32,9 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
 export class CivWiki {
   readonly element: HTMLElement
 
+  private readonly buttons = new Map<WikiCategoryId, HTMLButtonElement>()
+  private readonly panels = new Map<WikiCategoryId, HTMLElement>()
+
   constructor() {
     const wiki = document.createElement('section')
     wiki.className = 'civ-wiki'
@@ -30,10 +42,15 @@ export class CivWiki {
 
     const page = document.createElement('article')
     page.className = 'civ-wiki__page'
-    page.append(this.createIntro(), this.createTerrains())
 
+    const layout = document.createElement('div')
+    layout.className = 'civ-wiki__layout'
+    layout.append(this.createNavigation(), this.createContent())
+
+    page.append(this.createIntro(), layout)
     wiki.append(page)
     this.element = wiki
+    this.showCategory(DEFAULT_CATEGORY)
   }
 
   private createIntro(): HTMLElement {
@@ -50,6 +67,84 @@ export class CivWiki {
 
     intro.append(title, subtitle)
     return intro
+  }
+
+  private createNavigation(): HTMLElement {
+    const nav = document.createElement('nav')
+    nav.className = 'civ-wiki__nav'
+    nav.setAttribute('aria-label', 'Encyclopedia')
+
+    for (const group of WIKI_GROUPS) {
+      const section = document.createElement('div')
+      section.className = 'civ-wiki__nav-group'
+
+      const label = document.createElement('p')
+      label.className = 'civ-wiki__nav-label'
+      label.textContent = group.label
+
+      const list = document.createElement('div')
+      list.className = 'civ-wiki__nav-list'
+
+      for (const category of group.categories) {
+        list.append(this.createNavButton(category))
+      }
+
+      section.append(label, list)
+      nav.append(section)
+    }
+
+    return nav
+  }
+
+  private createNavButton(category: WikiCategory): HTMLButtonElement {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'civ-wiki__nav-button'
+    button.textContent = category.label
+    button.addEventListener('click', () => {
+      this.showCategory(category.id)
+    })
+    this.buttons.set(category.id, button)
+    return button
+  }
+
+  private createContent(): HTMLElement {
+    const content = document.createElement('div')
+    content.className = 'civ-wiki__content'
+
+    for (const group of WIKI_GROUPS) {
+      for (const category of group.categories) {
+        const panel = this.createPanel(category)
+        this.panels.set(category.id, panel)
+        content.append(panel)
+      }
+    }
+
+    return content
+  }
+
+  private createPanel(category: WikiCategory): HTMLElement {
+    if (category.id === 'base-terrains') {
+      return this.createBaseTerrainsPanel()
+    }
+
+    const panel = document.createElement('section')
+    panel.className = 'civ-wiki__panel'
+
+    const heading = document.createElement('h2')
+    heading.className = 'civ-wiki__heading'
+    heading.id = `civ-wiki-${category.id}`
+    heading.textContent = category.label
+    panel.setAttribute('aria-labelledby', heading.id)
+    panel.append(heading, this.createIconGrid(iconsFor(category.id)))
+    return panel
+  }
+
+  private createBaseTerrainsPanel(): HTMLElement {
+    const panel = document.createElement('div')
+    panel.className = 'civ-wiki__panel'
+    panel.append(this.createTerrains(), this.createTerrainIcons())
+    return panel
   }
 
   private createTerrains(): HTMLElement {
@@ -118,5 +213,71 @@ export class CivWiki {
     }
 
     return graphic
+  }
+
+  private createTerrainIcons(): HTMLElement {
+    const section = document.createElement('section')
+    section.className = 'civ-wiki__icon-section'
+    section.setAttribute('aria-labelledby', 'civ-wiki-terrain-icons')
+
+    const heading = document.createElement('h3')
+    heading.className = 'civ-wiki__subheading'
+    heading.id = 'civ-wiki-terrain-icons'
+    heading.textContent = 'Terrain toolbar icons'
+
+    const note = document.createElement('p')
+    note.className = 'civ-wiki__note'
+    note.textContent =
+      'These are the original 24 × 24 toolbar icons, not the full-sized terrain graphics above.'
+
+    section.append(heading, note, this.createIconGrid(iconsFor('base-terrains')))
+    return section
+  }
+
+  private createIconGrid(names: readonly IconName[]): HTMLElement {
+    const grid = document.createElement('div')
+    grid.className = 'civ-wiki__grid'
+
+    for (const name of names) {
+      grid.append(this.createIconCard(name))
+    }
+
+    return grid
+  }
+
+  private createIconCard(name: IconName): HTMLElement {
+    const card = document.createElement('article')
+    card.className = 'civ-wiki__card'
+
+    const art = document.createElement('div')
+    art.className = 'civ-wiki__card-art'
+    const icon = createIcon(name)
+    icon.classList.add('civ-wiki__icon')
+    art.append(icon)
+
+    const title = document.createElement('h3')
+    title.className = 'civ-wiki__card-name'
+    title.textContent = iconTitle(name)
+
+    const identifier = document.createElement('p')
+    identifier.className = 'civ-wiki__card-id'
+    identifier.textContent = name
+
+    card.append(art, title, identifier)
+    return card
+  }
+
+  private showCategory(category: WikiCategoryId): void {
+    for (const [id, button] of this.buttons) {
+      const selected = id === category
+      button.classList.toggle('is-selected', selected)
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false')
+    }
+
+    for (const [id, panel] of this.panels) {
+      panel.hidden = id !== category
+    }
+
+    this.element.scrollTop = 0
   }
 }
