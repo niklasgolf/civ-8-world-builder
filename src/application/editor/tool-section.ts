@@ -28,5 +28,17 @@ export class ToolSection {
   public addButton(button: ToolButton): void {
     this.buttons.push(button)
     this.grid.append(button.element)
+    button.element.addEventListener('click', () => this.select(button))
+  }
+
+  private select(button: ToolButton): void {
+    if (!button.group) {
+      return
+    }
+    this.buttons.forEach(otherButton => {
+      if (otherButton.group === button.group) {
+        otherButton.setSelected(otherButton === button)
+      }
+    })
   }
 }

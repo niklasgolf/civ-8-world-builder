@@ -12,16 +12,37 @@ export class LeftPanel {
     this.scroll.className = 'tool-panel__scroll'
 
     const toolSections = [
-      new ToolSection('Map'),
       new ToolSection('Terrain'),
-      new ToolSection('Resources'),
       new ToolSection('Features'),
-      new ToolSection('Objects'),
+      new ToolSection('Rivers'),
+      new ToolSection('Brush'),
     ]
+    const smallBrushButton = new ToolButton(
+      'brush-small',
+      'Small brush',
+      'brush-small',
+      'brush'
+    )
+    const mediumBrushButton = new ToolButton(
+      'brush-medium',
+      'Medium brush',
+      'brush-medium',
+      'brush'
+    )
+    const largeBrushButton = new ToolButton(
+      'brush-large',
+      'Large brush',
+      'brush-large',
+      'brush'
+    )
     const undoButton = new ToolButton('undo', 'Undo', 'undo')
     const redoButton = new ToolButton('redo', 'Redo', 'redo')
-    toolSections[0].addButton(undoButton)
-    toolSections[0].addButton(redoButton)
+    toolSections[3].addButton(smallBrushButton)
+    toolSections[3].addButton(mediumBrushButton)
+    mediumBrushButton.setSelected(true)
+    toolSections[3].addButton(largeBrushButton)
+    toolSections[3].addButton(undoButton)
+    toolSections[3].addButton(redoButton)
     toolSections.forEach(section => this.scroll.append(section.element))
     this.element.append(this.scroll)
   }
