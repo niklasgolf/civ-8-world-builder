@@ -461,3 +461,12 @@ button {
     width: 140px;
   }
 }
+
+.tool-section {
+  padding: 16px;
+}
+
+.tool-section__title {
+  margin: 0;
+  font-size: 16px;
+}
