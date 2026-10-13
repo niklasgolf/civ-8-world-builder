@@ -1,6 +1,7 @@
 import { ToolButton } from './tool-button'
 
 export class ToolSection {
+  readonly grid: HTMLDivElement
   readonly element: HTMLElement
   readonly buttons: ToolButton[]
   readonly body: HTMLElement
@@ -8,6 +9,9 @@ export class ToolSection {
   constructor(title: string) {
     this.buttons = []
     this.body = document.createElement('div')
+    this.grid = document.createElement('div')
+    this.grid.className = 'tool-grid'
+
     this.element = document.createElement('section')
     this.element.className = 'tool-section'
 
@@ -18,10 +22,11 @@ export class ToolSection {
 
     this.body.className = 'tool-section__body'
     this.element.append(this.body)
+    this.body.append(this.grid)
   }
 
   public addButton(button: ToolButton): void {
     this.buttons.push(button)
-    this.body.append(button.element)
+    this.grid.append(button.element)
   }
 }
