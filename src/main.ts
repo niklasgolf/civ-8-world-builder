@@ -2,12 +2,15 @@ import './style.css'
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
 import { EditorLayout } from './application/editor/editor-layout.ts'
+import { ConvexConnection } from './application/database/convex-client.ts'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
 if (!app) {
   throw new Error('Application root element not found')
 }
+
+const convex = new ConvexConnection()
 
 const editor = document.createElement('div')
 editor.className = 'editor'
@@ -40,3 +43,5 @@ function showView(view: AppView): void {
   wiki.element.hidden = view !== 'civ-wiki'
   header.setView(view)
 }
+
+void convex
