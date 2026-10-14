@@ -10,6 +10,7 @@ export class RightPanel {
 
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
+    const resourcesSection = new ToolSection('Resources')
 
     const pyramidButton = new ToolButton(
       'pyramid',
@@ -85,6 +86,54 @@ export class RightPanel {
       'continents'
     )
 
+    const wheatButton = new ToolButton(
+      'wheat',
+      'Wheat',
+      'wheat',
+      'resources'
+    )
+    const cattleButton = new ToolButton(
+      'cattle',
+      'Cattle',
+      'cattle',
+      'resources'
+    )
+    const horsesButton = new ToolButton(
+      'horses',
+      'Horses',
+      'horses',
+      'resources'
+    )
+    const deerButton = new ToolButton(
+      'deer',
+      'Deer',
+      'deer',
+      'resources'
+    )
+    const fishButton = new ToolButton(
+      'fish',
+      'Fish',
+      'fish',
+      'resources'
+    )
+    const stoneButton = new ToolButton(
+      'stone',
+      'Stone',
+      'stone',
+      'resources'
+    )
+    const ironButton = new ToolButton(
+      'iron',
+      'Iron',
+      'iron',
+      'resources'
+    )
+    const goldButton = new ToolButton(
+      'gold',
+      'Gold',
+      'gold',
+      'resources'
+    )
 
     wonderSection.addButton(pyramidButton)
     wonderSection.addButton(colossusButton)
@@ -100,7 +149,17 @@ export class RightPanel {
     continentsSection.addButton(purpleContinentButton)
     continentsSection.addButton(orangeContinentButton)
 
+    resourcesSection.addButton(wheatButton)
+    resourcesSection.addButton(cattleButton)
+    resourcesSection.addButton(horsesButton)
+    resourcesSection.addButton(deerButton)
+    resourcesSection.addButton(fishButton)
+    resourcesSection.addButton(stoneButton)
+    resourcesSection.addButton(ironButton)
+    resourcesSection.addButton(goldButton)
+
     this.element.append(wonderSection.element)
     this.element.append(continentsSection.element)
+    this.element.append(resourcesSection.element)
   }
 }
