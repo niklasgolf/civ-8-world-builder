@@ -4,7 +4,7 @@ export type AppView = 'world-builder' | 'civ-wiki'
 
 const APP_VIEWS: ReadonlyArray<readonly [AppView, string]> = [
   ['world-builder', 'World Builder'],
-  ['civ-wiki', 'Civ Wiki'],
+  ['civ-wiki', 'CoW Wiki'],
 ]
 
 export class Header {
@@ -38,7 +38,7 @@ export class Header {
 
     const name = document.createElement('span')
     name.className = 'editor-header__name'
-    name.textContent = 'Civilization 8'
+    name.textContent = 'Civilization of Wonders'
 
     const dash = document.createElement('span')
     dash.className = 'editor-header__dash'

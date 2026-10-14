@@ -38,7 +38,7 @@ export class CivWiki {
   constructor() {
     const wiki = document.createElement('section')
     wiki.className = 'civ-wiki'
-    wiki.setAttribute('aria-label', 'Civilization 8 Wiki')
+    wiki.setAttribute('aria-label', 'Civilization of Wonders Wiki')
 
     const page = document.createElement('article')
     page.className = 'civ-wiki__page'
@@ -59,7 +59,7 @@ export class CivWiki {
 
     const title = document.createElement('h1')
     title.className = 'civ-wiki__title'
-    title.textContent = 'Civilization 8 Wiki'
+    title.textContent = 'Civilization of Wonders Wiki'
 
     const subtitle = document.createElement('p')
     subtitle.className = 'civ-wiki__subtitle'
