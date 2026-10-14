@@ -11,6 +11,7 @@ export class RightPanel {
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
     const resourcesSection = new ToolSection('Resources')
+    const improvementsSection = new ToolSection('Improvements')
 
     const pyramidButton = new ToolButton(
       'pyramid',
@@ -135,6 +136,55 @@ export class RightPanel {
       'resources'
     )
 
+    const farmButton = new ToolButton(
+      'farm',
+      'Farm',
+      'farm',
+      'improvements'
+    )
+    const mineButton = new ToolButton(
+      'mine',
+      'Mine',
+      'mine',
+      'improvements'
+    )
+    const quarryButton = new ToolButton(
+      'quarry',
+      'Quarry',
+      'quarry',
+      'improvements'
+    )
+    const campButton = new ToolButton(
+      'camp',
+      'Camp',
+      'camp',
+      'improvements'
+    )
+    const pastureButton = new ToolButton(
+      'pasture',
+      'Pasture',
+      'pasture',
+      'improvements'
+    )
+    const fishingButton = new ToolButton(
+      'fishing',
+      'Fishing boats',
+      'fishing',
+      'improvements'
+    )
+    const plantationButton = new ToolButton(
+      'plantation',
+      'Plantation',
+      'plantation',
+      'improvements'
+    )
+    const fortButton = new ToolButton(
+      'fort',
+      'Fort',
+      'fort',
+      'improvements'
+    )
+
     wonderSection.addButton(pyramidButton)
     wonderSection.addButton(colossusButton)
     wonderSection.addButton(lighthouseButton)
@@ -158,8 +208,18 @@ export class RightPanel {
     resourcesSection.addButton(ironButton)
     resourcesSection.addButton(goldButton)
 
+    improvementsSection.addButton(farmButton)
+    improvementsSection.addButton(mineButton)
+    improvementsSection.addButton(quarryButton)
+    improvementsSection.addButton(campButton)
+    improvementsSection.addButton(pastureButton)
+    improvementsSection.addButton(fishingButton)
+    improvementsSection.addButton(plantationButton)
+    improvementsSection.addButton(fortButton)
+
     this.element.append(wonderSection.element)
     this.element.append(continentsSection.element)
     this.element.append(resourcesSection.element)
+    this.element.append(improvementsSection.element)
   }
 }
