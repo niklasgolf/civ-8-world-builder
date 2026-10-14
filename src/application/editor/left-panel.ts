@@ -17,6 +17,48 @@ export class LeftPanel {
       new ToolSection('Rivers'),
       new ToolSection('Brush'),
     ]
+    const grassButton = new ToolButton(
+      'grass',
+      'Grass',
+      'grass',
+      'terrain'
+    )
+    const plainsButton = new ToolButton(
+      'plains',
+      'Plains',
+      'plains',
+      'terrain'
+    )
+    const desertButton = new ToolButton(
+      'desert',
+      'Desert',
+      'desert',
+      'terrain'
+    )
+    const tundraButton = new ToolButton(
+      'tundra',
+      'Tundra',
+      'tundra',
+      'terrain'
+    )
+    const snowButton = new ToolButton(
+      'snow',
+      'Snow',
+      'snow',
+      'terrain'
+    )
+    const coastButton = new ToolButton(
+      'coast',
+      'Coast',
+      'coast',
+      'terrain'
+    )
+    const oceanButton = new ToolButton(
+      'ocean',
+      'Ocean',
+      'ocean',
+      'terrain'
+    )
     const smallBrushButton = new ToolButton(
       'brush-small',
       'Small brush',
@@ -37,6 +79,14 @@ export class LeftPanel {
     )
     const undoButton = new ToolButton('undo', 'Undo', 'undo')
     const redoButton = new ToolButton('redo', 'Redo', 'redo')
+    toolSections[0].addButton(grassButton)
+    toolSections[0].addButton(plainsButton)
+    toolSections[0].addButton(desertButton)
+    toolSections[0].addButton(tundraButton)
+    toolSections[0].addButton(snowButton)
+    toolSections[0].addButton(coastButton)
+    toolSections[0].addButton(oceanButton)
+    grassButton.setSelected(true)
     toolSections[3].addButton(smallBrushButton)
     toolSections[3].addButton(mediumBrushButton)
     mediumBrushButton.setSelected(true)
