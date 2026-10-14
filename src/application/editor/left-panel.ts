@@ -17,6 +17,7 @@ export class LeftPanel {
       new ToolSection('Rivers'),
       new ToolSection('Brush'),
     ]
+
     const grassButton = new ToolButton(
       'grass',
       'Grass',
@@ -59,6 +60,7 @@ export class LeftPanel {
       'ocean',
       'terrain'
     )
+
     const woodsButton = new ToolButton(
       'woods',
       'Woods',
@@ -107,6 +109,7 @@ export class LeftPanel {
       'volcano',
       'features'
     )
+    
     const riverButton = new ToolButton(
       'river',
       'River',
@@ -125,6 +128,7 @@ export class LeftPanel {
       'river-mouth',
       'rivers'
     )
+
     const smallBrushButton = new ToolButton(
       'brush-small',
       'Small brush',
@@ -145,6 +149,7 @@ export class LeftPanel {
     )
     const undoButton = new ToolButton('undo', 'Undo', 'undo')
     const redoButton = new ToolButton('redo', 'Redo', 'redo')
+
     toolSections[0].addButton(grassButton)
     toolSections[0].addButton(plainsButton)
     toolSections[0].addButton(desertButton)
@@ -152,6 +157,8 @@ export class LeftPanel {
     toolSections[0].addButton(snowButton)
     toolSections[0].addButton(coastButton)
     toolSections[0].addButton(oceanButton)
+    grassButton.setSelected(true)
+
     toolSections[1].addButton(woodsButton)
     toolSections[1].addButton(rainforestButton)
     toolSections[1].addButton(marshButton)
@@ -160,16 +167,18 @@ export class LeftPanel {
     toolSections[1].addButton(iceButton)
     toolSections[1].addButton(reefButton)
     toolSections[1].addButton(volcanoButton)
+
     toolSections[2].addButton(riverButton)
     toolSections[2].addButton(riverSourceButton)
     toolSections[2].addButton(riverMouthButton)
-    grassButton.setSelected(true)
+
     toolSections[3].addButton(smallBrushButton)
     toolSections[3].addButton(mediumBrushButton)
-    mediumBrushButton.setSelected(true)
     toolSections[3].addButton(largeBrushButton)
     toolSections[3].addButton(undoButton)
     toolSections[3].addButton(redoButton)
+    mediumBrushButton.setSelected(true)
+
     toolSections.forEach(section => this.scroll.append(section.element))
     this.element.append(this.scroll)
   }
