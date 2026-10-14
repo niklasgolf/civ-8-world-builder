@@ -179,9 +179,16 @@ During the original project setup, this created files including:
 - `CLAUDE.md`
 - `convex/_generated/ai/guidelines.md`
 
-It also installed Convex agent skills.
+It also installed Convex agent skills in:
+
+- `.agents/skills/`
+- `.claude/skills/`
 
 These files help AI-assisted development but are **not required for the website to function**.
+
+The original project keeps `AGENTS.md` and `CLAUDE.md` in GitHub, but excludes the installed skill directories from version control.
+
+See Section 2.8 for details.
 
 ### 2.7 Development Environment Variables
 
@@ -205,11 +212,100 @@ Use the values generated for your own Convex project.
 
 Keep `.env.local` out of version control.
 
+The project's `.gitignore` contains:
+
+    *.local
+
+This excludes `.env.local` and other files ending in `.local`.
+
 Check that your `.gitignore` excludes local environment files before committing changes.
 
 Never commit secret keys, private credentials or authentication tokens to a public GitHub repository.
 
-### 2.8 Generated Convex Files
+**Important:** Variables beginning with `VITE_` are exposed to the browser application when used in client-side code. Never store secret credentials in these variables.
+
+### 2.8 Git Configuration and AI Skill Files
+
+Convex can install numerous AI development files.
+
+During the original setup, the optional AI configuration generated dozens of files that were accidentally included in the first Git commit.
+
+These files are useful locally but do not all need to be stored in the application repository.
+
+#### Files to Keep in GitHub
+
+The project keeps:
+
+- `AGENTS.md`
+- `CLAUDE.md`
+- `convex/README.md`
+- `convex/tsconfig.json`
+- `convex/_generated/`
+- `package.json`
+- `package-lock.json`
+- Application source code
+- Project documentation
+
+The `convex/_generated/` directory contains generated TypeScript API definitions and related Convex files.
+
+These are normally committed to Git so that the project has the generated types needed for development and builds.
+
+Do not manually edit generated API or type definitions.
+
+#### Files Excluded from GitHub
+
+The following optional AI skill files are excluded:
+
+- `.agents/skills/`
+- `.claude/skills/`
+- `skills-lock.json`
+
+The project's `.gitignore` includes:
+
+    # AI assistant skills installed by Convex
+    .agents/skills/
+    .claude/skills/
+    skills-lock.json
+
+This keeps the GitHub repository focused on the application rather than large collections of locally installed AI assistant instructions.
+
+Other developers may choose to install their own AI skills independently.
+
+#### Important — Gitignore Does Not Remove Tracked Files
+
+Adding a filename to `.gitignore` prevents Git from automatically tracking it in the future.
+
+However, if the file has already been committed, Git continues tracking it.
+
+To stop tracking the optional AI skills without deleting them from your computer, run:
+
+    git rm -r --cached .agents/skills .claude/skills skills-lock.json
+
+The options mean:
+
+- `git rm` — Remove files from Git's index.
+- `-r` — Process directories recursively.
+- `--cached` — Keep the actual files on your computer.
+
+The files will be removed from the next Git commit but will remain available locally.
+
+Check the result:
+
+    git status --short
+
+The removed files should appear with a `D` in the staged column.
+
+After reviewing the changes, commit and push:
+
+    git add .
+    git commit -m "Clean up Convex AI files and update gitignore"
+    git push
+
+This cleanup was completed in the original project on 15 October 2026.
+
+**Note:** Removing files in a new commit does not erase them from earlier Git history. Never use this approach as a substitute for properly removing exposed secrets.
+
+### 2.9 Generated Convex Files
 
 The Convex setup creates a directory similar to:
 
@@ -232,7 +328,7 @@ Configures TypeScript for the Convex backend.
 
 Application-specific database schemas, queries and mutations will be added later.
 
-### 2.9 Keep Convex Running During Development
+### 2.10 Keep Convex Running During Development
 
 The command:
 
@@ -250,7 +346,7 @@ Open a second terminal for ordinary commands such as:
 
     npm run dev
 
-### 2.10 Verify the Convex Deployment
+### 2.11 Verify the Convex Deployment
 
 When initialization succeeds, the terminal should report something similar to:
 
@@ -316,18 +412,35 @@ Throws an error if the required URL is missing.
 
 This prevents silently creating a client without a configured deployment.
 
-### 3.3 Current Implementation Status
+### 3.3 Verify TypeScript Compilation
 
-The client wrapper has been created.
+Run:
+
+    npx tsc --noEmit
+
+This checks the TypeScript project without generating output files.
+
+If compilation succeeds, the command normally finishes without reporting errors.
+
+The original project passed this check on 15 October 2026.
+
+**Important:** Successful TypeScript compilation does not prove that the application has connected to Convex or that database operations work.
+
+Those features must be tested separately.
+
+### 3.4 Current Implementation Status
+
+The Convex client wrapper has been created.
+
+The initial TypeScript compilation check has succeeded.
 
 The next steps are to:
 
-1. Verify TypeScript compilation.
-2. Connect the client to the application.
-3. Define the Convex database schema.
-4. Implement the twelve permanent worlds.
-5. Add database queries and mutations.
-6. Verify real-time communication.
+1. Connect the client to the application.
+2. Define the Convex database schema.
+3. Implement the twelve permanent worlds.
+4. Add database queries and mutations.
+5. Verify real-time communication.
 
 **Status:** In progress — not yet an end-to-end working database integration.
 
@@ -484,7 +597,7 @@ The objective is to make it possible for another developer to clone the reposito
 
 ---
 
-*Installation Guide — Version 1.0*
+*Installation Guide — Version 1.1*
 
 *Last updated: 15 October 2026*
 
