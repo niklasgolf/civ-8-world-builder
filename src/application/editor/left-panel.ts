@@ -59,6 +59,54 @@ export class LeftPanel {
       'ocean',
       'terrain'
     )
+    const woodsButton = new ToolButton(
+      'woods',
+      'Woods',
+      'woods',
+      'features'
+    )
+    const rainforestButton = new ToolButton(
+      'rainforest',
+      'Rainforest',
+      'rainforest',
+      'features'
+    )
+    const marshButton = new ToolButton(
+      'marsh',
+      'Marsh',
+      'marsh',
+      'features'
+    )
+    const oasisButton = new ToolButton(
+      'oasis',
+      'Oasis',
+      'oasis',
+      'features'
+    )
+    const floodplainsButton = new ToolButton(
+      'floodplains',
+      'Floodplains',
+      'floodplains',
+      'features'
+    )
+    const iceButton = new ToolButton(
+      'ice',
+      'Ice',
+      'ice',
+      'features'
+    )
+    const reefButton = new ToolButton(
+      'reef',
+      'Reef',
+      'reef',
+      'features'
+    )
+    const volcanoButton = new ToolButton(
+      'volcano',
+      'Volcano',
+      'volcano',
+      'features'
+    )
     const smallBrushButton = new ToolButton(
       'brush-small',
       'Small brush',
@@ -86,6 +134,14 @@ export class LeftPanel {
     toolSections[0].addButton(snowButton)
     toolSections[0].addButton(coastButton)
     toolSections[0].addButton(oceanButton)
+    toolSections[1].addButton(woodsButton)
+    toolSections[1].addButton(rainforestButton)
+    toolSections[1].addButton(marshButton)
+    toolSections[1].addButton(oasisButton)
+    toolSections[1].addButton(floodplainsButton)
+    toolSections[1].addButton(iceButton)
+    toolSections[1].addButton(reefButton)
+    toolSections[1].addButton(volcanoButton)
     grassButton.setSelected(true)
     toolSections[3].addButton(smallBrushButton)
     toolSections[3].addButton(mediumBrushButton)
