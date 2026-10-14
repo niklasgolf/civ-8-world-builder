@@ -107,6 +107,24 @@ export class LeftPanel {
       'volcano',
       'features'
     )
+    const riverButton = new ToolButton(
+      'river',
+      'River',
+      'river',
+      'rivers'
+    )
+    const riverSourceButton = new ToolButton(
+      'river-source',
+      'River source',
+      'river-source',
+      'rivers'
+    )
+    const riverMouthButton = new ToolButton(
+      'river-mouth',
+      'River mouth',
+      'river-mouth',
+      'rivers'
+    )
     const smallBrushButton = new ToolButton(
       'brush-small',
       'Small brush',
@@ -142,6 +160,9 @@ export class LeftPanel {
     toolSections[1].addButton(iceButton)
     toolSections[1].addButton(reefButton)
     toolSections[1].addButton(volcanoButton)
+    toolSections[2].addButton(riverButton)
+    toolSections[2].addButton(riverSourceButton)
+    toolSections[2].addButton(riverMouthButton)
     grassButton.setSelected(true)
     toolSections[3].addButton(smallBrushButton)
     toolSections[3].addButton(mediumBrushButton)
