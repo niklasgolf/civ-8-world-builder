@@ -1,4 +1,4 @@
-# 🌍 Civilization 8 — World Builder
+# 🌍 Civilization of Wonders — World Builder
 
 ## ✨ Phase 2: The Connected World
 
@@ -76,6 +76,44 @@ Prefer existing libraries, reusable object-oriented classes and managed services
 
 [https://github.com/FelixJrB/VisitorModule](https://github.com/FelixJrB/VisitorModule)
 
+## 🐄 Mascot and Favicon
+
+**Civilization of Wonders (CoW)** has a cheerful calf mascot.
+
+👀 The calf has bright blue eyes, golden horns, a pink smiling muzzle, and a decorative dark-green leafy wreath.
+
+🌊 The dark ocean-blue background connects the mascot visually with the game's world-building theme.
+
+🤖 The original illustration was generated using ChatGPT.
+
+✏️ We converted the original PNG illustration into genuine SVG vector artwork using [Vectorizely](https://vectorizely.com/).
+
+📁 The finished SVG is already stored at `public/favicon-cow-vectorizely.svg`.
+
+🖼️ SVG was chosen because our game uses SVG graphics.
+
+![Civilization of Wonders mascot](public/favicon-cow-vectorizely.svg)
+
+### 🐄 Cattle — An Early-Game Mega-Tile
+
+This is a planned gameplay concept. It is not an implemented feature yet.
+
+🥩 Cattle will be one of the most valuable resources during the early stages of Civilization of Wonders.
+
+🏛️ Cattle represents the historical importance of domesticated animals in the development of civilization.
+
+🌾 It provides a powerful combination of food production, agricultural development, and economic value.
+
+🥛 Milk and other animal products help support growing populations.
+
+🏘️ Cattle also contributes to production and the development of early settlements.
+
+✨ Finding cattle should be an exciting discovery for players during the early game.
+
+🧭 Cattle should be relatively rare, making its location strategically important.
+
+🐄 The cheerful cow mascot is therefore not just decorative: it represents one of the game's important early resources.
+
 ---
 
 # 🏛️ Part 2 — Website Structure & Navigation
@@ -88,7 +126,7 @@ The website has four navigation buttons, in exactly this order:
 
 🌍 **1. World Builder** — Civilization-style hexagonal map editor and viewer.
 
-📖 **2. Civ Wiki** — Existing Civilization 8 encyclopedia and reference page.
+📖 **2. CoW Wiki** — Existing Civilization of Wonders encyclopedia and reference page.
 
 🗺️ **3. Map Gallery** — Public collection of twelve permanent, evolving worlds.
 
@@ -96,7 +134,7 @@ The website has four navigation buttons, in exactly this order:
 
 ## 🎨 One Consistent Visual Identity
 
-All four pages share the same Civilization 8 design.
+All four pages share the same Civilization of Wonders design.
 
 🏛️ **Shared navigation** — The same header and four navigation buttons.
 
@@ -122,9 +160,9 @@ All four pages share the same Civilization 8 design.
 
 Only the authenticated map owner may edit their world.
 
-## 📖 Page 2 — Civ Wiki
+## 📖 Page 2 — CoW Wiki
 
-📚 Existing Civilization 8 reference material.
+📚 Existing Civilization of Wonders reference material.
 
 🎨 Matching visual design.
 
@@ -414,11 +452,11 @@ A real geographical map in the same central position as the hexagonal World Buil
 
 ## 👥 Who Counts as a Visitor?
 
-Anyone visiting any part of the Civilization 8 website.
+Anyone visiting any part of the Civilization of Wonders website.
 
 🌍 Public visitors count.
 
-📖 Civ Wiki readers count.
+📖 CoW Wiki readers count.
 
 🗺️ Map Gallery visitors count.
 
@@ -570,7 +608,7 @@ Build incrementally through small, manageable exercises.
 
 ⚡ Prioritize real-time functionality.
 
-🎨 Preserve the Civilization 8 appearance.
+🎨 Preserve the Civilization of Wonders appearance.
 
 🚫 Avoid unnecessary complexity.
 
@@ -686,7 +724,7 @@ Build incrementally through small, manageable exercises.
 
 📱 Check smaller-screen usability.
 
-**Milestone:** Civilization 8 is publicly accessible at mindchess.se.
+**Milestone:** Civilization of Wonders is publicly accessible at mindchess.se.
 
 ## 🧪 Final Acceptance Checklist
 
