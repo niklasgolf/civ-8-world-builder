@@ -9,6 +9,7 @@ export class RightPanel {
     this.element.className = 'editor-layout__right-panel'
 
     const wonderSection = new ToolSection('Wonders')
+    const continentsSection = new ToolSection('Continents')
 
     const pyramidButton = new ToolButton(
       'pyramid',
@@ -47,6 +48,44 @@ export class RightPanel {
       'wonders'
     )
 
+    const crimsonContinentButton = new ToolButton(
+      'continent-crimson',
+      'Crimson continent',
+      'continent-crimson',
+      'continents'
+    )
+    const blueContinentButton = new ToolButton(
+      'continent-blue',
+      'Blue continent',
+      'continent-blue',
+      'continents'
+    )
+    const greenContinentButton = new ToolButton(
+      'continent-green',
+      'Green continent',
+      'continent-green',
+      'continents'
+    )
+    const goldContinentButton = new ToolButton(
+      'continent-gold',
+      'Gold continent',
+      'continent-gold',
+      'continents'
+    )
+    const purpleContinentButton = new ToolButton(
+      'continent-purple',
+      'Purple continent',
+      'continent-purple',
+      'continents'
+    )
+    const orangeContinentButton = new ToolButton(
+      'continent-orange',
+      'Orange continent',
+      'continent-orange',
+      'continents'
+    )
+
+
     wonderSection.addButton(pyramidButton)
     wonderSection.addButton(colossusButton)
     wonderSection.addButton(lighthouseButton)
@@ -54,6 +93,14 @@ export class RightPanel {
     wonderSection.addButton(gardensButton)
     wonderSection.addButton(observatoryButton)
 
+    continentsSection.addButton(crimsonContinentButton)
+    continentsSection.addButton(blueContinentButton)
+    continentsSection.addButton(greenContinentButton)
+    continentsSection.addButton(goldContinentButton)
+    continentsSection.addButton(purpleContinentButton)
+    continentsSection.addButton(orangeContinentButton)
+
     this.element.append(wonderSection.element)
+    this.element.append(continentsSection.element)
   }
 }
