@@ -11,9 +11,9 @@ Install:
 - [Git](https://git-scm.com/)
 - A code editor, such as VS Code or Cursor
 
-You also need a GitHub account with SSH configured if cloning over SSH.
+A GitHub account with SSH configured is recommended for cloning the repository.
 
-The application uses **Midgard Hex Grid**, a reusable TypeScript library that is now publicly available on npm.
+The application uses **Midgard Hex Grid**, a reusable TypeScript library published on npm.
 
 ## 2. Clone the Repository
 
@@ -22,106 +22,129 @@ git clone git@github.com:niklasgolf/civ-8-world-builder.git
 cd civ-8-world-builder
 ```
 
-Alternatively, clone over HTTPS if SSH is not configured.
+The GitHub repository is:
+
+https://github.com/niklasgolf/civ-8-world-builder
 
 ## 3. Midgard Hex Grid
 
 Midgard provides the hexagonal grid geometry used by Civilization of Wonders.
 
-**npm package:** [midgard-hex-grid](https://www.npmjs.com/package/midgard-hex-grid)
+- **npm package:** [midgard-hex-grid](https://www.npmjs.com/package/midgard-hex-grid)
+- **Version:** `1.0.0`
+- **Published:** 15 October 2026
+- **Publisher:** `niklasgolf`
 
-**First published version:** `1.0.0`
+### 3.1 npm Dependency
 
-**Published:** 15 October 2026
+The World Builder uses the published npm package:
 
-**npm publisher:** `niklasgolf`
-
-### 3.1 Public npm Package
-
-The library has been successfully published to the npm registry.
-
-It can be installed with:
-
-```bash
-npm install midgard-hex-grid@1.0.0
+```json
+"midgard-hex-grid": "^1.0.0"
 ```
 
-The package includes compiled JavaScript, TypeScript declarations, documentation and its license.
+The exact dependency specification is maintained in `package.json`.
 
-The published package was verified using:
-
-```bash
-npm run build
-npm pack --dry-run
-```
-
-An ES module import test also succeeded:
-
-```text
-ES module import successful
-```
-
-### 3.2 World Builder Dependency Migration
-
-The World Builder originally used a local dependency:
+The original development setup used a local dependency:
 
 ```json
 "midgard-hex-grid": "file:../laboration-2/midgard-hex-grid"
 ```
 
-This required a separate local copy of Midgard at:
+That local dependency was replaced with the published npm package on 15 October 2026.
+
+**Migration status: Complete and verified.**
+
+The migration was committed to GitHub:
 
 ```text
-parent-directory/
-├── civ-8-world-builder/
-└── laboration-2/
-    └── midgard-hex-grid/
-        └── package.json
+8b59108 Migrate Midgard Hex Grid to npm package
 ```
 
-Now that Midgard is published on npm, this arrangement can be replaced by a normal npm dependency.
+Developers no longer need a separate local Midgard repository to install and build Civilization of Wonders.
 
-**Migration status:** The public npm package is available, but the World Builder dependency change has not yet been verified.
+### 3.2 Verify the Library
 
-Before relying on a fresh clone, update the World Builder's `package.json` and `package-lock.json` to use the npm package, test the application, and commit the changes.
+After installing project dependencies, run:
 
-After that migration, developers will no longer need a separate local Midgard repository.
+```bash
+npm ls midgard-hex-grid
+```
+
+The installation should show version `1.0.0`, for example:
+
+```text
+└── midgard-hex-grid@1.0.0
+```
+
+The package contains compiled JavaScript, TypeScript declarations, documentation and its license.
 
 ## 4. Install Dependencies
 
-From `civ-8-world-builder`:
+From the `civ-8-world-builder` directory:
 
 ```bash
 npm install
 ```
 
-Convex, Vite and TypeScript are already declared as project dependencies. Do not install them separately.
+This installs the dependencies declared by the project, including:
 
-**Important:** Until the Midgard dependency migration is committed, the existing local dependency must still be available for a fresh installation.
+- Midgard Hex Grid
+- Convex
+- Vite
+- TypeScript
 
-Once the migration is complete, `npm install` will retrieve Midgard directly from npm.
+Midgard is downloaded from npm automatically.
+
+There is no need to install the library separately or clone its source repository.
 
 ## 5. Verify TypeScript
+
+Run:
 
 ```bash
 npx tsc --noEmit
 ```
 
-This checks the application without generating build files.
+This checks TypeScript without generating build files.
 
-You can also verify the production build:
+Next, verify the production build:
 
 ```bash
 npm run build
 ```
 
-The application requires a Convex deployment before its database-driven features can run successfully.
+Both commands were successfully tested after the npm migration on 15 October 2026.
 
-## 6. About npm Publishing
+The Vite production build also completed successfully on Vercel.
 
-Publishing Midgard is a separate maintenance task. Developers installing Civilization of Wonders do not need to publish the library or create an npm account.
+## 6. Run the Development Server
 
-For reference, the first release was published using:
+Once the Convex deployment has been configured, start Vite:
+
+```bash
+npm run dev
+```
+
+Open the local URL displayed in the terminal, usually:
+
+```text
+http://localhost:5173
+```
+
+Vite serves the frontend application.
+
+Convex provides the database and real-time subscriptions.
+
+For local development, use separate terminals for Vite and Convex.
+
+## 7. About npm Publishing
+
+Publishing Midgard is a separate library maintenance task.
+
+Developers installing Civilization of Wonders do not need to create an npm account or publish anything.
+
+For reference, the first Midgard release was published using:
 
 ```bash
 npm login
@@ -129,27 +152,41 @@ npm whoami
 npm publish
 ```
 
-The npm account uses two-factor authentication with a passkey.
-
 Successful publication was confirmed by:
 
 ```text
 + midgard-hex-grid@1.0.0
 ```
 
-Future releases must use a new version number. Version `1.0.0` cannot simply be overwritten.
+The package was also verified using:
 
-Authentication credentials, passkeys and npm recovery codes must never be committed to GitHub.
+```bash
+npm run build
+npm pack --dry-run
+```
 
-## 7. Part 1 Completion
+An ES module import test succeeded:
+
+```text
+ES module import successful
+```
+
+Future npm releases require a new version number. Published version `1.0.0` cannot simply be overwritten.
+
+Never commit authentication credentials, passkeys or recovery codes to GitHub.
+
+## 8. Part 1 Completion
 
 At this point, you should have:
 
 - Cloned the World Builder repository.
 - Installed Node.js and npm.
-- Installed the project dependencies.
+- Installed project dependencies.
+- Verified Midgard Hex Grid 1.0.0.
 - Verified TypeScript compilation.
-- Prepared the application for its Convex connection.
+- Verified the Vite production build.
+
+The next step is to configure Convex and initialize the twelve worlds.
 
 **Continue with [Part 2 — Convex Database](INSTALLATION-GUIDE-PART-2.md).**
 
