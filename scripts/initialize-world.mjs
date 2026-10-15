@@ -1,9 +1,12 @@
 
 import { execFileSync } from 'node:child_process'
+import { setTimeout as sleep } from 'node:timers/promises'
 import { HexGrid } from 'midgard-hex-grid'
 
-const WORLD_NUMBER = 1
+const EXPECTED_WORLD_COUNT = 12
 const EXPECTED_HEX_COUNT = 1174
+const POLL_INTERVAL_MS = 2000
+const MAX_WAIT_MS = 120000
 
 const grid = new HexGrid('x-dominated')
 
@@ -34,32 +37,136 @@ if (coordinateKeys.size !== EXPECTED_HEX_COUNT) {
 
 console.log(`Midgard generated ${coordinates.length} unique coordinates.`)
 
-const worldsJson = execFileSync(
-  'npx',
-  ['convex', 'run', 'worlds:list'],
-  { encoding: 'utf8' },
-)
+function runConvex(functionName, args) {
+  const command = ['convex', 'run', functionName]
 
-const worlds = JSON.parse(worldsJson)
-const world = worlds.find((item) => item.number === WORLD_NUMBER)
+  if (args !== undefined) {
+    command.push(JSON.stringify(args))
+  }
 
-if (!world) {
-  throw new Error(`World ${WORLD_NUMBER} does not exist in Convex`)
+  const output = execFileSync('npx', command, {
+    encoding: 'utf8',
+  })
+
+  return JSON.parse(output)
 }
 
-console.log(`Found World ${WORLD_NUMBER}: ${world._id}`)
+function getWorlds() {
+  return runConvex('worlds:list')
+}
 
-const args = JSON.stringify({
-  worldId: world._id,
-  coordinates,
-})
+function getHexCount(worldId) {
+  const hexes = runConvex('hexes:listByWorld', { worldId })
 
-console.log('Scheduling world initialization in Convex...')
+  return hexes.length
+}
 
-const result = execFileSync(
-  'npx',
-  ['convex', 'run', 'hexes:initializeWorld', args],
-  { encoding: 'utf8' },
-)
+async function waitForWorld(worldId, worldNumber) {
+  const deadline = Date.now() + MAX_WAIT_MS
 
-console.log(result)
+  while (Date.now() < deadline) {
+    const world = getWorlds().find(
+      (item) => item._id === worldId,
+    )
+
+    if (!world) {
+      throw new Error(`World ${worldNumber} disappeared`)
+    }
+
+    if (world.initializationStatus === 'ready') {
+      const count = getHexCount(worldId)
+
+      if (count !== EXPECTED_HEX_COUNT) {
+        throw new Error(
+          `World ${worldNumber} has ${count} hexagons, expected ${EXPECTED_HEX_COUNT}`,
+        )
+      }
+
+      console.log(
+        `World ${worldNumber} verified: ${count} hexagons.`,
+      )
+
+      return
+    }
+
+    console.log(
+      `Waiting for World ${worldNumber}: ${world.initializationStatus ?? 'empty'}`,
+    )
+
+    await sleep(POLL_INTERVAL_MS)
+  }
+
+  throw new Error(
+    `Timed out waiting for World ${worldNumber} to initialize`,
+  )
+}
+
+async function main() {
+  const worlds = getWorlds()
+
+  if (worlds.length !== EXPECTED_WORLD_COUNT) {
+    throw new Error(
+      `Expected ${EXPECTED_WORLD_COUNT} worlds, received ${worlds.length}`,
+    )
+  }
+
+  const worldNumbers = new Set(worlds.map((world) => world.number))
+
+  if (
+    worldNumbers.size !== EXPECTED_WORLD_COUNT ||
+    !Array.from(
+      { length: EXPECTED_WORLD_COUNT },
+      (_, index) => index + 1,
+    ).every((number) => worldNumbers.has(number))
+  ) {
+    throw new Error('Expected exactly Worlds 1 through 12')
+  }
+
+  const orderedWorlds = [...worlds].sort(
+    (a, b) => a.number - b.number,
+  )
+
+  for (const world of orderedWorlds) {
+    console.log(`\nChecking World ${world.number}...`)
+
+    if (world.initializationStatus === 'ready') {
+      console.log(`World ${world.number} is already initialized.`)
+
+      await waitForWorld(world._id, world.number)
+      continue
+    }
+
+    if (world.initializationStatus === 'initializing') {
+      console.log(
+        `World ${world.number} is already initializing.`,
+      )
+
+      await waitForWorld(world._id, world.number)
+      continue
+    }
+
+    const existingCount = getHexCount(world._id)
+
+    if (existingCount !== 0) {
+      throw new Error(
+        `World ${world.number} has ${existingCount} hexagons but is not ready`,
+      )
+    }
+
+    console.log(`Initializing World ${world.number}...`)
+
+    const result = runConvex('hexes:initializeWorld', {
+      worldId: world._id,
+      coordinates,
+    })
+
+    console.log(result.message)
+
+    await waitForWorld(world._id, world.number)
+  }
+
+  console.log('\nAll 12 worlds verified!')
+  console.log(`Expected total: ${EXPECTED_WORLD_COUNT * EXPECTED_HEX_COUNT} hexagons.`)
+}
+
+await main()
