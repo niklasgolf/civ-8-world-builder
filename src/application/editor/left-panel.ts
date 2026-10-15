@@ -10,6 +10,12 @@ export class LeftPanel {
     this.element.className = 'editor-layout__left-panel'
     this.scroll = document.createElement('div')
     this.scroll.className = 'tool-panel__scroll'
+    const heading = document.createElement('h2')
+    heading.className = 'tool-section__title'
+    heading.textContent = 'Unedited Map'
+    const headingContainer = document.createElement('div')
+    headingContainer.className = 'tool-section world-panel__info'
+    headingContainer.append(heading)
 
     const toolSections = [
       new ToolSection('Terrain'),
@@ -180,6 +186,6 @@ export class LeftPanel {
     mediumBrushButton.setSelected(true)
 
     toolSections.forEach(section => this.scroll.append(section.element))
-    this.element.append(this.scroll)
+    this.element.append(headingContainer, this.scroll)
   }
 }

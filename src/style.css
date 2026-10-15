@@ -166,6 +166,8 @@ button {
 .editor-layout__left-panel {
   flex: 0 0 600px;
   background: #1a3148;
+  display: flex;
+  flex-direction: column;
 }
 
 .editor-layout__map-area {
@@ -177,6 +179,8 @@ button {
 .editor-layout__right-panel {
   flex: 0 0 600px;
   background: #1a3148;
+  display: flex;
+  flex-direction: column;
 }
 
 .civ-wiki {
@@ -282,7 +286,7 @@ button {
   width: 230px;
 }
 
-.civ-wiki__nav-group + .civ-wiki__nav-group {
+.civ-wiki__nav-group+.civ-wiki__nav-group {
   margin-top: 22px;
 }
 
@@ -690,4 +694,23 @@ button {
     width: 100%;
     overflow: visible;
   }
+}
+
+.world-panel__info {
+  margin: 10px 10px 0;
+}
+
+.world-panel__info .tool-section__title {
+  font-size: 16px;
+}
+
+/* Mirror all right-panel section headings. */
+
+.editor-layout__right-panel .tool-section__title {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.editor-layout__right-panel .tool-section__title::after {
+  background: linear-gradient(270deg, var(--brass), transparent);
 }

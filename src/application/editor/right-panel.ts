@@ -1,12 +1,25 @@
+
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
 
 export class RightPanel {
   readonly element: HTMLDivElement
+  readonly scroll: HTMLDivElement
 
   constructor() {
     this.element = document.createElement('div')
     this.element.className = 'editor-layout__right-panel'
+
+    this.scroll = document.createElement('div')
+    this.scroll.className = 'tool-panel__scroll'
+
+    const heading = document.createElement('h2')
+    heading.className = 'tool-section__title'
+    heading.textContent = 'Editor 1'
+
+    const headingContainer = document.createElement('div')
+    headingContainer.className = 'tool-section world-panel__info'
+    headingContainer.append(heading)
 
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
@@ -217,9 +230,11 @@ export class RightPanel {
     improvementsSection.addButton(plantationButton)
     improvementsSection.addButton(fortButton)
 
-    this.element.append(wonderSection.element)
-    this.element.append(continentsSection.element)
-    this.element.append(resourcesSection.element)
-    this.element.append(improvementsSection.element)
+    this.scroll.append(wonderSection.element)
+    this.scroll.append(continentsSection.element)
+    this.scroll.append(resourcesSection.element)
+    this.scroll.append(improvementsSection.element)
+
+    this.element.append(headingContainer, this.scroll)
   }
 }
