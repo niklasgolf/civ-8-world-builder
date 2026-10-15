@@ -4,18 +4,19 @@ import { ToolButton } from './tool-button'
 export class LeftPanel {
   readonly element: HTMLDivElement
   readonly scroll: HTMLDivElement
+  private readonly heading: HTMLHeadingElement
 
   constructor() {
     this.element = document.createElement('div')
     this.element.className = 'editor-layout__left-panel'
     this.scroll = document.createElement('div')
     this.scroll.className = 'tool-panel__scroll'
-    const heading = document.createElement('h2')
-    heading.className = 'tool-section__title'
-    heading.textContent = 'Unedited Map'
+    this.heading = document.createElement('h2')
+    this.heading.className = 'tool-section__title'
+    this.heading.textContent = 'Unedited Map'
     const headingContainer = document.createElement('div')
     headingContainer.className = 'tool-section world-panel__info'
-    headingContainer.append(heading)
+    headingContainer.append(this.heading)
 
     const toolSections = [
       new ToolSection('Terrain'),
@@ -187,5 +188,9 @@ export class LeftPanel {
 
     toolSections.forEach(section => this.scroll.append(section.element))
     this.element.append(headingContainer, this.scroll)
+  }
+
+  setWorldTitle(title: string): void {
+    this.heading.textContent = title
   }
 }

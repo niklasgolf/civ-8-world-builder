@@ -5,6 +5,7 @@ import { ToolButton } from './tool-button'
 export class RightPanel {
   readonly element: HTMLDivElement
   readonly scroll: HTMLDivElement
+  private readonly heading: HTMLHeadingElement
 
   constructor() {
     this.element = document.createElement('div')
@@ -13,13 +14,13 @@ export class RightPanel {
     this.scroll = document.createElement('div')
     this.scroll.className = 'tool-panel__scroll'
 
-    const heading = document.createElement('h2')
-    heading.className = 'tool-section__title'
-    heading.textContent = 'Editor 1'
+    this.heading = document.createElement('h2')
+    this.heading.className = 'tool-section__title'
+    this.heading.textContent = 'Editor 1'
 
     const headingContainer = document.createElement('div')
     headingContainer.className = 'tool-section world-panel__info'
-    headingContainer.append(heading)
+    headingContainer.append(this.heading)
 
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
@@ -236,5 +237,9 @@ export class RightPanel {
     this.scroll.append(improvementsSection.element)
 
     this.element.append(headingContainer, this.scroll)
+  }
+
+  setEditorTitle(title: string): void {
+    this.heading.textContent = title
   }
 }

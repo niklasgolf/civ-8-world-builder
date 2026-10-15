@@ -3,7 +3,7 @@ import './style.css'
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
 import { EditorLayout } from './application/editor/editor-layout.ts'
-import { WorldGallery } from './application/gallery/world-gallery.ts'
+import { WorldGallery, type GalleryWorld } from './application/gallery/world-gallery.ts'
 import { ConvexConnection } from './application/database/convex-client.ts'
 import { WorldMapController } from './application/map/world-map-controller.ts'
 import { api } from '../convex/_generated/api.js'
@@ -68,11 +68,12 @@ editor.append(header.element, content)
 app.replaceChildren(editor)
 
 let selectedWorldId: Id<'worlds'> | null = null
+let worlds: GalleryWorld[] = []
 
 showView('map-gallery')
 
 async function initializeGallery(): Promise<void> {
-  const worlds = await convex.client.query(api.worlds.list, {})
+  worlds = await convex.client.query(api.worlds.list, {})
 
   gallery.setWorlds(worlds)
 }
@@ -82,7 +83,19 @@ void initializeGallery().catch((error: unknown) => {
 })
 
 function selectWorld(worldId: Id<'worlds'>): void {
+  const selectedWorld = worlds.find((world) => world._id === worldId)
+
+  if (!selectedWorld) {
+    console.error('Selected world not found:', worldId)
+    return
+  }
+
   selectedWorldId = worldId
+
+  editorLayout.setWorldInformation(
+    'Unedited Map',
+    `Editor ${selectedWorld.number}`,
+  )
 
   header.setWorldBuilderAvailable(true)
   worldMapController.selectWorld(worldId)

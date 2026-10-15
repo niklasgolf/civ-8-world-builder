@@ -6,21 +6,26 @@ import { MapArea } from './map-area'
 export class EditorLayout {
   readonly element: HTMLDivElement
   readonly mapArea: MapArea
+  readonly leftPanel: LeftPanel
+  readonly rightPanel: RightPanel
 
   constructor() {
     this.element = document.createElement('div')
     this.element.className = 'editor-layout'
 
-    const leftPanel = new LeftPanel()
-
+    this.leftPanel = new LeftPanel()
     this.mapArea = new MapArea()
-
-    const rightPanel = new RightPanel()
+    this.rightPanel = new RightPanel()
 
     this.element.append(
-      leftPanel.element,
+      this.leftPanel.element,
       this.mapArea.element,
-      rightPanel.element,
+      this.rightPanel.element,
     )
+  }
+
+  setWorldInformation(worldTitle: string, editorTitle: string): void {
+    this.leftPanel.setWorldTitle(worldTitle)
+    this.rightPanel.setEditorTitle(editorTitle)
   }
 }
