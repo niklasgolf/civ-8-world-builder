@@ -172,3 +172,63 @@ export const listByWorld = query({
       .collect()
   },
 })
+
+/**
+ * Development-only terrain update for testing reactive subscriptions.
+ * Internal mutations cannot be called directly from the browser.
+ */
+export const testSetTerrain = internalMutation({
+  args: {
+    worldId: v.id('worlds'),
+    x: v.number(),
+    y: v.number(),
+    terrain: v.union(
+      v.literal('ocean'),
+      v.literal('coast'),
+      v.literal('grass'),
+      v.literal('desert'),
+    ),
+  },
+
+  handler: async (ctx, args) => {
+    const world = await ctx.db.get(args.worldId)
+
+    if (!world || world.initializationStatus !== 'ready') {
+      throw new Error('World is not ready')
+    }
+
+    if (
+      !Number.isSafeInteger(args.x) ||
+      !Number.isSafeInteger(args.y) ||
+      args.x % 2 !== args.y % 2
+    ) {
+      throw new Error('Invalid Midgard coordinate')
+    }
+
+    const hex = await ctx.db
+      .query('hexes')
+      .withIndex('by_world_coordinate', (q) =>
+        q
+          .eq('worldId', args.worldId)
+          .eq('x', args.x)
+          .eq('y', args.y),
+      )
+      .unique()
+
+    if (!hex) {
+      throw new Error(
+        `Hexagon (${args.x}, ${args.y}) does not exist`,
+      )
+    }
+
+    await ctx.db.patch(hex._id, {
+      terrain: args.terrain,
+    })
+
+    return {
+      x: args.x,
+      y: args.y,
+      terrain: args.terrain,
+    }
+  },
+})

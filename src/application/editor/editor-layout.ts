@@ -1,19 +1,26 @@
+
 import { LeftPanel } from './left-panel'
 import { RightPanel } from './right-panel'
 import { MapArea } from './map-area'
 
 export class EditorLayout {
-    readonly element: HTMLDivElement
-    constructor() {
-        this.element = document.createElement('div')
-        this.element.className = 'editor-layout'
+  readonly element: HTMLDivElement
+  readonly mapArea: MapArea
 
-        const leftPanel = new LeftPanel()
+  constructor() {
+    this.element = document.createElement('div')
+    this.element.className = 'editor-layout'
 
-        const mapArea = new MapArea()
+    const leftPanel = new LeftPanel()
 
-        const rightPanel = new RightPanel()
-        
-        this.element.append(leftPanel.element, mapArea.element, rightPanel.element)
-    }
+    this.mapArea = new MapArea()
+
+    const rightPanel = new RightPanel()
+
+    this.element.append(
+      leftPanel.element,
+      this.mapArea.element,
+      rightPanel.element,
+    )
+  }
 }
