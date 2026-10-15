@@ -1,9 +1,16 @@
+
 import { createHeaderMark } from '../../library-svg-graphics/icons/header-mark.ts'
 
-export type AppView = 'world-builder' | 'civ-wiki'
+export type AppView =
+  | 'map-gallery'
+  | 'world-builder'
+  | 'visitors-login'
+  | 'civ-wiki'
 
 const APP_VIEWS: ReadonlyArray<readonly [AppView, string]> = [
+  ['map-gallery', 'Map Gallery'],
   ['world-builder', 'World Builder'],
+  ['visitors-login', 'Visitors & Login'],
   ['civ-wiki', 'CoW Wiki'],
 ]
 
@@ -21,7 +28,8 @@ export class Header {
     header.append(createHeaderMark(), this.createTitle(), this.createModes())
 
     this.element = header
-    this.setView('world-builder')
+    this.setView('map-gallery')
+    this.setWorldBuilderAvailable(false)
   }
 
   setView(view: AppView): void {
@@ -29,6 +37,15 @@ export class Header {
       const selected = candidate === view
       button.classList.toggle('is-selected', selected)
       button.setAttribute('aria-pressed', selected ? 'true' : 'false')
+    }
+  }
+
+  setWorldBuilderAvailable(available: boolean): void {
+    const button = this.buttons.get('world-builder')
+
+    if (button) {
+      button.disabled = !available
+      button.title = available ? '' : 'Select a world in Map Gallery first'
     }
   }
 
@@ -62,9 +79,11 @@ export class Header {
       button.type = 'button'
       button.className = 'mode-button'
       button.textContent = label
+
       button.addEventListener('click', () => {
         this.onChange(view)
       })
+
       this.buttons.set(view, button)
       nav.append(button)
     }

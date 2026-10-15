@@ -3,9 +3,11 @@ import './style.css'
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
 import { EditorLayout } from './application/editor/editor-layout.ts'
+import { WorldGallery } from './application/gallery/world-gallery.ts'
 import { ConvexConnection } from './application/database/convex-client.ts'
 import { WorldMapController } from './application/map/world-map-controller.ts'
 import { api } from '../convex/_generated/api.js'
+import type { Id } from '../convex/_generated/dataModel.ts'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -26,8 +28,28 @@ worldBuilder.className = 'world-builder'
 worldBuilder.setAttribute('aria-label', 'World Builder')
 
 const editorLayout = new EditorLayout()
-
 worldBuilder.append(editorLayout.element)
+
+const worldMapController = new WorldMapController(
+  convex.client,
+  editorLayout.mapArea.mapGrid,
+)
+
+const gallery = new WorldGallery((worldId) => {
+  selectWorld(worldId)
+})
+
+const visitorsLogin = document.createElement('section')
+visitorsLogin.className = 'visitors-login'
+visitorsLogin.setAttribute('aria-label', 'Visitors & Login')
+
+const visitorsHeading = document.createElement('h1')
+visitorsHeading.textContent = 'Visitors & Login'
+
+const visitorsDescription = document.createElement('p')
+visitorsDescription.textContent = 'Coming soon.'
+
+visitorsLogin.append(visitorsHeading, visitorsDescription)
 
 const wiki = new CivWiki()
 
@@ -35,35 +57,48 @@ const header = new Header((view) => {
   showView(view)
 })
 
-content.append(worldBuilder, wiki.element)
+content.append(
+  gallery.element,
+  worldBuilder,
+  visitorsLogin,
+  wiki.element,
+)
+
 editor.append(header.element, content)
 app.replaceChildren(editor)
 
-showView('world-builder')
+let selectedWorldId: Id<'worlds'> | null = null
 
-const worldMapController = new WorldMapController(
-  convex.client,
-  editorLayout.mapArea.mapGrid,
-)
+showView('map-gallery')
 
-async function initializeWorldMap(): Promise<void> {
+async function initializeGallery(): Promise<void> {
   const worlds = await convex.client.query(api.worlds.list, {})
 
-  const world = worlds.find((item) => item.number === 1)
-
-  if (!world) {
-    throw new Error('World 1 was not found in Convex')
-  }
-
-  worldMapController.selectWorld(world._id)
+  gallery.setWorlds(worlds)
 }
 
-void initializeWorldMap().catch((error: unknown) => {
-  console.error('Failed to initialize world map:', error)
+void initializeGallery().catch((error: unknown) => {
+  console.error('Failed to initialize Map Gallery:', error)
 })
 
+function selectWorld(worldId: Id<'worlds'>): void {
+  selectedWorldId = worldId
+
+  header.setWorldBuilderAvailable(true)
+  worldMapController.selectWorld(worldId)
+
+  showView('world-builder')
+}
+
 function showView(view: AppView): void {
+  if (view === 'world-builder' && selectedWorldId === null) {
+    view = 'map-gallery'
+  }
+
+  gallery.element.hidden = view !== 'map-gallery'
   worldBuilder.hidden = view !== 'world-builder'
+  visitorsLogin.hidden = view !== 'visitors-login'
   wiki.element.hidden = view !== 'civ-wiki'
+
   header.setView(view)
 }
