@@ -7,6 +7,13 @@ export default defineSchema({
     number: v.number(),
     name: v.string(),
     ownerId: v.optional(v.string()),
+    initializationStatus: v.optional(
+      v.union(
+        v.literal('empty'),
+        v.literal('initializing'),
+        v.literal('ready'),
+      ),
+    ),
   }).index('by_number', ['number']),
 
   hexes: defineTable({

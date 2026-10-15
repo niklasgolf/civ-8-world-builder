@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as hexes from "../hexes.js";
 import type * as worlds from "../worlds.js";
 
 import type {
@@ -17,6 +18,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  hexes: typeof hexes;
   worlds: typeof worlds;
 }>;
 
