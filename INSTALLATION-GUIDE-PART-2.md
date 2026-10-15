@@ -119,9 +119,46 @@ npm run dev
 
 Open the local address printed by Vite.
 
-The World Builder should display **World 1**, initially containing ocean terrain.
+### 5.1 Map Gallery
 
-The SVG grid uses Midgard for coordinates and geometry. Terrain values come from Convex through a real-time subscription.
+The application opens on the **Map Gallery** homepage.
+
+The gallery contains twelve selectable world cards.
+
+Initially, each card displays:
+
+- `Unedited Map` as its title.
+- `Editor 1`, `Editor 2`, etc. as placeholder editor names.
+
+Visitors can select any of the twelve worlds.
+
+The **World Builder** navigation option is disabled until a world has been selected.
+
+### 5.2 World Builder
+
+Selecting a gallery card opens the World Builder for that world.
+
+The application:
+
+1. Identifies the selected Convex world.
+2. Subscribes to that world's hexagon records.
+3. Renders its SVG hexagonal map.
+4. Updates the left panel with the world title.
+5. Updates the right panel with the corresponding editor title.
+
+The SVG grid uses Midgard for coordinates and geometry.
+
+Terrain values come from Convex through a real-time subscription.
+
+The selected world determines which database records are displayed.
+
+### 5.3 Twelve Independent Worlds
+
+Each world has its own persistent terrain records.
+
+Changing one world's terrain does not change the terrain of the other eleven worlds.
+
+The world numbers are internal identifiers. Future gallery arrangements will not need to follow their numerical order.
 
 ## 6. Test Real-Time Terrain Updates (Optional)
 
@@ -133,7 +170,7 @@ First, find your World 1 document ID:
 npx convex run worlds:list
 ```
 
-Then, with the application open, run the following command using your own World 1 ID:
+Then, with the application open and World 1 selected, run the following command using your own World 1 ID:
 
 ```bash
 npx convex run hexes:testSetTerrain '{"worldId":"YOUR_WORLD_1_ID","x":85,"y":27,"terrain":"grass"}'
@@ -141,26 +178,41 @@ npx convex run hexes:testSetTerrain '{"worldId":"YOUR_WORLD_1_ID","x":85,"y":27,
 
 The hexagon at `(85, 27)` should turn green automatically, without refreshing the browser.
 
-This change is stored persistently in Convex. To restore the ocean terrain, run the same command with `"terrain":"ocean"`.
+This change is stored persistently in Convex.
+
+To restore the ocean terrain, run the same command with `"terrain":"ocean"`.
 
 The test mutation is internal and must not be exposed as an unauthenticated public write operation.
 
 ## 7. Installation Checklist
 
-- [ ] Midgard dependency is available and npm dependencies are installed.
+- [ ] npm dependencies are installed.
 - [ ] TypeScript compilation succeeds.
 - [ ] Your own Convex cloud deployment is connected.
 - [ ] Twelve worlds exist.
 - [ ] All 14,088 hexagons are initialized.
 - [ ] Vite starts the application.
-- [ ] World 1 appears in the browser.
+- [ ] The Map Gallery displays twelve world cards.
+- [ ] Selecting a card opens the corresponding world.
+- [ ] The left and right panel headings update for the selected world.
 - [ ] Optional: a Convex terrain change updates the SVG map automatically.
 
-## Current Limitations
+## 8. Current Limitations
 
-World 1 is currently selected automatically. World switching, browser-based terrain editing, user authentication, editor permissions and production hosting are not yet implemented.
+The following features are not yet complete:
 
-These installation instructions will be extended when those features become available.
+- Browser-based terrain editing.
+- Clerk authentication and Google sign-in.
+- Administrator and editor permissions.
+- Exclusive editing sessions and administrator takeover.
+- Production hosting with Vercel.
+- Custom domain configuration.
+
+The Map Gallery and world selection are implemented.
+
+Visitors can view the worlds, but database mutations are not yet connected to authenticated browser editing.
+
+Production deployment will be documented separately when the Vercel setup has been tested.
 
 ---
 

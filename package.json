@@ -14,6 +14,6 @@
   },
   "dependencies": {
     "convex": "^1.46.0",
-    "midgard-hex-grid": "file:../laboration-2/midgard-hex-grid"
+    "midgard-hex-grid": "^1.0.0"
   }
 }
