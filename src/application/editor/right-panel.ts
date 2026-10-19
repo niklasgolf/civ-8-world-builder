@@ -1,11 +1,20 @@
 
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
+import { EditorActionButton } from './editor-action-button'
 
 export class RightPanel {
   readonly element: HTMLDivElement
   readonly scroll: HTMLDivElement
+
   private readonly heading: HTMLHeadingElement
+  private readonly editingStatus: HTMLDivElement
+  private readonly likeButton: EditorActionButton
+  private readonly editButton: EditorActionButton
+  private readonly takeoverButton: EditorActionButton
+
+  private onEditAction: (() => void) | null = null
+  private onTakeoverAction: (() => void) | null = null
 
   constructor() {
     this.element = document.createElement('div')
@@ -16,11 +25,67 @@ export class RightPanel {
 
     this.heading = document.createElement('h2')
     this.heading.className = 'tool-section__title'
-    this.heading.textContent = 'Editor 1'
+    this.heading.textContent = 'Unassigned'
 
     const headingContainer = document.createElement('div')
     headingContainer.className = 'tool-section world-panel__info'
-    headingContainer.append(this.heading)
+
+    this.editingStatus = document.createElement('div')
+    this.editingStatus.className = 'editor-panel__status'
+    this.editingStatus.textContent = 'Viewing mode'
+
+    const headingRow = document.createElement('div')
+    headingRow.className = 'editor-panel__heading-row'
+
+    const headingLine = document.createElement('div')
+    headingLine.className = 'editor-panel__heading-line'
+
+    headingRow.append(
+      this.editingStatus,
+      headingLine,
+      this.heading,
+    )
+
+    this.likeButton = new EditorActionButton(
+      'Like',
+      'like',
+      () => { },
+    )
+    this.likeButton.setDisabled(true)
+    this.likeButton.element.title = 'Likes coming soon'
+
+    this.editButton = new EditorActionButton(
+      'Edit',
+      'edit',
+      () => {
+        this.onEditAction?.()
+      },
+    )
+
+    this.takeoverButton = new EditorActionButton(
+      'Take Over',
+      'take-over',
+      () => {
+        this.onTakeoverAction?.()
+      },
+    )
+
+    // Editing controls remain hidden until authorization.
+    this.editButton.setVisible(false)
+    this.takeoverButton.setVisible(false)
+
+    const actionContainer = document.createElement('div')
+    actionContainer.className = 'editor-panel__actions'
+    actionContainer.append(
+      this.likeButton.element,
+      this.editButton.element,
+      this.takeoverButton.element,
+    )
+
+    headingContainer.append(
+      headingRow,
+      actionContainer,
+    )
 
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
@@ -239,7 +304,42 @@ export class RightPanel {
     this.element.append(headingContainer, this.scroll)
   }
 
-  setEditorTitle(title: string): void {
+  public setEditorTitle(title: string): void {
     this.heading.textContent = title
+  }
+
+  public setEditingStatus(status: string): void {
+    this.editingStatus.textContent = status
+  }
+
+  public setEditing(isEditing: boolean): void {
+    this.editButton.setLabel(
+      isEditing ? 'Stop Editing' : 'Edit',
+    )
+
+    this.editButton.setIcon(
+      isEditing ? 'stop-editing' : 'edit',
+    )
+  }
+
+  public setEditButtonVisible(visible: boolean): void {
+    this.editButton.setVisible(visible)
+  }
+
+  public setTakeoverButtonVisible(visible: boolean): void {
+    this.takeoverButton.setVisible(visible)
+  }
+
+  public setEditingButtonsDisabled(disabled: boolean): void {
+    this.editButton.setDisabled(disabled)
+    this.takeoverButton.setDisabled(disabled)
+  }
+
+  public onEdit(callback: () => void): void {
+    this.onEditAction = callback
+  }
+
+  public onTakeover(callback: () => void): void {
+    this.onTakeoverAction = callback
   }
 }

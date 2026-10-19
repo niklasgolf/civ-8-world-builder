@@ -141,3 +141,110 @@
 .editor-layout__right-panel .tool-section__title::after {
   background: linear-gradient(270deg, var(--brass), transparent);
 }
+
+/* Rectangular editor action buttons. */
+
+.editor-action-button {
+  width: auto;
+  min-width: 0;
+  height: 72px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 12px 0 9px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--brass-bright);
+}
+
+.editor-action-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  color: var(--cream);
+}
+
+.editor-action-button__icon .tool-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.editor-action-button__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  text-align: center;
+}
+
+.editor-action-button[hidden] {
+  display: none;
+}
+
+/* Disabled until its functionality is implemented. */
+
+.editor-action-button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.editor-action-button:disabled:hover {
+  border-color: var(--button-border);
+  background: var(--button);
+}
+
+/* Editor panel heading. */
+
+.editor-panel__heading-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  margin-bottom: 8px;
+}
+
+.editor-panel__heading-row .tool-section__title {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.editor-panel__heading-row .tool-section__title::after {
+  display: none;
+}
+
+.editor-panel__status {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+  white-space: nowrap;
+}
+
+.editor-panel__heading-line {
+  flex: 1 1 auto;
+  min-width: 12px;
+  height: 1px;
+  background: linear-gradient(90deg,
+      var(--brass),
+      var(--brass));
+}
+
+/* Editor panel action buttons. */
+
+.editor-panel__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
