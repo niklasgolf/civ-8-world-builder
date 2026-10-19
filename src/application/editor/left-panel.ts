@@ -1,3 +1,4 @@
+
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
 
@@ -9,21 +10,44 @@ export class LeftPanel {
   constructor() {
     this.element = document.createElement('div')
     this.element.className = 'editor-layout__left-panel'
+
     this.scroll = document.createElement('div')
     this.scroll.className = 'tool-panel__scroll'
+
     this.heading = document.createElement('h2')
     this.heading.className = 'tool-section__title'
     this.heading.textContent = 'Unedited Map'
+
     const headingContainer = document.createElement('div')
     headingContainer.className = 'tool-section world-panel__info'
     headingContainer.append(this.heading)
 
-    const toolSections = [
-      new ToolSection('Terrain'),
-      new ToolSection('Features'),
-      new ToolSection('Rivers'),
-      new ToolSection('Brush'),
-    ]
+    const brushSection = new ToolSection('Brush')
+    const terrainSection = new ToolSection('Terrain')
+    const featuresSection = new ToolSection('Features')
+    const resourcesSection = new ToolSection('Resources')
+    const riversSection = new ToolSection('Rivers')
+
+    const smallBrushButton = new ToolButton(
+      'brush-small',
+      'Small brush',
+      'brush-small',
+      'brush'
+    )
+    const mediumBrushButton = new ToolButton(
+      'brush-medium',
+      'Medium brush',
+      'brush-medium',
+      'brush'
+    )
+    const largeBrushButton = new ToolButton(
+      'brush-large',
+      'Large brush',
+      'brush-large',
+      'brush'
+    )
+    const undoButton = new ToolButton('undo', 'Undo', 'undo')
+    const redoButton = new ToolButton('redo', 'Redo', 'redo')
 
     const grassButton = new ToolButton(
       'grass',
@@ -116,7 +140,56 @@ export class LeftPanel {
       'volcano',
       'features'
     )
-    
+
+    const wheatButton = new ToolButton(
+      'wheat',
+      'Wheat',
+      'wheat',
+      'resources'
+    )
+    const cattleButton = new ToolButton(
+      'cattle',
+      'Cattle',
+      'cattle',
+      'resources'
+    )
+    const horsesButton = new ToolButton(
+      'horses',
+      'Horses',
+      'horses',
+      'resources'
+    )
+    const deerButton = new ToolButton(
+      'deer',
+      'Deer',
+      'deer',
+      'resources'
+    )
+    const fishButton = new ToolButton(
+      'fish',
+      'Fish',
+      'fish',
+      'resources'
+    )
+    const stoneButton = new ToolButton(
+      'stone',
+      'Stone',
+      'stone',
+      'resources'
+    )
+    const ironButton = new ToolButton(
+      'iron',
+      'Iron',
+      'iron',
+      'resources'
+    )
+    const goldButton = new ToolButton(
+      'gold',
+      'Gold',
+      'gold',
+      'resources'
+    )
+
     const riverButton = new ToolButton(
       'river',
       'River',
@@ -136,57 +209,52 @@ export class LeftPanel {
       'rivers'
     )
 
-    const smallBrushButton = new ToolButton(
-      'brush-small',
-      'Small brush',
-      'brush-small',
-      'brush'
-    )
-    const mediumBrushButton = new ToolButton(
-      'brush-medium',
-      'Medium brush',
-      'brush-medium',
-      'brush'
-    )
-    const largeBrushButton = new ToolButton(
-      'brush-large',
-      'Large brush',
-      'brush-large',
-      'brush'
-    )
-    const undoButton = new ToolButton('undo', 'Undo', 'undo')
-    const redoButton = new ToolButton('redo', 'Redo', 'redo')
-
-    toolSections[0].addButton(grassButton)
-    toolSections[0].addButton(plainsButton)
-    toolSections[0].addButton(desertButton)
-    toolSections[0].addButton(tundraButton)
-    toolSections[0].addButton(snowButton)
-    toolSections[0].addButton(coastButton)
-    toolSections[0].addButton(oceanButton)
-    grassButton.setSelected(true)
-
-    toolSections[1].addButton(woodsButton)
-    toolSections[1].addButton(rainforestButton)
-    toolSections[1].addButton(marshButton)
-    toolSections[1].addButton(oasisButton)
-    toolSections[1].addButton(floodplainsButton)
-    toolSections[1].addButton(iceButton)
-    toolSections[1].addButton(reefButton)
-    toolSections[1].addButton(volcanoButton)
-
-    toolSections[2].addButton(riverButton)
-    toolSections[2].addButton(riverSourceButton)
-    toolSections[2].addButton(riverMouthButton)
-
-    toolSections[3].addButton(smallBrushButton)
-    toolSections[3].addButton(mediumBrushButton)
-    toolSections[3].addButton(largeBrushButton)
-    toolSections[3].addButton(undoButton)
-    toolSections[3].addButton(redoButton)
+    brushSection.addButton(smallBrushButton)
+    brushSection.addButton(mediumBrushButton)
+    brushSection.addButton(largeBrushButton)
+    brushSection.addButton(undoButton)
+    brushSection.addButton(redoButton)
     mediumBrushButton.setSelected(true)
 
-    toolSections.forEach(section => this.scroll.append(section.element))
+    terrainSection.addButton(grassButton)
+    terrainSection.addButton(plainsButton)
+    terrainSection.addButton(desertButton)
+    terrainSection.addButton(tundraButton)
+    terrainSection.addButton(snowButton)
+    terrainSection.addButton(coastButton)
+    terrainSection.addButton(oceanButton)
+    grassButton.setSelected(true)
+
+    featuresSection.addButton(woodsButton)
+    featuresSection.addButton(rainforestButton)
+    featuresSection.addButton(marshButton)
+    featuresSection.addButton(oasisButton)
+    featuresSection.addButton(floodplainsButton)
+    featuresSection.addButton(iceButton)
+    featuresSection.addButton(reefButton)
+    featuresSection.addButton(volcanoButton)
+
+    resourcesSection.addButton(wheatButton)
+    resourcesSection.addButton(cattleButton)
+    resourcesSection.addButton(horsesButton)
+    resourcesSection.addButton(deerButton)
+    resourcesSection.addButton(fishButton)
+    resourcesSection.addButton(stoneButton)
+    resourcesSection.addButton(ironButton)
+    resourcesSection.addButton(goldButton)
+
+    riversSection.addButton(riverButton)
+    riversSection.addButton(riverSourceButton)
+    riversSection.addButton(riverMouthButton)
+
+    this.scroll.append(
+      brushSection.element,
+      terrainSection.element,
+      featuresSection.element,
+      resourcesSection.element,
+      riversSection.element,
+    )
+
     this.element.append(headingContainer, this.scroll)
   }
 

@@ -2,6 +2,8 @@
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
 import { EditorActionButton } from './editor-action-button'
+import { Minimap } from './minimap'
+import type { MapViewport } from '../map/map-grid.ts'
 
 export class RightPanel {
   readonly element: HTMLDivElement
@@ -16,7 +18,7 @@ export class RightPanel {
   private onEditAction: (() => void) | null = null
   private onTakeoverAction: (() => void) | null = null
 
-  constructor() {
+  constructor(map: MapViewport) {
     this.element = document.createElement('div')
     this.element.className = 'editor-layout__right-panel'
 
@@ -87,10 +89,58 @@ export class RightPanel {
       actionContainer,
     )
 
+    const improvementsSection = new ToolSection('Improvements')
     const wonderSection = new ToolSection('Wonders')
     const continentsSection = new ToolSection('Continents')
-    const resourcesSection = new ToolSection('Resources')
-    const improvementsSection = new ToolSection('Improvements')
+
+    const farmButton = new ToolButton(
+      'farm',
+      'Farm',
+      'farm',
+      'improvements'
+    )
+    const mineButton = new ToolButton(
+      'mine',
+      'Mine',
+      'mine',
+      'improvements'
+    )
+    const quarryButton = new ToolButton(
+      'quarry',
+      'Quarry',
+      'quarry',
+      'improvements'
+    )
+    const campButton = new ToolButton(
+      'camp',
+      'Camp',
+      'camp',
+      'improvements'
+    )
+    const pastureButton = new ToolButton(
+      'pasture',
+      'Pasture',
+      'pasture',
+      'improvements'
+    )
+    const fishingButton = new ToolButton(
+      'fishing',
+      'Fishing boats',
+      'fishing',
+      'improvements'
+    )
+    const plantationButton = new ToolButton(
+      'plantation',
+      'Plantation',
+      'plantation',
+      'improvements'
+    )
+    const fortButton = new ToolButton(
+      'fort',
+      'Fort',
+      'fort',
+      'improvements'
+    )
 
     const pyramidButton = new ToolButton(
       'pyramid',
@@ -166,103 +216,14 @@ export class RightPanel {
       'continents'
     )
 
-    const wheatButton = new ToolButton(
-      'wheat',
-      'Wheat',
-      'wheat',
-      'resources'
-    )
-    const cattleButton = new ToolButton(
-      'cattle',
-      'Cattle',
-      'cattle',
-      'resources'
-    )
-    const horsesButton = new ToolButton(
-      'horses',
-      'Horses',
-      'horses',
-      'resources'
-    )
-    const deerButton = new ToolButton(
-      'deer',
-      'Deer',
-      'deer',
-      'resources'
-    )
-    const fishButton = new ToolButton(
-      'fish',
-      'Fish',
-      'fish',
-      'resources'
-    )
-    const stoneButton = new ToolButton(
-      'stone',
-      'Stone',
-      'stone',
-      'resources'
-    )
-    const ironButton = new ToolButton(
-      'iron',
-      'Iron',
-      'iron',
-      'resources'
-    )
-    const goldButton = new ToolButton(
-      'gold',
-      'Gold',
-      'gold',
-      'resources'
-    )
-
-    const farmButton = new ToolButton(
-      'farm',
-      'Farm',
-      'farm',
-      'improvements'
-    )
-    const mineButton = new ToolButton(
-      'mine',
-      'Mine',
-      'mine',
-      'improvements'
-    )
-    const quarryButton = new ToolButton(
-      'quarry',
-      'Quarry',
-      'quarry',
-      'improvements'
-    )
-    const campButton = new ToolButton(
-      'camp',
-      'Camp',
-      'camp',
-      'improvements'
-    )
-    const pastureButton = new ToolButton(
-      'pasture',
-      'Pasture',
-      'pasture',
-      'improvements'
-    )
-    const fishingButton = new ToolButton(
-      'fishing',
-      'Fishing boats',
-      'fishing',
-      'improvements'
-    )
-    const plantationButton = new ToolButton(
-      'plantation',
-      'Plantation',
-      'plantation',
-      'improvements'
-    )
-    const fortButton = new ToolButton(
-      'fort',
-      'Fort',
-      'fort',
-      'improvements'
-    )
+    improvementsSection.addButton(farmButton)
+    improvementsSection.addButton(mineButton)
+    improvementsSection.addButton(quarryButton)
+    improvementsSection.addButton(campButton)
+    improvementsSection.addButton(pastureButton)
+    improvementsSection.addButton(fishingButton)
+    improvementsSection.addButton(plantationButton)
+    improvementsSection.addButton(fortButton)
 
     wonderSection.addButton(pyramidButton)
     wonderSection.addButton(colossusButton)
@@ -278,30 +239,20 @@ export class RightPanel {
     continentsSection.addButton(purpleContinentButton)
     continentsSection.addButton(orangeContinentButton)
 
-    resourcesSection.addButton(wheatButton)
-    resourcesSection.addButton(cattleButton)
-    resourcesSection.addButton(horsesButton)
-    resourcesSection.addButton(deerButton)
-    resourcesSection.addButton(fishButton)
-    resourcesSection.addButton(stoneButton)
-    resourcesSection.addButton(ironButton)
-    resourcesSection.addButton(goldButton)
+    this.scroll.append(
+      improvementsSection.element,
+      wonderSection.element,
+      continentsSection.element,
+    )
 
-    improvementsSection.addButton(farmButton)
-    improvementsSection.addButton(mineButton)
-    improvementsSection.addButton(quarryButton)
-    improvementsSection.addButton(campButton)
-    improvementsSection.addButton(pastureButton)
-    improvementsSection.addButton(fishingButton)
-    improvementsSection.addButton(plantationButton)
-    improvementsSection.addButton(fortButton)
+    const minimap = new Minimap(map.getWorldFrame())
+    minimap.connect(map)
 
-    this.scroll.append(wonderSection.element)
-    this.scroll.append(continentsSection.element)
-    this.scroll.append(resourcesSection.element)
-    this.scroll.append(improvementsSection.element)
-
-    this.element.append(headingContainer, this.scroll)
+    this.element.append(
+      headingContainer,
+      this.scroll,
+      minimap.element,
+    )
   }
 
   public setEditorTitle(title: string): void {

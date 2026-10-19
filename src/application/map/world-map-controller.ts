@@ -2,6 +2,7 @@
 import type { ConvexClient } from 'convex/browser'
 import { api } from '../../../convex/_generated/api.js'
 import type { Id } from '../../../convex/_generated/dataModel.ts'
+import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 import type { MapGrid } from './map-grid.ts'
 
 type Terrain = 'ocean' | 'coast' | 'grass' | 'desert'
@@ -31,10 +32,19 @@ export class WorldMapController {
       { worldId },
       (hexes) => {
         for (const hex of hexes) {
-          this.mapGrid.setHexFill(
-            { x: hex.x, y: hex.y },
-            TERRAIN_COLORS[hex.terrain],
-          )
+          const coordinate = { x: hex.x, y: hex.y }
+
+          if (hex.terrain === 'ocean') {
+            this.mapGrid.setHexGraphic(
+              coordinate,
+              createOcean(),
+            )
+          } else {
+            this.mapGrid.setHexFill(
+              coordinate,
+              TERRAIN_COLORS[hex.terrain],
+            )
+          }
         }
       },
       (error) => {

@@ -25,6 +25,7 @@
   background: #1a3148;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .editor-layout__map-area {
@@ -38,7 +39,10 @@
   background: #1a3148;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
+
+/* Tool sections */
 
 .tool-section {
   border: 1px solid rgba(166, 132, 69, 0.55);
@@ -123,6 +127,8 @@
   display: block;
 }
 
+/* World information */
+
 .world-panel__info {
   margin: 10px 10px 0;
 }
@@ -131,7 +137,7 @@
   font-size: 16px;
 }
 
-/* Mirror all right-panel section headings. */
+/* Right-panel headings */
 
 .editor-layout__right-panel .tool-section__title {
   flex-direction: row-reverse;
@@ -142,7 +148,7 @@
   background: linear-gradient(270deg, var(--brass), transparent);
 }
 
-/* Rectangular editor action buttons. */
+/* Editor action buttons */
 
 .editor-action-button {
   width: auto;
@@ -190,8 +196,6 @@
   display: none;
 }
 
-/* Disabled until its functionality is implemented. */
-
 .editor-action-button:disabled {
   opacity: 1;
   cursor: default;
@@ -202,7 +206,7 @@
   background: var(--button);
 }
 
-/* Editor panel heading. */
+/* Editor status */
 
 .editor-panel__heading-row {
   display: flex;
@@ -235,16 +239,206 @@
   flex: 1 1 auto;
   min-width: 12px;
   height: 1px;
-  background: linear-gradient(90deg,
-      var(--brass),
-      var(--brass));
+  background: var(--brass);
 }
-
-/* Editor panel action buttons. */
 
 .editor-panel__actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
+}
+
+/* Minimap layout */
+
+/*
+ * The tool sections occupy the flexible area above.
+ * The minimap remains anchored to the bottom.
+ */
+
+.editor-layout__right-panel .tool-panel__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * Restore the original experiment's flush minimap appearance.
+ * Keep a generous map area without making the minimap
+ * dominate the entire right panel.
+ */
+
+.minimap {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  min-height: 0;
+  height: clamp(270px, 43%, 470px);
+  margin: 0;
+  padding: 8px 10px 10px;
+  border: 0;
+  border-top: 1px solid var(--brass-dim);
+  border-radius: 0;
+  background: #0d1b2b;
+  color: var(--cream);
+  box-shadow: none;
+}
+
+/* Minimap heading */
+
+.minimap__heading {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.minimap__title,
+.minimap__north {
+  margin: 0;
+  color: var(--brass-bright);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.minimap__north {
+  display: inline;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Zoom controls */
+
+.minimap__zoom {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.minimap__zoom-label {
+  color: var(--brass-bright);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.minimap__zoom-levels {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+.zoom-button {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--button-border);
+  border-radius: 5px;
+  background: var(--button);
+  color: var(--cream);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.zoom-button:hover {
+  border-color: var(--brass);
+  background: var(--button-hover);
+}
+
+.zoom-button:active {
+  background: #14283c;
+}
+
+.zoom-button:focus {
+  outline: none;
+}
+
+.zoom-button:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 2px;
+}
+
+.zoom-button.is-selected {
+  border-color: var(--brass-bright);
+  background: var(--button-selected);
+  color: var(--brass-bright);
+  box-shadow:
+    inset 0 0 0 1px var(--brass-bright),
+    0 0 8px rgba(226, 194, 122, 0.18);
+}
+
+/* Minimap graphics */
+
+/*
+ * The frame fills the remaining height.
+ * Its width follows the right panel.
+ */
+
+.minimap__frame {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 6px;
+  border: 1px solid var(--brass);
+  border-radius: 6px;
+  background:
+    radial-gradient(ellipse at center,
+      #0c3040 0%,
+      #071018 72%);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.45);
+}
+
+.minimap__grid {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  cursor: crosshair;
+  background: #0e4664;
+}
+
+/* The camera rectangle must not intercept minimap clicks. */
+
+.minimap__viewport {
+  pointer-events: none;
+}
+
+/* Smaller screens */
+
+@media (max-height: 700px) {
+  .minimap {
+    height: 240px;
+    gap: 5px;
+    padding: 7px 8px 8px;
+  }
+
+  .zoom-button {
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .minimap__frame {
+    padding: 4px;
+  }
 }

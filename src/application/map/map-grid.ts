@@ -101,6 +101,7 @@ export class MapGrid implements MapViewport {
   readonly element: SVGSVGElement
 
   private readonly polygons = new Map<string, SVGPolygonElement>()
+  private readonly graphics = new Map<string, SVGSVGElement>()
   private readonly placements = new Map<string, HexPlacement>()
   private readonly coordinates: Coordinate[]
   private readonly world: MapFrame
@@ -243,7 +244,15 @@ export class MapGrid implements MapViewport {
     graphic.setAttribute('height', String(HEX_BOUNDS.height))
     graphic.setAttribute('data-hex-graphic', key)
 
-    polygon.after(graphic)
+    const previousGraphic = this.graphics.get(key)
+
+    if (previousGraphic) {
+      previousGraphic.replaceWith(graphic)
+    } else {
+      polygon.after(graphic)
+    }
+
+    this.graphics.set(key, graphic)
   }
 
   private applyView(): void {

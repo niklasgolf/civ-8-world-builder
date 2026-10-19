@@ -15,7 +15,9 @@ export class EditorLayout {
 
     this.leftPanel = new LeftPanel()
     this.mapArea = new MapArea()
-    this.rightPanel = new RightPanel()
+
+    // Connect the minimap to the existing world map.
+    this.rightPanel = new RightPanel(this.mapArea.mapGrid)
 
     this.element.append(
       this.leftPanel.element,
