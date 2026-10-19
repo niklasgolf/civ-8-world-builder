@@ -93,10 +93,41 @@ This installs the dependencies declared by the project, including:
 - Convex
 - Vite
 - TypeScript
+- Clerk JavaScript SDK (`@clerk/clerk-js`)
 
 Midgard is downloaded from npm automatically.
 
 There is no need to install the library separately or clone its source repository.
+
+### 4.1 Clerk SDK Installation
+
+Clerk is the authentication provider for Civilization of Wonders. The project uses the vanilla JavaScript/TypeScript SDK, without React or Next.js.
+
+The Clerk SDK was installed on 16 October 2026:
+
+```bash
+npm install @clerk/clerk-js
+```
+
+The installation completed successfully:
+
+- 51 packages added.
+- 75 packages audited.
+- Zero vulnerabilities reported.
+
+npm displayed a deprecation warning for `crypto-js@4.2.0` and install-script approval notices for several dependencies. These did not prevent installation.
+
+The installed Clerk SDK was verified using:
+
+```bash
+npm ls @clerk/clerk-js
+```
+
+TypeScript verification also succeeded.
+
+The Clerk dependency is recorded in `package.json` and `package-lock.json`, so future developers normally only need to run `npm install`.
+
+Clerk authentication configuration is documented in [Part 4 — Authentication and Editor Permissions](INSTALLATION-GUIDE-PART-4.md).
 
 ## 5. Verify TypeScript
 
@@ -118,6 +149,10 @@ Both commands were successfully tested after the npm migration on 15 October 202
 
 The Vite production build also completed successfully on Vercel.
 
+After the Clerk–Convex authentication configuration was added, `npx tsc --noEmit` and `npx convex dev --once` completed successfully on 19 October 2026.
+
+The authentication integration has not yet been tested with a real Google sign-in.
+
 ## 6. Run the Development Server
 
 Once the Convex deployment has been configured, start Vite:
@@ -136,7 +171,32 @@ Vite serves the frontend application.
 
 Convex provides the database and real-time subscriptions.
 
+Clerk provides authentication.
+
 For local development, use separate terminals for Vite and Convex.
+
+### 6.1 Local Environment Variables
+
+The local `.env.local` file contains the development configuration for Convex and Clerk.
+
+Typical variable names are:
+
+```dotenv
+CONVEX_DEPLOYMENT=dev:your-deployment
+VITE_CONVEX_URL=https://your-deployment.convex.cloud
+VITE_CONVEX_SITE_URL=https://your-deployment.convex.site
+VITE_CLERK_PUBLISHABLE_KEY=your-clerk-publishable-key
+```
+
+Use values generated for your own Convex and Clerk applications.
+
+The Clerk publishable key identifies the Clerk application to the browser. It is not a secret key.
+
+Variables beginning with `VITE_` are included in the browser build and must never contain private API secrets.
+
+Keep `.env.local` out of Git.
+
+The Clerk issuer URL used by the Convex backend is configured separately, as described in Part 4.
 
 ## 7. About npm Publishing
 
@@ -183,6 +243,8 @@ At this point, you should have:
 - Installed Node.js and npm.
 - Installed project dependencies.
 - Verified Midgard Hex Grid 1.0.0.
+- Installed the Clerk JavaScript SDK.
+- Configured local environment variables.
 - Verified TypeScript compilation.
 - Verified the Vite production build.
 
@@ -192,4 +254,4 @@ The next step is to configure Convex and initialize the twelve worlds.
 
 ---
 
-*Last updated: 15 October 2026*
+*Last updated: 19 October 2026*

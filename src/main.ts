@@ -76,7 +76,8 @@ showView('map-gallery')
 
 void authentication.initialize()
   .then(() => {
-    console.log('Clerk authentication initialized')
+    convex.connectAuthentication(authentication)
+    console.log('Clerk authentication connected to Convex')
   })
   .catch((error: unknown) => {
     console.error('Failed to initialize Clerk authentication:', error)

@@ -1,4 +1,6 @@
+
 import { ConvexClient } from 'convex/browser'
+import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 
 export class ConvexConnection {
   readonly client: ConvexClient
@@ -11,5 +13,13 @@ export class ConvexConnection {
     }
 
     this.client = new ConvexClient(url)
+  }
+
+  public connectAuthentication(
+    authentication: ClerkAuthentication,
+  ): void {
+    this.client.setAuth(
+      async () => authentication.getConvexToken(),
+    )
   }
 }

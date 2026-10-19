@@ -53,9 +53,9 @@ This guide covers:
 
 **Status: First public deployment completed and verified on 15 October 2026.**
 
-### 📕 Part 4 — Authentication and Editor Permissions
+### 📕 [Part 4 — Authentication and Editor Permissions](INSTALLATION-GUIDE-PART-4.md)
 
-**Status: Planned**
+**Status: Clerk–Convex foundation configured and verified; end-to-end Google login and authorization pending.**
 
 This part will document:
 
@@ -67,6 +67,14 @@ This part will document:
 - Exclusive world editing sessions.
 - Administrator takeover.
 - Editor invitations and world assignments.
+
+## 🔐 Authentication Milestone — 19 October 2026
+
+Clerk is the chosen authentication provider. Its official Convex integration is enabled in the Clerk Development instance. The Convex backend has an `auth.config.ts` configuration and an `editors` table; the vanilla TypeScript frontend initializes Clerk and configures `ConvexClient.setAuth()` to fetch Clerk session tokens. The `authentication.currentUser` backend query has been deployed.
+
+TypeScript and Convex deployment checks passed, and the browser logged `Clerk authentication connected to Convex`. A real Google sign-in and a verified authenticated Convex query have **not** yet been tested. Editor authorization is **not** yet enforced.
+
+See [Part 4 — Authentication and Editor Permissions](INSTALLATION-GUIDE-PART-4.md) for the exact setup and remaining work.
 
 ## 🌍 Current Features
 
@@ -85,7 +93,7 @@ This part will document:
 ## 🚧 Not Yet Implemented
 
 - Browser-based terrain painting.
-- Clerk authentication and Google sign-in.
+- Google sign-in interface and end-to-end authentication test.
 - Administrator and editor permissions.
 - Exclusive editing sessions.
 - Separate Convex production deployment.
@@ -106,7 +114,7 @@ Browser-based editing and authenticated multi-user collaboration will be impleme
 | Cloud database | Convex |
 | Source control | Git and GitHub |
 | Web hosting | Vercel |
-| Authentication | Clerk (planned) |
+| Authentication | Clerk (integration configured; login UI pending) |
 
 The SVG map is a visual representation of terrain data stored in Convex.
 
@@ -154,4 +162,4 @@ This will provide the foundation for authenticated, real-time world editing.
 
 ---
 
-*Last updated: 15 October 2026*
+*Last updated: 19 October 2026*

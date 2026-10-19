@@ -1,7 +1,7 @@
 
 # 📙 Civilization of Wonders — Part 3: Vercel Deployment
 
-[← Installation Guide](INSTALLATION-GUIDE.md) | [← Part 2](INSTALLATION-GUIDE-PART-2.md)
+[← Installation Guide](INSTALLATION-GUIDE.md) | [← Part 2](INSTALLATION-GUIDE-PART-2.md) | [Part 4 →](INSTALLATION-GUIDE-PART-4.md)
 
 ## 1. Overview
 
@@ -12,6 +12,8 @@ The frontend is built with TypeScript and Vite.
 Midgard Hex Grid provides hexagonal geometry and is installed directly from npm.
 
 Convex provides persistent world data and real-time subscriptions.
+
+Clerk provides authentication using Google accounts.
 
 GitHub stores the source code and connects the project to Vercel.
 
@@ -112,7 +114,36 @@ Production and Preview
 
 For your own project, use the Convex URL generated for your deployment.
 
-### Important: Development Versus Production
+### 5.1 Configure the Clerk Publishable Key
+
+Clerk was integrated into the project after the first Vercel deployment.
+
+The frontend now requires an additional environment variable:
+
+```text
+VITE_CLERK_PUBLISHABLE_KEY
+```
+
+The value must be the publishable key from the appropriate Clerk application instance.
+
+To configure it:
+
+1. Open the Vercel dashboard.
+2. Select the `civ-8-world-builder` project.
+3. Open **Settings → Environment Variables**.
+4. Add `VITE_CLERK_PUBLISHABLE_KEY`.
+5. Paste the publishable key from Clerk.
+6. Select the appropriate deployment environments.
+7. Save the variable.
+8. Redeploy the application so the new value is included in the Vite build.
+
+Clerk publishable keys are intended for browser applications.
+
+Never place a Clerk secret key in a `VITE_` environment variable.
+
+**Current status:** The Clerk publishable key is configured locally. Adding it to Vercel and verifying the public authentication integration remain pending.
+
+### 5.2 Important: Development Versus Production
 
 The first Civilization of Wonders deployment intentionally reused the existing Convex development database.
 
@@ -126,6 +157,8 @@ However, the recommended long-term arrangement is:
 A separate production deployment has not yet been configured for the original project.
 
 Do not assume that Convex automatically copies database records between deployments.
+
+When creating a separate production environment, configure the matching Clerk production instance and its authentication issuer.
 
 ## 6. Create the Vercel Project
 
@@ -152,8 +185,9 @@ Vercel will:
 1. Retrieve the source code from GitHub.
 2. Install the npm dependencies.
 3. Download Midgard Hex Grid from npm.
-4. Run the production build.
-5. Publish the generated frontend.
+4. Install Clerk and the other project dependencies.
+5. Run the production build.
+6. Publish the generated frontend.
 
 Wait for the deployment to finish.
 
@@ -182,6 +216,23 @@ For the original project's test data, World 1 contains a green grass hexagon nea
 The public application was tested successfully on two separate computers.
 
 This confirmed that the frontend could be accessed remotely and render data from the shared Convex deployment.
+
+### 8.1 Authentication Verification
+
+After the Clerk environment variable has been configured and the authentication interface implemented, verify that:
+
+1. The public website loads without a missing Clerk publishable key error.
+2. The Clerk SDK initializes.
+3. Google sign-in opens successfully.
+4. A user can sign in and sign out.
+5. Clerk supplies a session token.
+6. Convex verifies the authenticated identity.
+7. Unauthenticated visitors remain able to view public worlds.
+8. Unauthorized users cannot modify world data.
+
+These checks are **not yet completed**.
+
+A successful deployment alone does not prove that authentication and authorization work.
 
 ## 9. GitHub and Future Deployments
 
@@ -265,12 +316,14 @@ The first online deployment is working, but the following improvements remain pl
 
 - A dedicated Convex production deployment.
 - Separate development and production databases.
-- Clerk authentication.
-- Google sign-in.
+- Complete Google sign-in and sign-out interface.
+- End-to-end Clerk authentication verification.
 - Administrator and editor permissions.
 - Secure, authorized terrain editing.
 - Exclusive editing sessions.
 - Custom domain configuration.
+
+The Clerk SDK and Convex authentication foundation have been configured locally.
 
 The frontend is currently a working public world viewer.
 
@@ -290,6 +343,12 @@ Interactive terrain painting and multi-user editing are future development miles
 - [ ] SVG maps render correctly.
 - [ ] Convex terrain data is visible.
 - [ ] The website works on another computer.
+- [ ] `VITE_CLERK_PUBLISHABLE_KEY` is configured on Vercel.
+- [ ] Google sign-in and sign-out work.
+- [ ] Convex verifies the signed-in Clerk identity.
+- [ ] Backend authorization rejects unauthorized edits.
+
+The final four authentication and authorization checks are pending.
 
 ## 14. Deployment Milestone
 
@@ -305,8 +364,10 @@ The following components were verified together:
 - SVG world rendering.
 - Access from multiple computers.
 
-This establishes the foundation for the next development phase: **interactive terrain editing with real-time updates**.
+On 19 October 2026, the Clerk–Convex authentication foundation was also configured and successfully passed TypeScript and Convex deployment checks.
+
+This establishes the foundation for the next development phase: **Google authentication, server-side editor permissions and interactive terrain editing with real-time updates**.
 
 ---
 
-*Last updated: 15 October 2026*
+*Last updated: 19 October 2026*

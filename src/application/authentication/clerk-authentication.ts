@@ -26,6 +26,10 @@ export class ClerkAuthentication {
     return this.clerk.user?.id ?? null
   }
 
+  public async getConvexToken(): Promise<string | null> {
+    return await this.clerk.session?.getToken() ?? null
+  }
+
   public getClerk(): Clerk {
     return this.clerk
   }

@@ -102,6 +102,7 @@ Under **Data**, verify:
 |---|---:|
 | `worlds` | 12 |
 | `hexes` | 14,088 |
+| `editors` | 0 initially |
 
 Each world should have:
 
@@ -110,6 +111,93 @@ initializationStatus: "ready"
 ```
 
 World records and hexagons are stored in Convex, not in GitHub or Vercel.
+
+### 4.1 Editor Registry
+
+On 19 October 2026, the `editors` table was confirmed in the Convex Development dashboard.
+
+It stores the private identities, public fantasy names and authorization information for invited editors and administrators.
+
+The table is defined in:
+
+```text
+convex/schema.ts
+```
+
+The current editor fields are:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `email` | string | Private email address used for invitations |
+| `trueName` | string | Private real name, managed by the administrator |
+| `fantasyName` | string | Public display name |
+| `clerkUserId` | optional string | Clerk user identifier after account linking |
+| `role` | `admin` or `editor` | Authorization role |
+| `worldId` | optional world ID | World assigned to the editor |
+
+`clerkUserId` is optional because an invitation may exist before the invited person signs in.
+
+`worldId` is optional because administrators are not restricted to one assigned world.
+
+The editor table includes three indexes:
+
+```text
+editors.by_email
+editors.by_clerk_user_id
+editors.by_world
+```
+
+These indexes support efficient lookup by invited email address, authenticated Clerk identity and assigned world.
+
+### 4.2 Private and Public Information
+
+The editor registry separates real identities from public fantasy identities.
+
+For example:
+
+| Email | True name | Fantasy name |
+|---|---|---|
+| tom@example.com | Thomas Example | Tom Bombadil |
+| giselle@example.com | Anna Example | Giselle |
+| sam@example.com | Samuel Example | Samwise Gamgee |
+
+These are illustrative records, not actual editor accounts.
+
+The intended access rules are:
+
+- **Administrators** can view and manage editor email addresses and true names.
+- **Editors** can change their own fantasy names.
+- **Editors** cannot change their registered email addresses or true names.
+- **Visitors** can see public fantasy names but not private email addresses or true names.
+
+These rules are architectural requirements. They are not enforced merely by defining the database schema.
+
+Convex functions must enforce the rules before editor records are exposed or modified.
+
+### 4.3 Authentication and Authorization
+
+Civilization of Wonders uses **Clerk for authentication** and **Convex for authorization**.
+
+Clerk verifies the user's Google account and manages authentication sessions.
+
+Convex verifies Clerk-issued tokens and checks whether the authenticated user has permission to edit a world.
+
+The intended login process is:
+
+1. An administrator registers an editor's email, true name, fantasy name and world assignment.
+2. The editor receives a private invitation.
+3. The editor signs in through Clerk using Google.
+4. Convex verifies the Clerk identity.
+5. Convex matches the authenticated user to an authorized editor record.
+6. The editor receives permission to edit their assigned world.
+
+A fantasy name is a public display name, not a password or authentication credential.
+
+An authenticated Google user is not automatically an authorized editor.
+
+The Clerk–Convex connection has been configured, but editor authorization and the complete Google sign-in flow have not yet been tested end to end.
+
+See [Part 4 — Authentication and Editor Permissions](INSTALLATION-GUIDE-PART-4.md).
 
 ## 5. Run Civilization of Wonders Locally
 
@@ -246,6 +334,8 @@ Deploying Convex functions does not automatically copy the development database 
 
 The production database must be initialized or migrated separately.
 
+Clerk development and production instances must also use matching authentication configuration for their respective environments.
+
 ## 9. Installation Checklist
 
 - [ ] npm dependencies are installed.
@@ -253,18 +343,23 @@ The production database must be initialized or migrated separately.
 - [ ] Your Convex development deployment is connected.
 - [ ] Twelve worlds exist.
 - [ ] All 14,088 hexagons are initialized.
+- [ ] The `editors` table exists.
 - [ ] Vite starts the application.
 - [ ] The Map Gallery displays twelve world cards.
 - [ ] Selecting a card opens the corresponding world.
 - [ ] The left and right panel headings update.
 - [ ] Optional: a Convex terrain change updates the SVG map automatically.
+- [ ] Clerk authentication configuration is deployed.
+- [ ] A real Google login is verified by Convex.
+
+The final authentication check remains pending.
 
 ## 10. Current Limitations
 
 The following features are not yet complete:
 
 - Browser-based terrain editing.
-- Clerk authentication and Google sign-in.
+- Google sign-in interface and authenticated-session verification.
 - Administrator and editor permissions.
 - Exclusive editing sessions and administrator takeover.
 - Separate production Convex deployment.
@@ -282,4 +377,4 @@ Visitors can view the worlds, but authenticated browser editing is not yet avail
 
 ---
 
-*Last updated: 15 October 2026*
+*Last updated: 19 October 2026*
