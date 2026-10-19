@@ -42,12 +42,19 @@ export const getActiveSession = query({
     }
 
     const editor = await ctx.db.get(session.editorId)
+    const identity = await ctx.auth.getUserIdentity()
+
+    const isMine = (
+      identity !== null &&
+      editor?.clerkUserId === identity.subject
+    )
 
     return {
       worldId: session.worldId,
       fantasyName: editor?.fantasyName ?? 'Unknown',
       role: editor?.role ?? 'editor',
       startedAt: session.startedAt,
+      isMine,
     }
   },
 })

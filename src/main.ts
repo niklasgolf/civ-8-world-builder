@@ -16,6 +16,21 @@ import { ClerkAuthentication } from './application/authentication/clerk-authenti
 import { api } from '../convex/_generated/api.js'
 import type { Id } from '../convex/_generated/dataModel.ts'
 
+type FantasyIdentity = {
+  authenticated: boolean
+  role: 'visitor' | 'editor' | 'admin'
+  fantasyName: string | null
+  worldId: Id<'worlds'> | null
+}
+
+type EditingSession = {
+  worldId: Id<'worlds'>
+  fantasyName: string
+  role: 'editor' | 'admin'
+  startedAt: number
+  isMine: boolean
+}
+
 const app = document.querySelector<HTMLDivElement>('#app')
 
 if (!app) {
@@ -70,6 +85,22 @@ let worlds: GalleryWorld[] = []
 let authenticationRequest = 0
 let assignedEditorRequest = 0
 
+let currentIdentity: FantasyIdentity | null = null
+let activeSession: EditingSession | null = null
+let sessionLoaded = false
+let editingActionPending = false
+let unsubscribeEditingSession: (() => void) | null = null
+
+editorLayout.rightPanel.onEdit(() => {
+  void handleEditAction()
+})
+
+editorLayout.rightPanel.onTakeover(() => {
+  void handleTakeoverAction()
+})
+
+updateEditingControls()
+
 showView('map-gallery')
 
 void initializeAuthentication()
@@ -87,7 +118,9 @@ async function initializeAuthentication(): Promise<void> {
     await refreshFantasyIdentity()
   } catch (error: unknown) {
     console.error('Authentication initialization failed:', error)
+    currentIdentity = null
     visitors.loginPage.setFantasyIdentity(null)
+    updateEditingControls()
   }
 }
 
@@ -95,8 +128,11 @@ async function refreshFantasyIdentity(): Promise<void> {
   const request = ++authenticationRequest
   const userId = authentication.getUserId()
 
+  currentIdentity = null
+  visitors.loginPage.setFantasyIdentity(null)
+  updateEditingControls()
+
   if (!userId) {
-    visitors.loginPage.setFantasyIdentity(null)
     return
   }
 
@@ -113,7 +149,9 @@ async function refreshFantasyIdentity(): Promise<void> {
       return
     }
 
+    currentIdentity = user
     visitors.loginPage.setFantasyIdentity(user)
+    updateEditingControls()
 
     if (user?.role === 'admin') {
       console.log(
@@ -132,7 +170,9 @@ async function refreshFantasyIdentity(): Promise<void> {
     }
 
     console.error('Fantasy identity verification failed:', error)
+    currentIdentity = null
     visitors.loginPage.setFantasyIdentity(null)
+    updateEditingControls()
   }
 }
 
@@ -163,6 +203,7 @@ function selectWorld(worldId: Id<'worlds'>): void {
   header.setWorldBuilderAvailable(true)
   worldMapController.selectWorld(worldId)
 
+  subscribeToEditingSession(worldId)
   showView('world-builder')
 
   void refreshAssignedEditor(worldId)
@@ -202,6 +243,187 @@ async function refreshAssignedEditor(
     editorLayout.rightPanel.setEditorTitle(
       'Unassigned',
     )
+  }
+}
+
+function subscribeToEditingSession(
+  worldId: Id<'worlds'>,
+): void {
+  unsubscribeEditingSession?.()
+  unsubscribeEditingSession = null
+
+  activeSession = null
+  sessionLoaded = false
+  updateEditingControls()
+
+  unsubscribeEditingSession = convex.client.onUpdate(
+    api.editingSessions.getActiveSession,
+    { worldId },
+    (session) => {
+      if (selectedWorldId !== worldId) {
+        return
+      }
+
+      activeSession = session
+      sessionLoaded = true
+      updateEditingControls()
+    },
+    (error) => {
+      if (selectedWorldId !== worldId) {
+        return
+      }
+
+      console.error('Editing session subscription failed:', error)
+
+      activeSession = null
+      sessionLoaded = false
+      updateEditingControls()
+    },
+  )
+}
+
+function isCurrentEditor(): boolean {
+  return activeSession?.isMine === true
+}
+
+function canEditSelectedWorld(): boolean {
+  if (
+    !selectedWorldId ||
+    !currentIdentity ||
+    currentIdentity.role === 'visitor'
+  ) {
+    return false
+  }
+
+  return (
+    currentIdentity.role === 'admin' ||
+    currentIdentity.worldId === selectedWorldId
+  )
+}
+
+function updateEditingControls(): void {
+  const panel = editorLayout.rightPanel
+  const isAdmin = currentIdentity?.role === 'admin'
+  const ownsSession = isCurrentEditor()
+  const canEdit = canEditSelectedWorld()
+
+  if (!sessionLoaded) {
+    panel.setEditingStatus('Loading status...')
+  } else if (activeSession) {
+    panel.setEditingStatus(
+      `Editing: ${activeSession.fantasyName}`,
+    )
+  } else {
+    panel.setEditingStatus('Viewing mode')
+  }
+
+  panel.setEditing(ownsSession)
+
+  const showEdit = (
+    canEdit &&
+    (activeSession === null || ownsSession)
+  )
+
+  const showTakeover = (
+    isAdmin &&
+    activeSession !== null &&
+    !ownsSession
+  )
+
+  panel.setEditButtonVisible(
+    sessionLoaded && showEdit,
+  )
+
+  panel.setTakeoverButtonVisible(
+    sessionLoaded && showTakeover,
+  )
+
+  panel.setEditingButtonsDisabled(editingActionPending)
+}
+
+async function handleEditAction(): Promise<void> {
+  const worldId = selectedWorldId
+
+  if (
+    !worldId ||
+    !sessionLoaded ||
+    !canEditSelectedWorld() ||
+    editingActionPending
+  ) {
+    return
+  }
+
+  const stopping = isCurrentEditor()
+
+  if (!stopping && activeSession !== null) {
+    return
+  }
+
+  editingActionPending = true
+  updateEditingControls()
+
+  try {
+    if (stopping) {
+      await convex.client.mutation(
+        api.editingSessions.stopEditing,
+        { worldId },
+      )
+    } else {
+      await convex.client.mutation(
+        api.editingSessions.startEditing,
+        { worldId },
+      )
+    }
+  } catch (error: unknown) {
+    console.error('Editing action failed:', error)
+
+    window.alert(
+      error instanceof Error
+        ? error.message
+        : 'Unable to change the editing session',
+    )
+  } finally {
+    editingActionPending = false
+    updateEditingControls()
+  }
+}
+
+async function handleTakeoverAction(): Promise<void> {
+  const worldId = selectedWorldId
+
+  if (
+    !worldId ||
+    !sessionLoaded ||
+    currentIdentity?.role !== 'admin' ||
+    activeSession === null ||
+    isCurrentEditor() ||
+    editingActionPending
+  ) {
+    return
+  }
+
+  editingActionPending = true
+  updateEditingControls()
+
+  try {
+    await convex.client.mutation(
+      api.editingSessions.startEditing,
+      {
+        worldId,
+        takeover: true,
+      },
+    )
+  } catch (error: unknown) {
+    console.error('Editing takeover failed:', error)
+
+    window.alert(
+      error instanceof Error
+        ? error.message
+        : 'Unable to take over the editing session',
+    )
+  } finally {
+    editingActionPending = false
+    updateEditingControls()
   }
 }
 
