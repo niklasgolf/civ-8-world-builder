@@ -105,16 +105,75 @@
   line-height: 1;
 }
 
-/* Authentication and account */
+/* Fantasy identity and Clerk authentication */
 
-.visitors-layout__account-status {
-  padding: 20px;
-  border: 1px solid var(--brass);
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid var(--brass-dim);
   border-radius: 6px;
+  background: rgba(7, 17, 28, 0.3);
+}
+
+.login-page__status {
+  color: var(--brass-bright);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.login-page__role {
+  color: #a9b4bf;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.login-page__role:empty {
+  display: none;
+}
+
+.login-page__button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  padding: 12px 20px;
+  border: 1px solid var(--brass);
+  border-radius: 5px;
   background: var(--button);
   color: var(--brass-bright);
-  font-size: 15px;
-  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.login-page__button:hover:not(:disabled) {
+  border-color: var(--brass-bright);
+  background: var(--button-hover);
+}
+
+.login-page__button:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 3px;
+}
+
+.login-page__button:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 /* Responsive layout */

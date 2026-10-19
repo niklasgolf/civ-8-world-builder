@@ -49,4 +49,10 @@ export default defineSchema({
     .index('by_email', ['email'])
     .index('by_clerk_user_id', ['clerkUserId'])
     .index('by_world', ['worldId']),
+
+  editingSessions: defineTable({
+    worldId: v.id('worlds'),
+    editorId: v.id('editors'),
+    startedAt: v.number(),
+  }).index('by_world', ['worldId']),
 })

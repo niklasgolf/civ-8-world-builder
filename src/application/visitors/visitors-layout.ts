@@ -1,11 +1,15 @@
 
+import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
+import { LoginPage } from '../authentication/login-page.ts'
+
 export class VisitorsLayout {
   readonly element: HTMLElement
   readonly statisticsArea: HTMLElement
   readonly mapArea: HTMLElement
   readonly loginArea: HTMLElement
+  readonly loginPage: LoginPage
 
-  constructor() {
+  constructor(authentication: ClerkAuthentication) {
     this.element = document.createElement('section')
     this.element.className = 'visitors-layout'
     this.element.setAttribute('aria-label', 'Visitors & Login')
@@ -19,15 +23,21 @@ export class VisitorsLayout {
     this.loginArea = document.createElement('aside')
     this.loginArea.className = 'visitors-layout__right-panel'
 
+    this.loginPage = new LoginPage(authentication)
+
     this.createStatistics()
     this.createMapPlaceholder()
-    this.createLoginPlaceholder()
+    this.createLoginArea()
 
     this.element.append(
       this.statisticsArea,
       this.mapArea,
       this.loginArea,
     )
+  }
+
+  public initializeAuthentication(): void {
+    this.loginPage.initialize()
   }
 
   private createStatistics(): void {
@@ -95,7 +105,7 @@ export class VisitorsLayout {
     )
   }
 
-  private createLoginPlaceholder(): void {
+  private createLoginArea(): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Login & Account'
 
@@ -103,14 +113,10 @@ export class VisitorsLayout {
     description.textContent =
       'Sign in with Google to access your Civilization of Wonders account.'
 
-    const status = document.createElement('div')
-    status.className = 'visitors-layout__account-status'
-    status.textContent = 'Authentication interface coming next'
-
     this.loginArea.append(
       heading,
       description,
-      status,
+      this.loginPage.element,
     )
   }
 }

@@ -3,6 +3,7 @@ import { v } from 'convex/values'
 import { internal } from './_generated/api'
 import {
   internalMutation,
+  mutation,
   query,
 } from './_generated/server'
 
@@ -16,6 +17,23 @@ const coordinateValidator = v.object({
   x: v.number(),
   y: v.number(),
 })
+
+const terrainValidator = v.union(
+  v.literal('ocean'),
+  v.literal('coast'),
+  v.literal('grass'),
+  v.literal('desert'),
+)
+
+function validateCoordinate(x: number, y: number): void {
+  if (
+    !Number.isSafeInteger(x) ||
+    !Number.isSafeInteger(y) ||
+    x % 2 !== y % 2
+  ) {
+    throw new Error('Invalid Midgard coordinate')
+  }
+}
 
 export const initializeWorld = internalMutation({
   args: {
@@ -63,15 +81,7 @@ export const initializeWorld = internalMutation({
     const coordinateKeys = new Set<string>()
 
     for (const coordinate of args.coordinates) {
-      if (
-        !Number.isSafeInteger(coordinate.x) ||
-        !Number.isSafeInteger(coordinate.y) ||
-        coordinate.x % 2 !== coordinate.y % 2
-      ) {
-        throw new Error(
-          `Invalid Midgard coordinate (${coordinate.x}, ${coordinate.y})`,
-        )
-      }
+      validateCoordinate(coordinate.x, coordinate.y)
 
       const key = `${coordinate.x},${coordinate.y}`
 
@@ -173,6 +183,90 @@ export const listByWorld = query({
   },
 })
 
+export const setTerrain = mutation({
+  args: {
+    worldId: v.id('worlds'),
+    x: v.number(),
+    y: v.number(),
+    terrain: terrainValidator,
+  },
+
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+
+    if (!identity) {
+      throw new Error('Authentication required')
+    }
+
+    const editor = await ctx.db
+      .query('editors')
+      .withIndex('by_clerk_user_id', (q) =>
+        q.eq('clerkUserId', identity.subject),
+      )
+      .unique()
+
+    if (!editor) {
+      throw new Error('Visitors cannot modify terrain')
+    }
+
+    if (
+      editor.role !== 'admin' &&
+      editor.worldId !== args.worldId
+    ) {
+      throw new Error(
+        'You are not assigned to this world',
+      )
+    }
+
+    const session = await ctx.db
+      .query('editingSessions')
+      .withIndex('by_world', (q) =>
+        q.eq('worldId', args.worldId),
+      )
+      .unique()
+
+    if (!session || session.editorId !== editor._id) {
+      throw new Error(
+        'You must control the active editing session',
+      )
+    }
+
+    const world = await ctx.db.get(args.worldId)
+
+    if (!world || world.initializationStatus !== 'ready') {
+      throw new Error('World is not ready')
+    }
+
+    validateCoordinate(args.x, args.y)
+
+    const hex = await ctx.db
+      .query('hexes')
+      .withIndex('by_world_coordinate', (q) =>
+        q
+          .eq('worldId', args.worldId)
+          .eq('x', args.x)
+          .eq('y', args.y),
+      )
+      .unique()
+
+    if (!hex) {
+      throw new Error(
+        `Hexagon (${args.x}, ${args.y}) does not exist`,
+      )
+    }
+
+    await ctx.db.patch(hex._id, {
+      terrain: args.terrain,
+    })
+
+    return {
+      x: args.x,
+      y: args.y,
+      terrain: args.terrain,
+    }
+  },
+})
+
 /**
  * Development-only terrain update for testing reactive subscriptions.
  * Internal mutations cannot be called directly from the browser.
@@ -182,12 +276,7 @@ export const testSetTerrain = internalMutation({
     worldId: v.id('worlds'),
     x: v.number(),
     y: v.number(),
-    terrain: v.union(
-      v.literal('ocean'),
-      v.literal('coast'),
-      v.literal('grass'),
-      v.literal('desert'),
-    ),
+    terrain: terrainValidator,
   },
 
   handler: async (ctx, args) => {
@@ -197,13 +286,7 @@ export const testSetTerrain = internalMutation({
       throw new Error('World is not ready')
     }
 
-    if (
-      !Number.isSafeInteger(args.x) ||
-      !Number.isSafeInteger(args.y) ||
-      args.x % 2 !== args.y % 2
-    ) {
-      throw new Error('Invalid Midgard coordinate')
-    }
+    validateCoordinate(args.x, args.y)
 
     const hex = await ctx.db
       .query('hexes')

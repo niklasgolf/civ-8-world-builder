@@ -47,7 +47,7 @@ const gallery = new WorldGallery((worldId) => {
   selectWorld(worldId)
 })
 
-const visitors = new VisitorsLayout()
+const visitors = new VisitorsLayout(authentication)
 const wiki = new CivWiki()
 
 const header = new Header((view) => {
@@ -67,16 +67,73 @@ app.replaceChildren(editor)
 let selectedWorldId: Id<'worlds'> | null = null
 let worlds: GalleryWorld[] = []
 
+let authenticationRequest = 0
+
 showView('map-gallery')
 
-void authentication.initialize()
-  .then(() => {
-    convex.connectAuthentication(authentication)
-    console.log('Clerk authentication connected to Convex')
-  })
-  .catch((error: unknown) => {
-    console.error('Failed to initialize Clerk authentication:', error)
-  })
+void initializeAuthentication()
+
+async function initializeAuthentication(): Promise<void> {
+  try {
+    await authentication.initialize()
+
+    visitors.loginPage.initialize(() => {
+      void refreshFantasyIdentity()
+    })
+
+    await convex.connectAuthentication(authentication)
+
+    await refreshFantasyIdentity()
+  } catch (error: unknown) {
+    console.error('Authentication initialization failed:', error)
+    visitors.loginPage.setFantasyIdentity(null)
+  }
+}
+
+async function refreshFantasyIdentity(): Promise<void> {
+  const request = ++authenticationRequest
+  const userId = authentication.getUserId()
+
+  if (!userId) {
+    visitors.loginPage.setFantasyIdentity(null)
+    return
+  }
+
+  try {
+    const user = await convex.client.query(
+      api.authentication.currentUser,
+      {},
+    )
+
+    if (
+      request !== authenticationRequest ||
+      authentication.getUserId() !== userId
+    ) {
+      return
+    }
+
+    visitors.loginPage.setFantasyIdentity(user)
+
+    if (user?.role === 'admin') {
+      console.log(
+        `Administrator verified: ${user.fantasyName}`,
+      )
+    } else if (user?.role === 'editor') {
+      console.log(
+        `Editor verified: ${user.fantasyName}`,
+      )
+    } else {
+      console.log('Visitor verified')
+    }
+  } catch (error: unknown) {
+    if (request !== authenticationRequest) {
+      return
+    }
+
+    console.error('Fantasy identity verification failed:', error)
+    visitors.loginPage.setFantasyIdentity(null)
+  }
+}
 
 async function initializeGallery(): Promise<void> {
   worlds = await convex.client.query(api.worlds.list, {})

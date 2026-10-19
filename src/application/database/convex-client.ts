@@ -17,9 +17,14 @@ export class ConvexConnection {
 
   public connectAuthentication(
     authentication: ClerkAuthentication,
-  ): void {
-    this.client.setAuth(
-      async () => authentication.getConvexToken(),
-    )
+  ): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.client.setAuth(
+        async () => authentication.getConvexToken(),
+        (isAuthenticated) => {
+          resolve(isAuthenticated)
+        },
+      )
+    })
   }
 }
