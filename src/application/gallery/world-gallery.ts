@@ -5,6 +5,7 @@ export interface GalleryWorld {
   _id: Id<'worlds'>
   number: number
   name: string
+  fantasyName: string | null
 }
 
 export class WorldGallery {
@@ -85,7 +86,7 @@ export class WorldGallery {
 
       const editor = document.createElement('span')
       editor.className = 'world-gallery__editor'
-      editor.textContent = `Editor ${world.number}`
+      editor.textContent = world.fantasyName ?? 'Unassigned'
 
       card.append(title, editor)
 

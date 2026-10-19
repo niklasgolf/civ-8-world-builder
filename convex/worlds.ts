@@ -1,4 +1,6 @@
+
 import { internalMutation, query } from './_generated/server'
+import { v } from 'convex/values'
 
 export const initialize = internalMutation({
   args: {},
@@ -23,6 +25,54 @@ export const initialize = internalMutation({
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query('worlds').withIndex('by_number').collect()
+    const worlds = await ctx.db
+      .query('worlds')
+      .withIndex('by_number')
+      .collect()
+
+    return await Promise.all(
+      worlds.map(async (world) => {
+        const editor = await ctx.db
+          .query('editors')
+          .withIndex('by_world', (q) =>
+            q.eq('worldId', world._id)
+          )
+          .first()
+
+        return {
+          ...world,
+          fantasyName: editor?.fantasyName ?? null,
+        }
+      }),
+    )
+  },
+})
+
+export const getAssignedEditor = query({
+  args: {
+    worldId: v.id('worlds'),
+  },
+  handler: async (ctx, args) => {
+    const world = await ctx.db.get(args.worldId)
+
+    if (!world) {
+      return null
+    }
+
+    const editor = await ctx.db
+      .query('editors')
+      .withIndex('by_world', (q) =>
+        q.eq('worldId', args.worldId)
+      )
+      .first()
+
+    if (!editor) {
+      return null
+    }
+
+    return {
+      fantasyName: editor.fantasyName,
+      role: editor.role,
+    }
   },
 })

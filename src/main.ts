@@ -68,6 +68,7 @@ let selectedWorldId: Id<'worlds'> | null = null
 let worlds: GalleryWorld[] = []
 
 let authenticationRequest = 0
+let assignedEditorRequest = 0
 
 showView('map-gallery')
 
@@ -156,13 +157,52 @@ function selectWorld(worldId: Id<'worlds'>): void {
 
   editorLayout.setWorldInformation(
     'Unedited Map',
-    `Editor ${selectedWorld.number}`,
+    'Loading...',
   )
 
   header.setWorldBuilderAvailable(true)
   worldMapController.selectWorld(worldId)
 
   showView('world-builder')
+
+  void refreshAssignedEditor(worldId)
+}
+
+async function refreshAssignedEditor(
+  worldId: Id<'worlds'>,
+): Promise<void> {
+  const request = ++assignedEditorRequest
+
+  try {
+    const assignedEditor = await convex.client.query(
+      api.worlds.getAssignedEditor,
+      { worldId },
+    )
+
+    if (
+      request !== assignedEditorRequest ||
+      selectedWorldId !== worldId
+    ) {
+      return
+    }
+
+    editorLayout.rightPanel.setEditorTitle(
+      assignedEditor?.fantasyName ?? 'Unassigned',
+    )
+  } catch (error: unknown) {
+    if (
+      request !== assignedEditorRequest ||
+      selectedWorldId !== worldId
+    ) {
+      return
+    }
+
+    console.error('Failed to load assigned editor:', error)
+
+    editorLayout.rightPanel.setEditorTitle(
+      'Unassigned',
+    )
+  }
 }
 
 function showView(view: AppView): void {
