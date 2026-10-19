@@ -1,0 +1,143 @@
+/* World Builder */
+
+.world-builder {
+  display: none;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  background: var(--ink);
+}
+
+.world-builder.is-active {
+  display: block;
+}
+
+.editor-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.editor-layout__left-panel {
+  flex: 0 0 600px;
+  background: #1a3148;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-layout__map-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: #0e4664;
+}
+
+.editor-layout__right-panel {
+  flex: 0 0 600px;
+  background: #1a3148;
+  display: flex;
+  flex-direction: column;
+}
+
+.tool-section {
+  border: 1px solid rgba(166, 132, 69, 0.55);
+  border-radius: 8px;
+  background: rgba(7, 17, 28, 0.38);
+  padding: 8px 8px 10px;
+  box-shadow: inset 0 0 0 1px rgba(226, 194, 122, 0.05);
+}
+
+.tool-panel__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--brass-dim) transparent;
+}
+
+.tool-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-bright);
+}
+
+.tool-section__title::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, var(--brass), transparent);
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 72px);
+  gap: 6px;
+}
+
+.tool-button {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  border: 1px solid var(--button-border);
+  background: var(--button);
+  color: var(--cream);
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.tool-button:hover {
+  border-color: var(--brass);
+  background: var(--button-hover);
+}
+
+.tool-button:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 2px;
+}
+
+.tool-button.is-selected {
+  border-color: var(--brass-bright);
+  background: var(--button-selected);
+  box-shadow:
+    inset 0 0 0 1px var(--brass-bright),
+    0 0 8px rgba(226, 194, 122, 0.18);
+  color: var(--brass-bright);
+}
+
+.tool-icon {
+  width: 52px;
+  height: 52px;
+  display: block;
+}
+
+.world-panel__info {
+  margin: 10px 10px 0;
+}
+
+.world-panel__info .tool-section__title {
+  font-size: 16px;
+}
+
+/* Mirror all right-panel section headings. */
+
+.editor-layout__right-panel .tool-section__title {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.editor-layout__right-panel .tool-section__title::after {
+  background: linear-gradient(270deg, var(--brass), transparent);
+}

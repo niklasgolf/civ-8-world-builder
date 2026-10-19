@@ -1,9 +1,15 @@
 
-import './style.css'
+import './style-main.css'
+import './style-map-gallery.css'
+import './style-world-builder.css'
+import './style-visitors-and-login.css'
+import './style-civ-wiki.css'
+
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
 import { EditorLayout } from './application/editor/editor-layout.ts'
 import { WorldGallery, type GalleryWorld } from './application/gallery/world-gallery.ts'
+import { VisitorsLayout } from './application/visitors/visitors-layout.ts'
 import { ConvexConnection } from './application/database/convex-client.ts'
 import { WorldMapController } from './application/map/world-map-controller.ts'
 import { ClerkAuthentication } from './application/authentication/clerk-authentication.ts'
@@ -41,18 +47,7 @@ const gallery = new WorldGallery((worldId) => {
   selectWorld(worldId)
 })
 
-const visitorsLogin = document.createElement('section')
-visitorsLogin.className = 'visitors-login'
-visitorsLogin.setAttribute('aria-label', 'Visitors & Login')
-
-const visitorsHeading = document.createElement('h1')
-visitorsHeading.textContent = 'Visitors & Login'
-
-const visitorsDescription = document.createElement('p')
-visitorsDescription.textContent = 'Coming soon.'
-
-visitorsLogin.append(visitorsHeading, visitorsDescription)
-
+const visitors = new VisitorsLayout()
 const wiki = new CivWiki()
 
 const header = new Header((view) => {
@@ -62,7 +57,7 @@ const header = new Header((view) => {
 content.append(
   gallery.element,
   worldBuilder,
-  visitorsLogin,
+  visitors.element,
   wiki.element,
 )
 
@@ -85,7 +80,6 @@ void authentication.initialize()
 
 async function initializeGallery(): Promise<void> {
   worlds = await convex.client.query(api.worlds.list, {})
-
   gallery.setWorlds(worlds)
 }
 
@@ -119,10 +113,25 @@ function showView(view: AppView): void {
     view = 'map-gallery'
   }
 
-  gallery.element.hidden = view !== 'map-gallery'
-  worldBuilder.hidden = view !== 'world-builder'
-  visitorsLogin.hidden = view !== 'visitors-login'
-  wiki.element.hidden = view !== 'civ-wiki'
+  gallery.element.classList.toggle(
+    'is-active',
+    view === 'map-gallery',
+  )
+
+  worldBuilder.classList.toggle(
+    'is-active',
+    view === 'world-builder',
+  )
+
+  visitors.element.classList.toggle(
+    'is-active',
+    view === 'visitors-login',
+  )
+
+  wiki.element.classList.toggle(
+    'is-active',
+    view === 'civ-wiki',
+  )
 
   header.setView(view)
 }

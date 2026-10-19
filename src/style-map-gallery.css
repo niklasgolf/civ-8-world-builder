@@ -1,0 +1,150 @@
+/* Map Gallery */
+
+.world-gallery {
+  display: none;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  background: var(--ink);
+}
+
+.world-gallery.is-active {
+  display: block;
+}
+
+.world-gallery__layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.world-gallery__left-panel,
+.world-gallery__right-panel {
+  flex: 0 0 600px;
+  min-width: 0;
+  padding: 32px;
+  overflow: auto;
+  background: #1a3148;
+}
+
+.world-gallery__left-panel {
+  border-right: 1px solid var(--brass-dim);
+}
+
+.world-gallery__right-panel {
+  border-left: 1px solid var(--brass-dim);
+}
+
+.world-gallery__center {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 24px 16px;
+  overflow: auto;
+  background: #0e4664;
+  text-align: center;
+}
+
+.world-gallery h1,
+.world-gallery h2 {
+  margin: 0 0 16px;
+  color: var(--brass-bright);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.world-gallery h1 {
+  font-size: 24px;
+}
+
+.world-gallery h2 {
+  font-size: 22px;
+}
+
+.world-gallery p {
+  margin: 0 0 24px;
+  color: var(--cream);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.world-gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.world-gallery__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 100px;
+  padding: 12px 4px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button);
+  color: var(--cream);
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.world-gallery__card:hover {
+  border-color: var(--brass-bright);
+  background: var(--button-hover);
+}
+
+.world-gallery__card:focus-visible {
+  outline: 2px solid var(--brass-bright);
+  outline-offset: 3px;
+}
+
+.world-gallery__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brass-bright);
+}
+
+.world-gallery__editor {
+  font-size: 11px;
+  color: var(--cream);
+  opacity: 0.75;
+}
+
+@media (max-width: 1400px) {
+
+  .world-gallery__left-panel,
+  .world-gallery__right-panel {
+    flex-basis: 300px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .world-gallery__layout {
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .world-gallery {
+    overflow: auto;
+  }
+
+  .world-gallery__left-panel,
+  .world-gallery__right-panel {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .world-gallery__center {
+    flex: 0 0 auto;
+    width: 100%;
+    overflow: visible;
+  }
+}

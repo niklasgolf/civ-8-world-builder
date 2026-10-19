@@ -1,0 +1,149 @@
+/* Visitors & Login */
+
+.visitors-layout {
+  display: none;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--ink);
+}
+
+.visitors-layout.is-active {
+  display: flex;
+}
+
+/* Left panel: Visitor statistics */
+
+.visitors-layout__left-panel {
+  flex: 0 0 600px;
+  min-width: 0;
+  padding: 32px;
+  overflow: auto;
+  background: #1a3148;
+  border-right: 1px solid var(--brass-dim);
+}
+
+/* Center: Visitor world map */
+
+.visitors-layout__map-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 32px 20px;
+  overflow: auto;
+  background: #0e4664;
+  text-align: center;
+}
+
+/* Right panel: Login and account */
+
+.visitors-layout__right-panel {
+  flex: 0 0 600px;
+  min-width: 0;
+  padding: 32px;
+  overflow: auto;
+  background: #1a3148;
+  border-left: 1px solid var(--brass-dim);
+}
+
+/* Headings and descriptions */
+
+.visitors-layout h1 {
+  margin: 0 0 16px;
+  color: var(--brass-bright);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.visitors-layout p {
+  margin: 0 0 24px;
+  color: var(--cream);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Visitor statistics */
+
+.visitors-layout__statistic {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 18px;
+  border: 1px solid var(--button-border);
+  border-radius: 6px;
+  background: var(--button);
+  color: var(--cream);
+  font-size: 15px;
+}
+
+.visitors-layout__statistic strong {
+  color: var(--brass-bright);
+  font-size: 18px;
+}
+
+/* Visitor map placeholder */
+
+.visitors-layout__map-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  min-height: 360px;
+  border: 1px solid var(--brass-dim);
+  border-radius: 8px;
+  background: rgba(7, 17, 28, 0.2);
+  color: var(--cream);
+  font-size: 16px;
+}
+
+.visitors-layout__map-symbol {
+  font-size: 96px;
+  line-height: 1;
+}
+
+/* Authentication and account */
+
+.visitors-layout__account-status {
+  padding: 20px;
+  border: 1px solid var(--brass);
+  border-radius: 6px;
+  background: var(--button);
+  color: var(--brass-bright);
+  font-size: 15px;
+  text-align: center;
+}
+
+/* Responsive layout */
+
+@media (max-width: 1400px) {
+
+  .visitors-layout__left-panel,
+  .visitors-layout__right-panel {
+    flex-basis: 300px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .visitors-layout.is-active {
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+  }
+
+  .visitors-layout__left-panel,
+  .visitors-layout__right-panel {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .visitors-layout__map-area {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
