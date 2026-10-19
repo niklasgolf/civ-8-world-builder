@@ -6,6 +6,7 @@ import { EditorLayout } from './application/editor/editor-layout.ts'
 import { WorldGallery, type GalleryWorld } from './application/gallery/world-gallery.ts'
 import { ConvexConnection } from './application/database/convex-client.ts'
 import { WorldMapController } from './application/map/world-map-controller.ts'
+import { ClerkAuthentication } from './application/authentication/clerk-authentication.ts'
 import { api } from '../convex/_generated/api.js'
 import type { Id } from '../convex/_generated/dataModel.ts'
 
@@ -16,6 +17,7 @@ if (!app) {
 }
 
 const convex = new ConvexConnection()
+const authentication = new ClerkAuthentication()
 
 const editor = document.createElement('div')
 editor.className = 'editor'
@@ -71,6 +73,14 @@ let selectedWorldId: Id<'worlds'> | null = null
 let worlds: GalleryWorld[] = []
 
 showView('map-gallery')
+
+void authentication.initialize()
+  .then(() => {
+    console.log('Clerk authentication initialized')
+  })
+  .catch((error: unknown) => {
+    console.error('Failed to initialize Clerk authentication:', error)
+  })
 
 async function initializeGallery(): Promise<void> {
   worlds = await convex.client.query(api.worlds.list, {})

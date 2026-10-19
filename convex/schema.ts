@@ -34,4 +34,19 @@ export default defineSchema({
   })
     .index('by_world', ['worldId'])
     .index('by_world_coordinate', ['worldId', 'x', 'y']),
+
+  editors: defineTable({
+    email: v.string(),
+    trueName: v.string(),
+    fantasyName: v.string(),
+    clerkUserId: v.optional(v.string()),
+    role: v.union(
+      v.literal('admin'),
+      v.literal('editor'),
+    ),
+    worldId: v.optional(v.id('worlds')),
+  })
+    .index('by_email', ['email'])
+    .index('by_clerk_user_id', ['clerkUserId'])
+    .index('by_world', ['worldId']),
 })
