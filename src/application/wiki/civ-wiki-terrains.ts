@@ -10,6 +10,9 @@ import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 import { createPlainsFlat } from '../../library-svg-graphics/terrain/plains.ts'
 import { createPlainsHills } from '../../library-svg-graphics/terrain/plains-hills.ts'
 import { createPlainsMountains } from '../../library-svg-graphics/terrain/plains-mountains.ts'
+import { createSnowFlat } from '../../library-svg-graphics/terrain/snow.ts'
+import { createSnowHills } from '../../library-svg-graphics/terrain/snow-hills.ts'
+import { createSnowMountains } from '../../library-svg-graphics/terrain/snow-mountains.ts'
 import { createTundraFlat } from '../../library-svg-graphics/terrain/tundra.ts'
 import { createTundraHills } from '../../library-svg-graphics/terrain/tundra-hills.ts'
 import { createTundraMountains } from '../../library-svg-graphics/terrain/tundra-mountains.ts'
@@ -90,6 +93,21 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
     name: 'Tundra — Mountains',
     description: 'Snow-capped mountain peaks with cool slate-grey rock, muted brown slopes and weathered tundra foothills.',
     createGraphic: createTundraMountains,
+  },
+  {
+    name: 'Snow — Flat',
+    description: 'Wind-packed snow with soft blue shadows, sweeping drifts, fine ice crystals and delicate surface fractures.',
+    createGraphic: createSnowFlat,
+  },
+  {
+    name: 'Snow — Hills',
+    description: 'Five rounded snow-covered hills with bright white crests, icy-blue shadows and delicate wind-carved ridges.',
+    createGraphic: createSnowHills,
+  },
+  {
+    name: 'Snow — Mountains',
+    description: 'Towering snow-covered peaks with bright white summits, icy-blue slopes, deep slate-blue shadows and snowy foothills.',
+    createGraphic: createSnowMountains,
   },
 ]
 
