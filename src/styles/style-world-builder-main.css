@@ -1,0 +1,53 @@
+/* World Builder */
+
+/* Main application view */
+
+.world-builder {
+  display: none;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  background: var(--ink);
+}
+
+.world-builder.is-active {
+  display: block;
+}
+
+/* Main editor layout */
+
+.editor-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Left panel */
+
+.editor-layout__left-panel {
+  flex: 0 0 600px;
+  background: #1a3148;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Center map area */
+
+.editor-layout__map-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: #0e4664;
+}
+
+/* Right panel */
+
+.editor-layout__right-panel {
+  flex: 0 0 600px;
+  background: #1a3148;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}

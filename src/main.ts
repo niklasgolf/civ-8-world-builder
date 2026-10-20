@@ -1,9 +1,13 @@
 
-import './style-main.css'
-import './style-map-gallery.css'
-import './style-world-builder.css'
-import './style-visitors-and-login.css'
-import './style-civ-wiki.css'
+import './styles/style-main.css'
+import './styles/style-map-gallery.css'
+import './styles/style-world-builder-main.css'
+import './styles/style-world-builder-tool-panels.css'
+import './styles/style-world-builder-terrain-palette.css'
+import './styles/style-world-builder-editor-actions.css'
+import './styles/style-world-builder-minimap.css'
+import './styles/style-visitors-and-login.css'
+import './styles/style-civ-wiki.css'
 
 import { Header, type AppView } from './application/editor/header.ts'
 import { CivWiki } from './application/wiki/civ-wiki.ts'
