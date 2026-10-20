@@ -1,5 +1,9 @@
+
 import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons.ts'
 import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
+import { createGrassFlat } from '../../library-svg-graphics/terrain/grass.ts'
+import { createGrassHills } from '../../library-svg-graphics/terrain/grass-hills.ts'
+import { createGrassMountains } from '../../library-svg-graphics/terrain/grass-mountains.ts'
 import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 import {
   DEFAULT_CATEGORY,
@@ -26,6 +30,21 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
     name: 'Coast',
     description: 'Shallow coastal water.',
     createGraphic: createCoast,
+  },
+  {
+    name: 'Grass — Flat',
+    description: 'Open grassland with gentle green variations and scattered grass tufts.',
+    createGraphic: createGrassFlat,
+  },
+  {
+    name: 'Grass — Hills',
+    description: 'Rolling green hills rising from the grassland.',
+    createGraphic: createGrassHills,
+  },
+  {
+    name: 'Grass — Mountains',
+    description: 'Rocky mountain peaks with snow-covered summits rising above green grassland.',
+    createGraphic: createGrassMountains,
   },
 ]
 
