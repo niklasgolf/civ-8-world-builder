@@ -12,7 +12,6 @@ export function createMinimapViewport(
   bounds: MinimapViewportBounds,
 ): SVGRectElement {
   return createSvg('rect', {
-    class: 'minimap__viewport',
     x: String(bounds.x),
     y: String(bounds.y),
     width: String(bounds.width),

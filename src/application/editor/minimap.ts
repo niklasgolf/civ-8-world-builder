@@ -90,6 +90,7 @@ export class Minimap {
     frame.className = 'minimap__frame'
 
     this.svg = createMinimapCanvas(world)
+    this.svg.classList.add('minimap__grid')
 
     this.svg.appendChild(createMinimapBackground(world))
 
@@ -103,6 +104,7 @@ export class Minimap {
     })
 
     const hexGroup = createMinimapHexagonGroup()
+    hexGroup.classList.add('minimap__hexagons')
     this.svg.appendChild(hexGroup)
 
     for (const hexagon of hexagons) {
@@ -117,6 +119,7 @@ export class Minimap {
 
     // The viewport must be drawn above the hexagons.
     this.viewport = createMinimapViewport(world)
+    this.viewport.classList.add('minimap__viewport')
     this.svg.appendChild(this.viewport)
 
     this.svg.addEventListener('click', (event) => {

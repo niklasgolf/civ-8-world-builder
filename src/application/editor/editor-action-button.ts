@@ -21,7 +21,10 @@ export class EditorActionButton {
 
     this.iconContainer = document.createElement('span')
     this.iconContainer.className = 'editor-action-button__icon'
-    this.iconContainer.append(createEditorActionIcon(icon))
+
+    const svg = createEditorActionIcon(icon)
+    svg.classList.add('tool-icon')
+    this.iconContainer.append(svg)
 
     this.labelElement = document.createElement('span')
     this.labelElement.className = 'editor-action-button__label'
@@ -40,9 +43,9 @@ export class EditorActionButton {
   }
 
   public setIcon(icon: EditorActionIconName): void {
-    this.iconContainer.replaceChildren(
-      createEditorActionIcon(icon),
-    )
+    const svg = createEditorActionIcon(icon)
+    svg.classList.add('tool-icon')
+    this.iconContainer.replaceChildren(svg)
   }
 
   public setDisabled(disabled: boolean): void {

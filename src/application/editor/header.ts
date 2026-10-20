@@ -25,7 +25,11 @@ export class Header {
 
     const header = document.createElement('header')
     header.className = 'editor-header'
-    header.append(createHeaderMark(), this.createTitle(), this.createModes())
+
+    const mark = createHeaderMark()
+    mark.classList.add('editor-header__mark')
+
+    header.append(mark, this.createTitle(), this.createModes())
 
     this.element = header
     this.setView('map-gallery')

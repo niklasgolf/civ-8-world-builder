@@ -1,3 +1,4 @@
+
 import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons'
 
 export class ToolButton {
@@ -16,7 +17,10 @@ export class ToolButton {
     if (this.group) {
       this.element.setAttribute('aria-pressed', 'false')
     }
-    this.element.append(createIcon(icon))
+
+    const svg = createIcon(icon)
+    svg.classList.add('tool-icon')
+    this.element.append(svg)
   }
 
   public setSelected(selected: boolean): void {

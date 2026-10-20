@@ -2,7 +2,6 @@ import { appendSvg, createSvg } from '../primitives/svg.ts'
 
 export function createHeaderMark(): SVGSVGElement {
   const mark = createSvg('svg', {
-    class: 'editor-header__mark',
     viewBox: '0 0 24 24',
     'aria-hidden': 'true',
   })

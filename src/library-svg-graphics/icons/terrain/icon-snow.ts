@@ -5,7 +5,6 @@ import { hex, stroke } from '../shared.ts'
 export function createSnowIcon(): SVGSVGElement {
   const icon = createSvg('svg', {
     viewBox: '0 0 24 24',
-    class: 'tool-icon',
     'aria-hidden': 'true',
     fill: 'none',
   })

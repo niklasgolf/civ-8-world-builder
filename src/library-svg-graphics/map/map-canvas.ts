@@ -12,7 +12,6 @@ export function createMapCanvas(
   bounds: MapCanvasBounds,
 ): SVGSVGElement {
   return createSvg('svg', {
-    class: 'map-area__grid',
     viewBox: `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`,
     preserveAspectRatio: 'xMidYMid meet',
     role: 'img',

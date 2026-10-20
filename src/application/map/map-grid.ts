@@ -147,6 +147,7 @@ export class MapGrid implements MapViewport {
     }
 
     const canvas = createMapCanvas(this.view)
+    canvas.classList.add('map-area__grid')
 
     for (const hexagon of hexagons) {
       const key = coordinateKey(hexagon.coordinate)
