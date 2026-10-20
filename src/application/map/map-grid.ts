@@ -5,10 +5,8 @@ import {
   HEX_BOUNDS,
   HEX_WORLD_WIDTH,
 } from '../../library-svg-graphics/definitions/hex.ts'
-import {
-  appendSvg,
-  createSvg,
-} from '../../library-svg-graphics/primitives/svg.ts'
+import { createMapCanvas } from '../../library-svg-graphics/map/map-canvas.ts'
+import { createWorldHexPolygon } from '../../library-svg-graphics/map/world-hex-polygon.ts'
 
 const SKELETON_WIDTH = 42
 const SKELETON_HEIGHT = 13
@@ -148,30 +146,20 @@ export class MapGrid implements MapViewport {
       zoomLevel: 1,
     }
 
-    const canvas = createSvg('svg', {
-      class: 'map-area__grid',
-      viewBox: this.viewBoxOf(this.view),
-      preserveAspectRatio: 'xMidYMid meet',
-      role: 'img',
-      'aria-label': 'Hexagonal world map',
-    })
+    const canvas = createMapCanvas(this.view)
 
     for (const hexagon of hexagons) {
       const key = coordinateKey(hexagon.coordinate)
 
-      const polygon = appendSvg(canvas, 'polygon', {
-        id: `hex-${key}`,
-        'data-x': String(hexagon.coordinate.x),
-        'data-y': String(hexagon.coordinate.y),
-        points: hexagon.points
-          .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
-          .join(' '),
+      const polygon = createWorldHexPolygon({
+        x: hexagon.coordinate.x,
+        y: hexagon.coordinate.y,
+        points: hexagon.points,
         fill: HEX_FILL,
         stroke: HEX_STROKE,
-        'stroke-width': '1',
-        'stroke-linejoin': 'round',
-        'vector-effect': 'non-scaling-stroke',
       })
+
+      canvas.appendChild(polygon)
 
       this.polygons.set(key, polygon)
 

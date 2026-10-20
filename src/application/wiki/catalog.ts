@@ -1,3 +1,4 @@
+
 import type { IconName } from '../../library-svg-graphics/icons/icons.ts'
 
 export type WikiCategoryId =
@@ -80,8 +81,6 @@ export type WikiGroup = {
   readonly label: string
   readonly categories: readonly WikiCategory[]
 }
-
-export const DEFAULT_CATEGORY: WikiCategoryId = 'base-terrains'
 
 export const WIKI_GROUPS: readonly WikiGroup[] = [
   {

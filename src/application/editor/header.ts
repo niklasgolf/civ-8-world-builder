@@ -1,5 +1,5 @@
 
-import { createHeaderMark } from '../../library-svg-graphics/icons/header-mark.ts'
+import { createHeaderMark } from '../../library-svg-graphics/icons/icon-header-mark.ts'
 
 export type AppView =
   | 'map-gallery'

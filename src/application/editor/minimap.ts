@@ -10,10 +10,11 @@ import {
 import {
   HEX_WORLD_WIDTH,
 } from '../../library-svg-graphics/definitions/hex.ts'
-import {
-  appendSvg,
-  createSvg,
-} from '../../library-svg-graphics/primitives/svg.ts'
+import { createMinimapCanvas } from '../../library-svg-graphics/map/minimap-canvas.ts'
+import { createMinimapBackground } from '../../library-svg-graphics/map/minimap-background.ts'
+import { createMinimapHexagonGroup } from '../../library-svg-graphics/map/minimap-hexagon-group.ts'
+import { createMinimapHexagonPolygon } from '../../library-svg-graphics/map/minimap-hexagon-polygon.ts'
+import { createMinimapViewport } from '../../library-svg-graphics/map/minimap-viewport.ts'
 
 const SKELETON_WIDTH = 42
 const SKELETON_HEIGHT = 13
@@ -88,20 +89,9 @@ export class Minimap {
     const frame = document.createElement('div')
     frame.className = 'minimap__frame'
 
-    this.svg = createSvg('svg', {
-      class: 'minimap__grid',
-      viewBox: `${world.x} ${world.y} ${world.width} ${world.height}`,
-      preserveAspectRatio: 'xMidYMid meet',
-      'aria-label': 'World minimap',
-    })
+    this.svg = createMinimapCanvas(world)
 
-    appendSvg(this.svg, 'rect', {
-      x: String(world.x),
-      y: String(world.y),
-      width: String(world.width),
-      height: String(world.height),
-      fill: '#0e4664',
-    })
+    this.svg.appendChild(createMinimapBackground(world))
 
     // Use the same Midgard geometry as the main world map.
     const grid = new HexGrid('x-dominated')
@@ -112,33 +102,22 @@ export class Minimap {
       skeletonHeight: SKELETON_HEIGHT,
     })
 
-    const hexGroup = appendSvg(this.svg, 'g', {
-      class: 'minimap__hexagons',
-    })
+    const hexGroup = createMinimapHexagonGroup()
+    this.svg.appendChild(hexGroup)
 
     for (const hexagon of hexagons) {
-      appendSvg(hexGroup, 'polygon', {
-        points: hexagon.points
+      hexGroup.appendChild(createMinimapHexagonPolygon(
+        hexagon.points
           .map(point => `${point.x},${point.y}`)
           .join(' '),
-        fill: '#15536f',
-        stroke: '#3d8eab',
-        'stroke-width': '1.5',
-      })
+        '#15536f',
+        '#3d8eab',
+      ))
     }
 
     // The viewport must be drawn above the hexagons.
-    this.viewport = appendSvg(this.svg, 'rect', {
-      class: 'minimap__viewport',
-      x: String(world.x),
-      y: String(world.y),
-      width: String(world.width),
-      height: String(world.height),
-      fill: 'rgba(226, 194, 122, 0.12)',
-      stroke: '#e2c27a',
-      'stroke-width': '2',
-      'vector-effect': 'non-scaling-stroke',
-    })
+    this.viewport = createMinimapViewport(world)
+    this.svg.appendChild(this.viewport)
 
     this.svg.addEventListener('click', (event) => {
       const point = clientToSvg(
