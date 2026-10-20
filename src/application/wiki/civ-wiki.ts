@@ -5,6 +5,9 @@ import { createGrassFlat } from '../../library-svg-graphics/terrain/grass.ts'
 import { createGrassHills } from '../../library-svg-graphics/terrain/grass-hills.ts'
 import { createGrassMountains } from '../../library-svg-graphics/terrain/grass-mountains.ts'
 import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
+import { createPlainsFlat } from '../../library-svg-graphics/terrain/plains.ts'
+import { createPlainsHills } from '../../library-svg-graphics/terrain/plains-hills.ts'
+import { createPlainsMountains } from '../../library-svg-graphics/terrain/plains-mountains.ts'
 import {
   DEFAULT_CATEGORY,
   WIKI_GROUPS,
@@ -45,6 +48,21 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
     name: 'Grass — Mountains',
     description: 'Rocky mountain peaks with snow-covered summits rising above green grassland.',
     createGraphic: createGrassMountains,
+  },
+  {
+    name: 'Plains — Flat',
+    description: 'Golden-yellow grassland with scattered dry grasses and subtle variations in the ground.',
+    createGraphic: createPlainsFlat,
+  },
+  {
+    name: 'Plains — Hills',
+    description: 'Five low, rounded golden hills with sunlit slopes and darker grassy shadows.',
+    createGraphic: createPlainsHills,
+  },
+  {
+    name: 'Plains — Mountains',
+    description: 'Rocky mountain peaks with snow-covered summits rising above golden plains.',
+    createGraphic: createPlainsMountains,
   },
 ]
 
