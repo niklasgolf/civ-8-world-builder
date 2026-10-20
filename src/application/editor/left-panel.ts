@@ -1,6 +1,30 @@
 
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
+import { TerrainButton } from './terrain-button'
+
+import { createGrassFlat } from '../../library-svg-graphics/terrain/grass.ts'
+import { createGrassHills } from '../../library-svg-graphics/terrain/grass-hills.ts'
+import { createGrassMountains } from '../../library-svg-graphics/terrain/grass-mountains.ts'
+
+import { createPlainsFlat } from '../../library-svg-graphics/terrain/plains.ts'
+import { createPlainsHills } from '../../library-svg-graphics/terrain/plains-hills.ts'
+import { createPlainsMountains } from '../../library-svg-graphics/terrain/plains-mountains.ts'
+
+import { createDesertFlat } from '../../library-svg-graphics/terrain/desert.ts'
+import { createDesertHills } from '../../library-svg-graphics/terrain/desert-hills.ts'
+import { createDesertMountains } from '../../library-svg-graphics/terrain/desert-mountains.ts'
+
+import { createTundraFlat } from '../../library-svg-graphics/terrain/tundra.ts'
+import { createTundraHills } from '../../library-svg-graphics/terrain/tundra-hills.ts'
+import { createTundraMountains } from '../../library-svg-graphics/terrain/tundra-mountains.ts'
+
+import { createSnowFlat } from '../../library-svg-graphics/terrain/snow.ts'
+import { createSnowHills } from '../../library-svg-graphics/terrain/snow-hills.ts'
+import { createSnowMountains } from '../../library-svg-graphics/terrain/snow-mountains.ts'
+
+import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
+import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 
 export class LeftPanel {
   readonly element: HTMLDivElement
@@ -51,47 +75,97 @@ export class LeftPanel {
     const undoButton = new ToolButton('undo', 'Undo', 'undo')
     const redoButton = new ToolButton('redo', 'Redo', 'redo')
 
-    const grassButton = new ToolButton(
+    // Flat terrain — row 1
+    const grassButton = new TerrainButton(
       'grass',
       'Grass',
-      'grass',
-      'terrain',
+      createGrassFlat,
     )
-    const plainsButton = new ToolButton(
+    const plainsButton = new TerrainButton(
       'plains',
       'Plains',
-      'plains',
-      'terrain',
+      createPlainsFlat,
     )
-    const desertButton = new ToolButton(
+    const desertButton = new TerrainButton(
       'desert',
       'Desert',
-      'desert',
-      'terrain',
+      createDesertFlat,
     )
-    const tundraButton = new ToolButton(
+    const tundraButton = new TerrainButton(
       'tundra',
       'Tundra',
-      'tundra',
-      'terrain',
+      createTundraFlat,
     )
-    const snowButton = new ToolButton(
+    const snowButton = new TerrainButton(
       'snow',
       'Snow',
-      'snow',
-      'terrain',
+      createSnowFlat,
     )
-    const coastButton = new ToolButton(
+
+    // Hills — row 2
+    const grassHillsButton = new TerrainButton(
+      'grass-hills',
+      'Grass Hills',
+      createGrassHills,
+    )
+    const plainsHillsButton = new TerrainButton(
+      'plains-hills',
+      'Plains Hills',
+      createPlainsHills,
+    )
+    const desertHillsButton = new TerrainButton(
+      'desert-hills',
+      'Desert Hills',
+      createDesertHills,
+    )
+    const tundraHillsButton = new TerrainButton(
+      'tundra-hills',
+      'Tundra Hills',
+      createTundraHills,
+    )
+    const snowHillsButton = new TerrainButton(
+      'snow-hills',
+      'Snow Hills',
+      createSnowHills,
+    )
+
+    // Mountains — row 3
+    const grassMountainsButton = new TerrainButton(
+      'grass-mountains',
+      'Grass Mountains',
+      createGrassMountains,
+    )
+    const plainsMountainsButton = new TerrainButton(
+      'plains-mountains',
+      'Plains Mountains',
+      createPlainsMountains,
+    )
+    const desertMountainsButton = new TerrainButton(
+      'desert-mountains',
+      'Desert Mountains',
+      createDesertMountains,
+    )
+    const tundraMountainsButton = new TerrainButton(
+      'tundra-mountains',
+      'Tundra Mountains',
+      createTundraMountains,
+    )
+    const snowMountainsButton = new TerrainButton(
+      'snow-mountains',
+      'Snow Mountains',
+      createSnowMountains,
+    )
+
+    // Water — column 7
+    const coastButton = new TerrainButton(
       'coast',
       'Coast',
-      'coast',
-      'terrain',
+      createCoast,
     )
-    const oceanButton = new ToolButton(
+    const oceanButton = new TerrainButton(
       'ocean',
       'Ocean',
-      'ocean',
-      'terrain',
+      createOcean,
     )
 
     const woodsButton = new ToolButton(
@@ -223,6 +297,19 @@ export class LeftPanel {
     terrainSection.addButton(desertButton)
     terrainSection.addButton(tundraButton)
     terrainSection.addButton(snowButton)
+
+    terrainSection.addButton(grassHillsButton)
+    terrainSection.addButton(plainsHillsButton)
+    terrainSection.addButton(desertHillsButton)
+    terrainSection.addButton(tundraHillsButton)
+    terrainSection.addButton(snowHillsButton)
+
+    terrainSection.addButton(grassMountainsButton)
+    terrainSection.addButton(plainsMountainsButton)
+    terrainSection.addButton(desertMountainsButton)
+    terrainSection.addButton(tundraMountainsButton)
+    terrainSection.addButton(snowMountainsButton)
+
     terrainSection.addButton(coastButton)
     terrainSection.addButton(oceanButton)
     grassButton.setSelected(true)
