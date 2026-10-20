@@ -10,6 +10,9 @@ import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 import { createPlainsFlat } from '../../library-svg-graphics/terrain/plains.ts'
 import { createPlainsHills } from '../../library-svg-graphics/terrain/plains-hills.ts'
 import { createPlainsMountains } from '../../library-svg-graphics/terrain/plains-mountains.ts'
+import { createTundraFlat } from '../../library-svg-graphics/terrain/tundra.ts'
+import { createTundraHills } from '../../library-svg-graphics/terrain/tundra-hills.ts'
+import { createTundraMountains } from '../../library-svg-graphics/terrain/tundra-mountains.ts'
 
 type TerrainEntry = {
   readonly name: string
@@ -72,6 +75,21 @@ const BASE_TERRAINS: readonly TerrainEntry[] = [
     name: 'Desert — Mountains',
     description: 'Rocky mountain peaks with snow-covered summits rising above golden desert sands.',
     createGraphic: createDesertMountains,
+  },
+  {
+    name: 'Tundra — Flat',
+    description: 'Cold, weathered grey-brown rock with subtle ridges, branching fractures and tiny remnants of snow.',
+    createGraphic: createTundraFlat,
+  },
+  {
+    name: 'Tundra — Hills',
+    description: 'Five rounded rocky hills with cold grey-brown slopes, fine fractures and traces of snow.',
+    createGraphic: createTundraHills,
+  },
+  {
+    name: 'Tundra — Mountains',
+    description: 'Snow-capped mountain peaks with cool slate-grey rock, muted brown slopes and weathered tundra foothills.',
+    createGraphic: createTundraMountains,
   },
 ]
 
