@@ -1,5 +1,5 @@
 
-import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons.ts'
+import { createIcon, type IconName } from '../editor/icons.ts'
 import { iconsFor, iconTitle } from './catalog.ts'
 
 export class CivWikiIcons {

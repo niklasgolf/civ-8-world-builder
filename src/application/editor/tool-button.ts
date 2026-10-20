@@ -1,5 +1,5 @@
 
-import { createIcon, type IconName } from '../../library-svg-graphics/icons/icons'
+import { createIcon, type IconName } from './icons'
 
 export class ToolButton {
   readonly element: HTMLButtonElement
@@ -14,6 +14,7 @@ export class ToolButton {
     this.element.setAttribute('aria-label', label)
     this.id = id
     this.group = group
+
     if (this.group) {
       this.element.setAttribute('aria-pressed', 'false')
     }
@@ -25,6 +26,7 @@ export class ToolButton {
 
   public setSelected(selected: boolean): void {
     this.element.classList.toggle('is-selected', selected)
+
     if (this.group) {
       this.element.setAttribute('aria-pressed', selected.toString())
     }

@@ -10,9 +10,9 @@ import {
 import {
   HEX_WORLD_WIDTH,
 } from '../../library-svg-graphics/definitions/hex.ts'
+import { createSvg } from '../../library-svg-graphics/primitives/svg.ts'
 import { createMinimapCanvas } from '../../library-svg-graphics/map/minimap-canvas.ts'
 import { createMinimapBackground } from '../../library-svg-graphics/map/minimap-background.ts'
-import { createMinimapHexagonGroup } from '../../library-svg-graphics/map/minimap-hexagon-group.ts'
 import { createMinimapHexagonPolygon } from '../../library-svg-graphics/map/minimap-hexagon-polygon.ts'
 import { createMinimapViewport } from '../../library-svg-graphics/map/minimap-viewport.ts'
 
@@ -103,7 +103,7 @@ export class Minimap {
       skeletonHeight: SKELETON_HEIGHT,
     })
 
-    const hexGroup = createMinimapHexagonGroup()
+    const hexGroup = createSvg('g')
     hexGroup.classList.add('minimap__hexagons')
     this.svg.appendChild(hexGroup)
 

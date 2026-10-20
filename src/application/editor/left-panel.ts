@@ -28,23 +28,25 @@ export class LeftPanel {
     const resourcesSection = new ToolSection('Resources')
     const riversSection = new ToolSection('Rivers')
 
+    terrainSection.grid.classList.add('terrain-grid')
+
     const smallBrushButton = new ToolButton(
       'brush-small',
       'Small brush',
       'brush-small',
-      'brush'
+      'brush',
     )
     const mediumBrushButton = new ToolButton(
       'brush-medium',
       'Medium brush',
       'brush-medium',
-      'brush'
+      'brush',
     )
     const largeBrushButton = new ToolButton(
       'brush-large',
       'Large brush',
       'brush-large',
-      'brush'
+      'brush',
     )
     const undoButton = new ToolButton('undo', 'Undo', 'undo')
     const redoButton = new ToolButton('redo', 'Redo', 'redo')
@@ -53,160 +55,160 @@ export class LeftPanel {
       'grass',
       'Grass',
       'grass',
-      'terrain'
+      'terrain',
     )
     const plainsButton = new ToolButton(
       'plains',
       'Plains',
       'plains',
-      'terrain'
+      'terrain',
     )
     const desertButton = new ToolButton(
       'desert',
       'Desert',
       'desert',
-      'terrain'
+      'terrain',
     )
     const tundraButton = new ToolButton(
       'tundra',
       'Tundra',
       'tundra',
-      'terrain'
+      'terrain',
     )
     const snowButton = new ToolButton(
       'snow',
       'Snow',
       'snow',
-      'terrain'
+      'terrain',
     )
     const coastButton = new ToolButton(
       'coast',
       'Coast',
       'coast',
-      'terrain'
+      'terrain',
     )
     const oceanButton = new ToolButton(
       'ocean',
       'Ocean',
       'ocean',
-      'terrain'
+      'terrain',
     )
 
     const woodsButton = new ToolButton(
       'woods',
       'Woods',
       'woods',
-      'features'
+      'features',
     )
     const rainforestButton = new ToolButton(
       'rainforest',
       'Rainforest',
       'rainforest',
-      'features'
+      'features',
     )
     const marshButton = new ToolButton(
       'marsh',
       'Marsh',
       'marsh',
-      'features'
+      'features',
     )
     const oasisButton = new ToolButton(
       'oasis',
       'Oasis',
       'oasis',
-      'features'
+      'features',
     )
     const floodplainsButton = new ToolButton(
       'floodplains',
       'Floodplains',
       'floodplains',
-      'features'
+      'features',
     )
     const iceButton = new ToolButton(
       'ice',
       'Ice',
       'ice',
-      'features'
+      'features',
     )
     const reefButton = new ToolButton(
       'reef',
       'Reef',
       'reef',
-      'features'
+      'features',
     )
     const volcanoButton = new ToolButton(
       'volcano',
       'Volcano',
       'volcano',
-      'features'
+      'features',
     )
 
     const wheatButton = new ToolButton(
       'wheat',
       'Wheat',
       'wheat',
-      'resources'
+      'resources',
     )
     const cattleButton = new ToolButton(
       'cattle',
       'Cattle',
       'cattle',
-      'resources'
+      'resources',
     )
     const horsesButton = new ToolButton(
       'horses',
       'Horses',
       'horses',
-      'resources'
+      'resources',
     )
     const deerButton = new ToolButton(
       'deer',
       'Deer',
       'deer',
-      'resources'
+      'resources',
     )
     const fishButton = new ToolButton(
       'fish',
       'Fish',
       'fish',
-      'resources'
+      'resources',
     )
     const stoneButton = new ToolButton(
       'stone',
       'Stone',
       'stone',
-      'resources'
+      'resources',
     )
     const ironButton = new ToolButton(
       'iron',
       'Iron',
       'iron',
-      'resources'
+      'resources',
     )
     const goldButton = new ToolButton(
       'gold',
       'Gold',
       'gold',
-      'resources'
+      'resources',
     )
 
     const riverButton = new ToolButton(
       'river',
       'River',
       'river',
-      'rivers'
+      'rivers',
     )
     const riverSourceButton = new ToolButton(
       'river-source',
       'River source',
       'river-source',
-      'rivers'
+      'rivers',
     )
     const riverMouthButton = new ToolButton(
       'river-mouth',
       'River mouth',
       'river-mouth',
-      'rivers'
+      'rivers',
     )
 
     brushSection.addButton(smallBrushButton)

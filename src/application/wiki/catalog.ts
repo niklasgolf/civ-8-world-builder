@@ -1,5 +1,5 @@
 
-import type { IconName } from '../../library-svg-graphics/icons/icons.ts'
+import type { IconName } from '../editor/icons.ts'
 
 export type WikiCategoryId =
   | 'base-terrains'

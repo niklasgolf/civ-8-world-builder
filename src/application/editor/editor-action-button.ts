@@ -2,7 +2,7 @@
 import {
   createEditorActionIcon,
   type EditorActionIconName,
-} from '../../library-svg-graphics/icons/editor-action-icons.ts'
+} from './editor-action-icons.ts'
 
 export class EditorActionButton {
   readonly element: HTMLButtonElement
