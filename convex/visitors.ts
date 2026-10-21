@@ -10,6 +10,24 @@ const deviceTypeValidator = v.union(
   v.literal('other'),
 )
 
+const emptyVisitorStats = {
+  total: 0,
+  windows: 0,
+  mac: 0,
+  mobile: 0,
+  other: 0,
+  stored: 0,
+}
+
+const visitorStatsValidator = v.object({
+  total: v.number(),
+  windows: v.number(),
+  mac: v.number(),
+  mobile: v.number(),
+  other: v.number(),
+  stored: v.number(),
+})
+
 function hasValidLocation(location: {
   latitude: number
   longitude: number
@@ -131,5 +149,26 @@ export const getVisitorLocations = query({
     }
 
     return locations
+  },
+})
+
+export const getVisitorStats = query({
+  args: {},
+  returns: visitorStatsValidator,
+  handler: async (ctx) => {
+    const stats = await ctx.db.query('visitorStats').unique()
+
+    if (stats === null) {
+      return emptyVisitorStats
+    }
+
+    return {
+      total: stats.total,
+      windows: stats.windows,
+      mac: stats.mac,
+      mobile: stats.mobile,
+      other: stats.other,
+      stored: stats.stored,
+    }
   },
 })

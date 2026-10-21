@@ -4,6 +4,7 @@ import type { ClerkAuthentication } from '../authentication/clerk-authentication
 import { LoginPage } from '../authentication/login-page.ts'
 import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
 import { loadVisitorLocations } from './visitor-locations.ts'
+import { createVisitorStatistics } from './visitor-statistics.ts'
 
 export class VisitorsLayout {
   readonly element: HTMLElement
@@ -31,7 +32,7 @@ export class VisitorsLayout {
 
     this.loginPage = new LoginPage(authentication)
 
-    this.createStatistics()
+    this.createStatistics(client)
     this.createWorldMap(client)
     this.createLoginArea()
 
@@ -46,41 +47,17 @@ export class VisitorsLayout {
     this.loginPage.initialize()
   }
 
-  private createStatistics(): void {
+  private createStatistics(client: ConvexClient): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Visitor Statistics'
 
     const description = document.createElement('p')
-    description.textContent =
-      'Visitor activity and device statistics will appear here.'
-
-    const total = document.createElement('div')
-    total.className = 'visitors-layout__statistic'
-
-    const label = document.createElement('span')
-    label.textContent = 'Total visitors'
-
-    const value = document.createElement('strong')
-    value.textContent = '—'
-
-    total.append(label, value)
-
-    const devices = document.createElement('div')
-    devices.className = 'visitors-layout__statistic'
-
-    const devicesLabel = document.createElement('span')
-    devicesLabel.textContent = 'Devices'
-
-    const devicesValue = document.createElement('strong')
-    devicesValue.textContent = 'PC · Mac · Mobile'
-
-    devices.append(devicesLabel, devicesValue)
+    description.textContent = 'All recorded visits, by device.'
 
     this.statisticsArea.append(
       heading,
       description,
-      total,
-      devices,
+      createVisitorStatistics(client),
       this.createPanelNotes(),
     )
   }
