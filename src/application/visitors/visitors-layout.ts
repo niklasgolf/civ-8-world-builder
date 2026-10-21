@@ -2,6 +2,7 @@
 import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 import { LoginPage } from '../authentication/login-page.ts'
 import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
+import { addVisitorMarker } from './visitor-marker.ts'
 
 export class VisitorsLayout {
   readonly element: HTMLElement
@@ -102,6 +103,8 @@ export class VisitorsLayout {
     map.classList.add('visitors-layout__world-map')
     map.setAttribute('role', 'img')
     map.setAttribute('aria-label', 'Equirectangular world map')
+
+    addVisitorMarker(map, 56.87767, 14.80906, 'mac')
 
     frame.append(map)
 
