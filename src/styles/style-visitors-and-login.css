@@ -84,25 +84,41 @@
   font-size: 18px;
 }
 
-/* Visitor map placeholder */
+/* Visitor world map */
 
-.visitors-layout__map-placeholder {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  min-height: 360px;
-  border: 1px solid var(--brass-dim);
-  border-radius: 8px;
-  background: rgba(7, 17, 28, 0.2);
-  color: var(--cream);
-  font-size: 16px;
+.visitors-layout__map-frame {
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
-.visitors-layout__map-symbol {
-  font-size: 96px;
-  line-height: 1;
+.visitors-layout__world-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  background: #0B2941;
+  shape-rendering: geometricPrecision;
+}
+
+.visitors-layout__world-map path {
+  fill: #28536B;
+  stroke: #56839A;
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.visitors-layout__map-credit {
+  margin: 12px 0 0;
+  color: #a9b4bf;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.visitors-layout__map-credit a {
+  color: var(--brass-bright);
 }
 
 /* Fantasy identity and Clerk authentication */

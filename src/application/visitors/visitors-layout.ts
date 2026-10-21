@@ -1,6 +1,7 @@
 
 import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 import { LoginPage } from '../authentication/login-page.ts'
+import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
 
 export class VisitorsLayout {
   readonly element: HTMLElement
@@ -26,7 +27,7 @@ export class VisitorsLayout {
     this.loginPage = new LoginPage(authentication)
 
     this.createStatistics()
-    this.createMapPlaceholder()
+    this.createWorldMap()
     this.createLoginArea()
 
     this.element.append(
@@ -78,7 +79,7 @@ export class VisitorsLayout {
     )
   }
 
-  private createMapPlaceholder(): void {
+  private createWorldMap(): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Visitor World Map'
 
@@ -86,23 +87,49 @@ export class VisitorsLayout {
     description.textContent =
       'Live visitor locations will appear on this map.'
 
-    const placeholder = document.createElement('div')
-    placeholder.className = 'visitors-layout__map-placeholder'
+    const frame = document.createElement('figure')
+    frame.className = 'visitors-layout__map-frame'
 
-    const symbol = document.createElement('span')
-    symbol.className = 'visitors-layout__map-symbol'
-    symbol.textContent = '🌍'
+    const map = createVisitorWorldMap()
+    map.classList.add('visitors-layout__world-map')
+    map.setAttribute('role', 'img')
+    map.setAttribute('aria-label', 'Equirectangular world map')
 
-    const message = document.createElement('span')
-    message.textContent = 'Visitor map coming soon'
-
-    placeholder.append(symbol, message)
+    frame.append(map, this.createMapCredit())
 
     this.mapArea.append(
       heading,
       description,
-      placeholder,
+      frame,
     )
+  }
+
+  private createMapCredit(): HTMLElement {
+    const credit = document.createElement('figcaption')
+    credit.className = 'visitors-layout__map-credit'
+
+    const source = document.createElement('a')
+    source.href =
+      'https://commons.wikimedia.org/wiki/File:Equirectangular_projection_world_map_without_borders.svg'
+    source.textContent = 'Ebrahim'
+    source.rel = 'license noreferrer'
+    source.target = '_blank'
+
+    const license = document.createElement('a')
+    license.href = 'https://creativecommons.org/licenses/by-sa/4.0/'
+    license.textContent = 'CC BY-SA 4.0'
+    license.rel = 'license noreferrer'
+    license.target = '_blank'
+
+    credit.append(
+      'World map by ',
+      source,
+      ', ',
+      license,
+      ', based on Natural Earth data. Recolored for Civilization of Wonders.',
+    )
+
+    return credit
   }
 
   private createLoginArea(): void {
