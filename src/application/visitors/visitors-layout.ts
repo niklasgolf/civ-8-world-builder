@@ -76,7 +76,15 @@ export class VisitorsLayout {
       description,
       total,
       devices,
+      this.createPanelNotes(),
     )
+  }
+
+  private createPanelNotes(): HTMLElement {
+    const notes = document.createElement('div')
+    notes.className = 'visitors-layout__notes'
+    notes.append(this.createMapCredit(), this.createPrivacyNotice())
+    return notes
   }
 
   private createWorldMap(): void {
@@ -95,7 +103,7 @@ export class VisitorsLayout {
     map.setAttribute('role', 'img')
     map.setAttribute('aria-label', 'Equirectangular world map')
 
-    frame.append(map, this.createMapCredit())
+    frame.append(map)
 
     this.mapArea.append(
       heading,
@@ -105,7 +113,7 @@ export class VisitorsLayout {
   }
 
   private createMapCredit(): HTMLElement {
-    const credit = document.createElement('figcaption')
+    const credit = document.createElement('p')
     credit.className = 'visitors-layout__map-credit'
 
     const source = document.createElement('a')
@@ -130,6 +138,15 @@ export class VisitorsLayout {
     )
 
     return credit
+  }
+
+  private createPrivacyNotice(): HTMLElement {
+    const notice = document.createElement('p')
+    notice.className = 'visitors-layout__privacy'
+    notice.textContent =
+      'Anonymous visits are counted. Approximate location is obtained from an external IP-geolocation service. No IP addresses or visitor identities are stored in our database.'
+
+    return notice
   }
 
   private createLoginArea(): void {

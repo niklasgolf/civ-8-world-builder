@@ -16,10 +16,12 @@
 /* Left panel: Visitor statistics */
 
 .visitors-layout__left-panel {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 600px;
   min-width: 0;
   padding: 32px;
-  overflow: auto;
+  overflow: hidden;
   background: #1a3148;
   border-right: 1px solid var(--brass-dim);
 }
@@ -84,6 +86,11 @@
   font-size: 18px;
 }
 
+.visitors-layout__notes {
+  margin-top: auto;
+  padding-top: 24px;
+}
+
 /* Visitor world map */
 
 .visitors-layout__map-frame {
@@ -110,11 +117,16 @@
   vector-effect: non-scaling-stroke;
 }
 
-.visitors-layout__map-credit {
-  margin: 12px 0 0;
+.visitors-layout p.visitors-layout__map-credit,
+.visitors-layout p.visitors-layout__privacy {
+  margin: 0;
   color: #a9b4bf;
   font-size: 13px;
   line-height: 1.5;
+}
+
+.visitors-layout p.visitors-layout__map-credit {
+  margin-bottom: 10px;
 }
 
 .visitors-layout__map-credit a {

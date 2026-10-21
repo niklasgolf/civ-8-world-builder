@@ -23,6 +23,7 @@ import { Authentication } from './main/authentication.ts'
 import { EditingControls } from './main/editing-controls.ts'
 import { EditingSessionController } from './main/editing-session.ts'
 import { WorldSelection } from './main/world-selection.ts'
+import { registerAnonymousVisit } from './application/visitors/visitor-registration.ts'
 
 // Terrain selections and their database values
 
@@ -177,6 +178,8 @@ layout.editorLayout.mapArea.mapGrid.onHexClick((coordinate) => {
 
 editingControls.update()
 navigation.showView('map-gallery')
+
+registerAnonymousVisit(convex.client)
 
 void identity.initialize()
 

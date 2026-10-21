@@ -11,6 +11,7 @@
 import type * as authentication from "../authentication.js";
 import type * as editingSessions from "../editingSessions.js";
 import type * as hexes from "../hexes.js";
+import type * as visitors from "../visitors.js";
 import type * as worlds from "../worlds.js";
 
 import type {
@@ -23,6 +24,7 @@ declare const fullApi: ApiFromModules<{
   authentication: typeof authentication;
   editingSessions: typeof editingSessions;
   hexes: typeof hexes;
+  visitors: typeof visitors;
   worlds: typeof worlds;
 }>;
 
