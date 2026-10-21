@@ -10,6 +10,7 @@ import './styles/style-visitors-and-login.css'
 import './styles/style-civ-wiki.css'
 
 import type { Id } from '../convex/_generated/dataModel.ts'
+import { api } from '../convex/_generated/api.js'
 import type { AppView } from './application/editor/header.ts'
 import { ConvexConnection } from './application/database/convex-client.ts'
 import { ClerkAuthentication } from './application/authentication/clerk-authentication.ts'
@@ -22,6 +23,39 @@ import { Authentication } from './main/authentication.ts'
 import { EditingControls } from './main/editing-controls.ts'
 import { EditingSessionController } from './main/editing-session.ts'
 import { WorldSelection } from './main/world-selection.ts'
+
+// Terrain selections and their database values
+
+type Terrain = 'ocean' | 'coast' | 'grass' | 'plains' | 'desert' | 'tundra' | 'snow'
+type Relief = 'flat' | 'hills' | 'mountain'
+
+type TerrainSelection = {
+  terrain: Terrain
+  relief: Relief
+}
+
+const TERRAIN_SELECTIONS: Record<string, TerrainSelection> = {
+  grass: { terrain: 'grass', relief: 'flat' },
+  plains: { terrain: 'plains', relief: 'flat' },
+  desert: { terrain: 'desert', relief: 'flat' },
+  tundra: { terrain: 'tundra', relief: 'flat' },
+  snow: { terrain: 'snow', relief: 'flat' },
+
+  'grass-hills': { terrain: 'grass', relief: 'hills' },
+  'plains-hills': { terrain: 'plains', relief: 'hills' },
+  'desert-hills': { terrain: 'desert', relief: 'hills' },
+  'tundra-hills': { terrain: 'tundra', relief: 'hills' },
+  'snow-hills': { terrain: 'snow', relief: 'hills' },
+
+  'grass-mountains': { terrain: 'grass', relief: 'mountain' },
+  'plains-mountains': { terrain: 'plains', relief: 'mountain' },
+  'desert-mountains': { terrain: 'desert', relief: 'mountain' },
+  'tundra-mountains': { terrain: 'tundra', relief: 'mountain' },
+  'snow-mountains': { terrain: 'snow', relief: 'mountain' },
+
+  coast: { terrain: 'coast', relief: 'flat' },
+  ocean: { terrain: 'ocean', relief: 'flat' },
+}
 
 // Shared services and application state
 
@@ -105,6 +139,38 @@ layout.editorLayout.rightPanel.onEdit(() => {
 
 layout.editorLayout.rightPanel.onTakeover(() => {
   void editingSession.handleTakeoverAction()
+})
+
+// Paint a hexagon using the selected terrain
+
+layout.editorLayout.mapArea.mapGrid.onHexClick((coordinate) => {
+  if (!editingControls.isCurrentEditor()) {
+    return
+  }
+
+  const worldId = state.selectedWorldId
+
+  if (!worldId) {
+    return
+  }
+
+  const selectedTerrain = layout.editorLayout.leftPanel.getSelectedTerrain()
+  const selection = TERRAIN_SELECTIONS[selectedTerrain]
+
+  if (!selection) {
+    console.error('Unknown terrain selection:', selectedTerrain)
+    return
+  }
+
+  void convex.client.mutation(api.hexes.setTerrain, {
+    worldId,
+    x: coordinate.x,
+    y: coordinate.y,
+    terrain: selection.terrain,
+    relief: selection.relief,
+  }).catch((error: unknown) => {
+    console.error('Failed to paint hexagon:', error)
+  })
 })
 
 // Start the application

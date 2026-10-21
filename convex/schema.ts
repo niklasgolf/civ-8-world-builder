@@ -24,7 +24,10 @@ export default defineSchema({
       v.literal('ocean'),
       v.literal('coast'),
       v.literal('grass'),
+      v.literal('plains'),
       v.literal('desert'),
+      v.literal('tundra'),
+      v.literal('snow'),
     ),
     relief: v.union(
       v.literal('flat'),

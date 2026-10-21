@@ -1,10 +1,11 @@
+
 import { ToolButton } from './tool-button'
 
 export class ToolSection {
-  readonly grid: HTMLDivElement
+  private readonly grid: HTMLDivElement
   readonly element: HTMLElement
-  readonly buttons: ToolButton[]
-  readonly body: HTMLElement
+  private readonly buttons: ToolButton[]
+  private readonly body: HTMLElement
 
   constructor(title: string) {
     this.buttons = []
@@ -25,16 +26,29 @@ export class ToolSection {
     this.body.append(this.grid)
   }
 
+  public addGridClass(className: string): void {
+    this.grid.classList.add(className)
+  }
+
   public addButton(button: ToolButton): void {
     this.buttons.push(button)
     this.grid.append(button.element)
     button.element.addEventListener('click', () => this.select(button))
   }
 
+  public setUnavailable(): void {
+    this.element.classList.add('tool-section--unavailable')
+
+    this.buttons.forEach(button => {
+      button.element.disabled = true
+    })
+  }
+
   private select(button: ToolButton): void {
     if (!button.group) {
       return
     }
+
     this.buttons.forEach(otherButton => {
       if (otherButton.group === button.group) {
         otherButton.setSelected(otherButton === button)

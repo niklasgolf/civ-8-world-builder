@@ -30,6 +30,7 @@ export class LeftPanel {
   readonly element: HTMLDivElement
   readonly scroll: HTMLDivElement
   private readonly heading: HTMLHeadingElement
+  private selectedTerrain = 'grass'
 
   constructor() {
     this.element = document.createElement('div')
@@ -52,7 +53,7 @@ export class LeftPanel {
     const resourcesSection = new ToolSection('Resources')
     const riversSection = new ToolSection('Rivers')
 
-    terrainSection.grid.classList.add('terrain-grid')
+    terrainSection.addGridClass('terrain-grid')
 
     const smallBrushButton = new ToolButton(
       'brush-small',
@@ -314,6 +315,21 @@ export class LeftPanel {
     terrainSection.addButton(oceanButton)
     grassButton.setSelected(true)
 
+    const terrainButtons = [
+      grassButton, plainsButton, desertButton, tundraButton, snowButton,
+      grassHillsButton, plainsHillsButton, desertHillsButton,
+      tundraHillsButton, snowHillsButton,
+      grassMountainsButton, plainsMountainsButton, desertMountainsButton,
+      tundraMountainsButton, snowMountainsButton,
+      coastButton, oceanButton,
+    ]
+
+    for (const button of terrainButtons) {
+      button.element.addEventListener('click', () => {
+        this.selectedTerrain = button.id
+      })
+    }
+
     featuresSection.addButton(woodsButton)
     featuresSection.addButton(rainforestButton)
     featuresSection.addButton(marshButton)
@@ -336,6 +352,11 @@ export class LeftPanel {
     riversSection.addButton(riverSourceButton)
     riversSection.addButton(riverMouthButton)
 
+    brushSection.setUnavailable()
+    featuresSection.setUnavailable()
+    resourcesSection.setUnavailable()
+    riversSection.setUnavailable()
+
     this.scroll.append(
       brushSection.element,
       terrainSection.element,
@@ -345,6 +366,10 @@ export class LeftPanel {
     )
 
     this.element.append(headingContainer, this.scroll)
+  }
+
+  getSelectedTerrain(): string {
+    return this.selectedTerrain
   }
 
   setWorldTitle(title: string): void {

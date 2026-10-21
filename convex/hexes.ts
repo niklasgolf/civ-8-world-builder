@@ -22,7 +22,16 @@ const terrainValidator = v.union(
   v.literal('ocean'),
   v.literal('coast'),
   v.literal('grass'),
+  v.literal('plains'),
   v.literal('desert'),
+  v.literal('tundra'),
+  v.literal('snow'),
+)
+
+const reliefValidator = v.union(
+  v.literal('flat'),
+  v.literal('hills'),
+  v.literal('mountain'),
 )
 
 function validateCoordinate(x: number, y: number): void {
@@ -189,6 +198,7 @@ export const setTerrain = mutation({
     x: v.number(),
     y: v.number(),
     terrain: terrainValidator,
+    relief: reliefValidator,
   },
 
   handler: async (ctx, args) => {
@@ -257,12 +267,14 @@ export const setTerrain = mutation({
 
     await ctx.db.patch(hex._id, {
       terrain: args.terrain,
+      relief: args.relief,
     })
 
     return {
       x: args.x,
       y: args.y,
       terrain: args.terrain,
+      relief: args.relief,
     }
   },
 })
@@ -277,6 +289,7 @@ export const testSetTerrain = internalMutation({
     x: v.number(),
     y: v.number(),
     terrain: terrainValidator,
+    relief: reliefValidator,
   },
 
   handler: async (ctx, args) => {
@@ -306,12 +319,14 @@ export const testSetTerrain = internalMutation({
 
     await ctx.db.patch(hex._id, {
       terrain: args.terrain,
+      relief: args.relief,
     })
 
     return {
       x: args.x,
       y: args.y,
       terrain: args.terrain,
+      relief: args.relief,
     }
   },
 })

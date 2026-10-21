@@ -51,3 +51,16 @@
   flex-direction: column;
   min-height: 0;
 }
+
+/* Hexagon hover highlight */
+
+[data-hex-graphic].map-hex--hovered {
+  filter:
+    brightness(1.35) saturate(1.15) drop-shadow(0 0 8px rgba(255, 215, 100, 0.65));
+}
+
+/* Decorative terrain graphics must not intercept pointer events */
+
+[data-hex-graphic] {
+  pointer-events: none;
+}

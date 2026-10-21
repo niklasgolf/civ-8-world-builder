@@ -104,6 +104,7 @@ export class MapGrid implements MapViewport {
   private readonly coordinates: Coordinate[]
   private readonly world: MapFrame
   private readonly viewListeners: Array<(view: MapView) => void> = []
+  private readonly hexClickListeners: Array<(coordinate: Coordinate) => void> = []
 
   private centerX: number
   private centerY: number
@@ -160,6 +161,25 @@ export class MapGrid implements MapViewport {
         stroke: HEX_STROKE,
       })
 
+      polygon.addEventListener('pointerenter', () => {
+        this.graphics.get(key)?.classList.add('map-hex--hovered')
+      })
+
+      polygon.addEventListener('pointerleave', () => {
+        this.graphics.get(key)?.classList.remove('map-hex--hovered')
+      })
+
+      polygon.addEventListener('click', () => {
+        const coordinate = {
+          x: hexagon.coordinate.x,
+          y: hexagon.coordinate.y,
+        }
+
+        for (const listener of this.hexClickListeners) {
+          listener(coordinate)
+        }
+      })
+
       canvas.appendChild(polygon)
 
       this.polygons.set(key, polygon)
@@ -204,6 +224,10 @@ export class MapGrid implements MapViewport {
     this.viewListeners.push(listener)
   }
 
+  onHexClick(listener: (coordinate: Coordinate) => void): void {
+    this.hexClickListeners.push(listener)
+  }
+
   setHexFill(coordinate: Coordinate, fill: string): void {
     const polygon = this.polygons.get(coordinateKey(coordinate))
 
@@ -234,6 +258,10 @@ export class MapGrid implements MapViewport {
     graphic.setAttribute('data-hex-graphic', key)
 
     const previousGraphic = this.graphics.get(key)
+
+    if (previousGraphic?.classList.contains('map-hex--hovered')) {
+      graphic.classList.add('map-hex--hovered')
+    }
 
     if (previousGraphic) {
       previousGraphic.replaceWith(graphic)

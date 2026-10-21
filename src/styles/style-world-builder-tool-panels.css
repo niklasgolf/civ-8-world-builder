@@ -111,3 +111,36 @@
 .editor-layout__right-panel .tool-section__title::after {
   background: linear-gradient(270deg, var(--brass), transparent);
 }
+
+/* Unavailable tool sections */
+
+.tool-section--unavailable .tool-grid {
+  position: relative;
+  isolation: isolate;
+}
+
+.tool-section--unavailable .tool-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+  cursor: not-allowed;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(105, 20, 30, 0.5) 0,
+      rgba(105, 20, 30, 0.5) 2px,
+      transparent 2px,
+      transparent 12px),
+    repeating-linear-gradient(-45deg,
+      rgba(105, 20, 30, 0.5) 0,
+      rgba(105, 20, 30, 0.5) 2px,
+      transparent 2px,
+      transparent 12px),
+    rgba(55, 10, 18, 0.5);
+}
+
+.tool-section--unavailable .tool-button {
+  cursor: not-allowed;
+}
