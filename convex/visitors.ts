@@ -1,6 +1,8 @@
 import { mutation } from './_generated/server'
 import { v } from 'convex/values'
 
+const VISITOR_LIMIT = 1000
+
 const deviceTypeValidator = v.union(
   v.literal('windows'),
   v.literal('mac'),
@@ -39,6 +41,21 @@ export const registerVisit = mutation({
     }
 
     const stats = await ctx.db.query('visitorStats').unique()
+    const stored = stats?.stored ?? 0
+    const atLimit = stored >= VISITOR_LIMIT
+
+    if (atLimit) {
+      const oldest = await ctx.db
+        .query('visitors')
+        .order('asc')
+        .first()
+
+      if (oldest === null) {
+        throw new Error('Stored visitor count does not match the visitors table')
+      }
+
+      await ctx.db.delete(oldest._id)
+    }
 
     await ctx.db.insert('visitors', {
       visitedAt: Date.now(),
@@ -52,6 +69,7 @@ export const registerVisit = mutation({
       mac: stats?.mac ?? 0,
       mobile: stats?.mobile ?? 0,
       other: stats?.other ?? 0,
+      stored: atLimit ? stored : stored + 1,
     }
 
     counters[args.deviceType] += 1

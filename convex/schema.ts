@@ -79,5 +79,6 @@ export default defineSchema({
     mac: v.number(),
     mobile: v.number(),
     other: v.number(),
+    stored: v.number(),
   }),
 })
