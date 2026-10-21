@@ -19,6 +19,8 @@ GitHub stores the source code and connects the project to Vercel.
 
 The first successful public deployment was completed on **15 October 2026**.
 
+On **21 October 2026**, the Clerk-enabled application was successfully deployed and public terrain editing was verified.
+
 **Live application:**
 
 https://civ-8-world-builder.vercel.app
@@ -88,11 +90,22 @@ This runs TypeScript compilation followed by the Vite production build.
 
 Normally, the Vercel build and output defaults do not need to be overridden.
 
-## 5. Configure the Convex Environment Variable
+## 5. Configure Environment Variables
+
+The Vercel frontend requires two environment variables:
+
+```text
+VITE_CONVEX_URL
+VITE_CLERK_PUBLISHABLE_KEY
+```
+
+Both must be available when Vite builds the application.
+
+### 5.1 Configure the Convex URL
 
 Before deployment, expand **Environment Variables**.
 
-Add the following key:
+Add:
 
 ```text
 VITE_CONVEX_URL
@@ -106,7 +119,7 @@ https://youthful-reindeer-241.eu-west-1.convex.cloud
 
 Choose the appropriate deployment environments.
 
-The first deployment used:
+The original deployment used:
 
 ```text
 Production and Preview
@@ -114,17 +127,15 @@ Production and Preview
 
 For your own project, use the Convex URL generated for your deployment.
 
-### 5.1 Configure the Clerk Publishable Key
+### 5.2 Configure the Clerk Publishable Key
 
-Clerk was integrated into the project after the first Vercel deployment.
-
-The frontend now requires an additional environment variable:
+The frontend also requires:
 
 ```text
 VITE_CLERK_PUBLISHABLE_KEY
 ```
 
-The value must be the publishable key from the appropriate Clerk application instance.
+Obtain the publishable key from the Clerk dashboard.
 
 To configure it:
 
@@ -133,28 +144,42 @@ To configure it:
 3. Open **Settings → Environment Variables**.
 4. Add `VITE_CLERK_PUBLISHABLE_KEY`.
 5. Paste the publishable key from Clerk.
-6. Select the appropriate deployment environments.
+6. Select **Production and Preview**.
 7. Save the variable.
-8. Redeploy the application so the new value is included in the Vite build.
+8. Redeploy the application.
 
-Clerk publishable keys are intended for browser applications.
+The Clerk publishable key identifies the Clerk application and is intended for browser use.
 
 Never place a Clerk secret key in a `VITE_` environment variable.
 
-**Current status:** The Clerk publishable key is configured locally. Adding it to Vercel and verifying the public authentication integration remain pending.
+### 5.3 Why Redeployment Is Necessary
 
-### 5.2 Important: Development Versus Production
+Vite includes environment variables beginning with `VITE_` in the frontend build.
 
-The first Civilization of Wonders deployment intentionally reused the existing Convex development database.
+Changing an environment variable in the Vercel dashboard does not retroactively change an already-generated JavaScript bundle.
 
-This made it possible to verify the application online using the twelve worlds already created during development.
+A new deployment must be built after the variable is added or changed.
 
-However, the recommended long-term arrangement is:
+For the 21 October deployment, a fresh redeployment was performed without using the previous build cache.
+
+A cache-free rebuild is useful when troubleshooting stale configuration, although it is not normally necessary for every environment-variable change.
+
+### 5.4 Development Versus Production
+
+The public Civilization of Wonders website currently uses the existing Convex development database.
+
+This makes it possible to view and edit the twelve worlds already created during development.
+
+The Clerk publishable key currently belongs to a Clerk development instance, identifiable by its `pk_test_` prefix.
+
+The recommended long-term arrangement is:
 
 - Local development → Convex development deployment.
 - Public production website → Convex production deployment.
+- Local authentication → Clerk development instance.
+- Production authentication → Clerk production instance.
 
-A separate production deployment has not yet been configured for the original project.
+A separate production deployment has not yet been configured.
 
 Do not assume that Convex automatically copies database records between deployments.
 
@@ -195,9 +220,81 @@ A successful deployment displays a congratulations screen and a production deplo
 
 The original application was deployed successfully on 15 October 2026.
 
-## 8. Verify the Public Website
+### 7.1 Terrain Painting Deployment
 
-Open the production website:
+On 21 October 2026, the real-time terrain painting implementation was committed and pushed to GitHub.
+
+The commit was:
+
+```text
+9c75fbf Implement real-time terrain painting with Convex synchronization
+```
+
+The commit included the frontend integration for:
+
+- Terrain selection.
+- Hexagon click handling.
+- Convex terrain mutations.
+- Real-time map updates.
+- SVG terrain rendering.
+- Backend terrain validation.
+
+Vercel automatically deployed the updated `main` branch.
+
+The deployment was marked **Ready**.
+
+However, the first attempt to open the updated public application revealed a configuration problem.
+
+## 8. Troubleshooting: Missing Clerk Publishable Key
+
+### 8.1 The Problem
+
+The updated application worked locally but initially failed to display correctly on the public Vercel website.
+
+The reason was that Clerk authentication had been added to the application after the original Vercel deployment.
+
+The local `.env.local` file already contained:
+
+```text
+VITE_CLERK_PUBLISHABLE_KEY
+```
+
+But the corresponding variable had not yet been configured in Vercel.
+
+The frontend therefore could not initialize Clerk correctly.
+
+### 8.2 The Solution
+
+The problem was resolved using the Vercel dashboard:
+
+1. Open the `civ-8-world-builder` project.
+2. Select **Settings → Environment Variables**.
+3. Add `VITE_CLERK_PUBLISHABLE_KEY`.
+4. Copy the publishable key from the Clerk dashboard.
+5. Select **Production and Preview**.
+6. Save the configuration.
+7. Open the deployment section.
+8. Select **Redeploy**.
+9. Build a fresh deployment without using the previous build cache.
+10. Wait for the deployment to become **Ready**.
+
+After redeployment, the public application loaded successfully.
+
+The World Builder displayed the authenticated Legolas account and the existing terrain map.
+
+The public application also displayed terrain data that had been saved through Convex.
+
+### 8.3 Important Lesson
+
+A successful Vercel build does not necessarily mean the application has all required runtime configuration.
+
+Vite can compile the frontend even when an environment variable needed during application initialization is missing.
+
+Always verify the actual deployed website after changing authentication or database configuration.
+
+## 9. Verify the Public Website
+
+Open:
 
 https://civ-8-world-builder.vercel.app
 
@@ -210,31 +307,49 @@ Verify the following:
 - The World Builder renders its SVG hexagonal grid.
 - The selected world's headings are displayed.
 - The terrain data loads from Convex.
+- Clerk authentication initializes.
+- A registered user can sign in.
+- An authorized editor can activate an editing session.
+- Terrain painting updates the database.
+- Other connected browsers receive the terrain changes.
 
-For the original project's test data, World 1 contains a green grass hexagon near the lower-right corner of the map.
+### 9.1 Public Deployment Verification — 21 October 2026
 
-The public application was tested successfully on two separate computers.
+The public website was successfully opened after the Clerk configuration was corrected.
 
-This confirmed that the frontend could be accessed remotely and render data from the shared Convex deployment.
+The following were observed:
 
-### 8.1 Authentication Verification
+- The Vercel deployment was marked **Ready**.
+- The Clerk-enabled application loaded.
+- Legolas was signed in.
+- The World Builder displayed an active editing session.
+- Previously painted terrain was visible.
+- The application continued to use the shared Convex development database.
 
-After the Clerk environment variable has been configured and the authentication interface implemented, verify that:
+Earlier local testing with the separate Legolas and Frodo accounts also confirmed that terrain updates could be observed between browsers.
+
+These results demonstrate that the application can render and edit persistent world data using its deployed frontend and shared backend.
+
+### 9.2 Authentication and Authorization Checks
+
+Before inviting additional editors, verify:
 
 1. The public website loads without a missing Clerk publishable key error.
 2. The Clerk SDK initializes.
-3. Google sign-in opens successfully.
-4. A user can sign in and sign out.
-5. Clerk supplies a session token.
-6. Convex verifies the authenticated identity.
-7. Unauthenticated visitors remain able to view public worlds.
-8. Unauthorized users cannot modify world data.
+3. Google sign-in opens successfully on the public domain.
+4. Users can sign in and sign out.
+5. Convex recognizes the authenticated identity.
+6. Unauthenticated visitors can view public worlds.
+7. Unauthorized users cannot modify world data.
+8. An editor can edit only their assigned world.
+9. Only one editing session controls a world at a time.
+10. Administrator takeover works as intended.
 
-These checks are **not yet completed**.
+The application has demonstrated authenticated editing and real-time synchronization.
 
-A successful deployment alone does not prove that authentication and authorization work.
+A complete public-domain access-control test involving invited users should still be performed before wider distribution.
 
-## 9. GitHub and Future Deployments
+## 10. GitHub and Future Deployments
 
 Vercel is connected to the GitHub repository.
 
@@ -245,16 +360,16 @@ Future changes can be committed and pushed using:
 ```bash
 git add .
 git commit -m "Describe the change"
-git push origin main
+git push
 ```
 
-Only stage files that belong in the commit. Review `git status` before committing.
+Review `git status` before committing to avoid including local environment files or unrelated changes.
 
 A push to the configured production branch normally triggers a new Vercel deployment automatically.
 
-Check the Vercel dashboard to confirm that the new deployment completes successfully.
+Check the Vercel dashboard to confirm that the deployment completes successfully.
 
-## 10. Local Development Still Works
+## 11. Local Development Still Works
 
 Deploying to Vercel does not replace the local development environment.
 
@@ -280,9 +395,27 @@ http://localhost:5173
 
 The public website runs independently on Vercel.
 
-For the first deployment, both environments connect to the same Convex development database.
+Both currently connect to the same Convex development database.
 
-## 11. Connecting a Custom Domain
+### 11.1 Deploying Backend Changes
+
+The Vercel deployment builds and publishes the frontend.
+
+Convex backend changes must also reach the correct Convex deployment.
+
+For development, run:
+
+```bash
+npx convex dev --once
+```
+
+This synchronizes the local Convex backend with the configured development deployment.
+
+The command was used successfully on 21 October 2026 to deploy updated terrain validators.
+
+For a future dedicated production deployment, use the appropriate Convex production deployment procedure rather than relying on the development command.
+
+## 12. Connecting a Custom Domain
 
 The original project owner has reserved:
 
@@ -310,49 +443,50 @@ When ready, the general process will be:
 
 Do not change the existing domain DNS records until the correct settings have been confirmed in Vercel.
 
-## 12. Future Production Improvements
+## 13. Future Production Improvements
 
-The first online deployment is working, but the following improvements remain planned:
+The public application is working, but the following improvements remain planned:
 
 - A dedicated Convex production deployment.
 - Separate development and production databases.
-- Complete Google sign-in and sign-out interface.
-- End-to-end Clerk authentication verification.
-- Administrator and editor permissions.
-- Secure, authorized terrain editing.
-- Exclusive editing sessions.
+- A matching Clerk production instance.
+- Public-domain authentication and invitation testing.
+- Complete authorization testing for assigned editors and visitors.
 - Custom domain configuration.
+- Final deployment documentation and security review.
 
-The Clerk SDK and Convex authentication foundation have been configured locally.
+The application already supports authenticated terrain editing and real-time synchronization.
 
-The frontend is currently a working public world viewer.
+## 14. Deployment Checklist
 
-Interactive terrain painting and multi-user editing are future development milestones.
+- [x] GitHub repository is connected to Vercel.
+- [x] Project framework is Vite.
+- [x] Root directory is correct.
+- [x] Midgard is installed from npm.
+- [x] `VITE_CONVEX_URL` is configured.
+- [x] `VITE_CLERK_PUBLISHABLE_KEY` is configured.
+- [x] Environment variables are available to Production and Preview.
+- [x] Deployment status is Ready.
+- [x] The public website loads over HTTPS.
+- [x] The Map Gallery displays twelve worlds.
+- [x] World selection works.
+- [x] SVG maps render correctly.
+- [x] Convex terrain data is visible.
+- [x] The website works on another computer.
+- [x] The Clerk-enabled public frontend loads.
+- [x] Authenticated editing has been demonstrated.
+- [x] Terrain painting persists in Convex.
+- [x] Real-time terrain synchronization has been demonstrated.
+- [ ] Public-domain invitation testing is complete.
+- [ ] All unauthorized editing scenarios have been tested.
+- [ ] Dedicated production Convex deployment is configured.
+- [ ] Matching Clerk production instance is configured.
 
-## 13. Deployment Checklist
+## 15. Deployment Milestones
 
-- [ ] GitHub repository is connected to Vercel.
-- [ ] Project framework is Vite.
-- [ ] Root directory is correct.
-- [ ] Midgard is installed from npm.
-- [ ] `VITE_CONVEX_URL` is configured.
-- [ ] Deployment status is Ready.
-- [ ] The public website loads over HTTPS.
-- [ ] The Map Gallery displays twelve worlds.
-- [ ] World selection works.
-- [ ] SVG maps render correctly.
-- [ ] Convex terrain data is visible.
-- [ ] The website works on another computer.
-- [ ] `VITE_CLERK_PUBLISHABLE_KEY` is configured on Vercel.
-- [ ] Google sign-in and sign-out work.
-- [ ] Convex verifies the signed-in Clerk identity.
-- [ ] Backend authorization rejects unauthorized edits.
+### 15 October 2026 — First Public Deployment
 
-The final four authentication and authorization checks are pending.
-
-## 14. Deployment Milestone
-
-On 15 October 2026, Civilization of Wonders achieved its first successful public deployment.
+Civilization of Wonders achieved its first successful public deployment.
 
 The following components were verified together:
 
@@ -364,10 +498,30 @@ The following components were verified together:
 - SVG world rendering.
 - Access from multiple computers.
 
-On 19 October 2026, the Clerk–Convex authentication foundation was also configured and successfully passed TypeScript and Convex deployment checks.
+### 19 October 2026 — Clerk–Convex Foundation
 
-This establishes the foundation for the next development phase: **Google authentication, server-side editor permissions and interactive terrain editing with real-time updates**.
+The Clerk–Convex authentication foundation was configured.
+
+TypeScript and Convex deployment checks passed.
+
+### 21 October 2026 — Real-Time Terrain Painting
+
+Interactive terrain painting was implemented and tested.
+
+The backend accepted authenticated terrain mutations, and connected browsers received the resulting map updates.
+
+The Legolas and Frodo accounts demonstrated collaborative world viewing and persistent terrain changes.
+
+### 21 October 2026 — Public Clerk-Enabled Deployment
+
+The missing `VITE_CLERK_PUBLISHABLE_KEY` was added to Vercel.
+
+The frontend was redeployed successfully.
+
+The public application loaded with Clerk authentication and displayed the persistent Convex world data.
+
+**Civilization of Wonders is now a publicly accessible, database-connected world builder with authenticated terrain editing.**
 
 ---
 
-*Last updated: 19 October 2026*
+*Original guide last updated: 19 October 2026; deployment and collaboration milestones updated: 21 October 2026*

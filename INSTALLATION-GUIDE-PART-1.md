@@ -3,6 +3,16 @@
 
 [← Installation Guide](INSTALLATION-GUIDE.md) | [Part 2 →](INSTALLATION-GUIDE-PART-2.md)
 
+## 9. Public Deployment Verification — 21 October 2026
+
+The local build and public deployment are now both operational. The latest demonstrated implementation includes authenticated editing, terrain selection, persistent Convex mutations, and real-time SVG updates between browsers.
+
+For local development, continue using the project's `.env.local` with `VITE_CONVEX_URL` and `VITE_CLERK_PUBLISHABLE_KEY`. For Vercel, configure those **same variable names** in the project settings and rebuild the frontend. Do not commit `.env.local` or any Clerk secret key.
+
+The public website currently uses the Convex and Clerk **development** environments. See Part 3 for the Vercel troubleshooting and redeployment record, and Part 4 for editor access controls.
+
+---
+
 ## 1. Prerequisites
 
 Install:
@@ -254,4 +264,4 @@ The next step is to configure Convex and initialize the twelve worlds.
 
 ---
 
-*Last updated: 19 October 2026*
+*Original guide sections last updated: 19 October 2026; milestone update: 21 October 2026*

@@ -124,7 +124,7 @@ The table is defined in:
 convex/schema.ts
 ```
 
-The current editor fields are:
+The editor fields are:
 
 | Field | Type | Purpose |
 |---|---|---|
@@ -170,9 +170,7 @@ The intended access rules are:
 - **Editors** cannot change their registered email addresses or true names.
 - **Visitors** can see public fantasy names but not private email addresses or true names.
 
-These rules are architectural requirements. They are not enforced merely by defining the database schema.
-
-Convex functions must enforce the rules before editor records are exposed or modified.
+These rules must be enforced by Convex functions, not merely by defining the database schema.
 
 ### 4.3 Authentication and Authorization
 
@@ -182,7 +180,7 @@ Clerk verifies the user's Google account and manages authentication sessions.
 
 Convex verifies Clerk-issued tokens and checks whether the authenticated user has permission to edit a world.
 
-The intended login process is:
+The login process is:
 
 1. An administrator registers an editor's email, true name, fantasy name and world assignment.
 2. The editor receives a private invitation.
@@ -195,7 +193,7 @@ A fantasy name is a public display name, not a password or authentication creden
 
 An authenticated Google user is not automatically an authorized editor.
 
-The Clerk–Convex connection has been configured, but editor authorization and the complete Google sign-in flow have not yet been tested end to end.
+**21 October 2026 update:** Authentication and editor-controlled painting were demonstrated successfully using separate Legolas and Frodo accounts.
 
 See [Part 4 — Authentication and Editor Permissions](INSTALLATION-GUIDE-PART-4.md).
 
@@ -275,12 +273,12 @@ Find the document ID for World 1.
 With World 1 open in the application, run:
 
 ```bash
-npx convex run hexes:testSetTerrain '{"worldId":"YOUR_WORLD_1_ID","x":85,"y":27,"terrain":"grass"}'
+npx convex run hexes:testSetTerrain '{"worldId":"YOUR_WORLD_1_ID","x":85,"y":27,"terrain":"grass","relief":"flat"}'
 ```
 
 Replace `YOUR_WORLD_1_ID` with the actual Convex document ID.
 
-The hexagon at `(85, 27)` should turn green automatically without refreshing the browser.
+The hexagon at `(85, 27)` should turn green automatically without refreshing the browser, provided the coordinate exists in that world.
 
 The change is stored persistently in Convex.
 
@@ -290,7 +288,11 @@ To restore the original terrain, run the same command using:
 "terrain": "ocean"
 ```
 
+Keep `"relief": "flat"`.
+
 The internal test mutation must not be replaced by an unauthenticated public write operation.
+
+**21 October update:** This terminal-based test is no longer required for ordinary terrain painting. Authorized editors can now paint directly in the browser.
 
 ## 7. Shared Data and Real-Time Updates
 
@@ -298,15 +300,119 @@ Convex stores the world data centrally.
 
 Multiple browsers can connect to the same deployment and subscribe to the same world.
 
-When a hexagon record changes in Convex, subscribed clients can receive the updated terrain automatically.
+When a hexagon record changes in Convex, subscribed clients receive the updated terrain automatically.
 
 This makes it possible to view the same world from different computers.
 
 On 15 October 2026, Civilization of Wonders was successfully opened from two separate computers using the public Vercel website.
 
-This confirms public access and shared world rendering.
+### 7.1 Interactive Terrain Painting — 21 October 2026
 
-**Important:** Browser-based terrain editing and simultaneous editor permissions have not yet been implemented.
+Interactive terrain painting is now implemented.
+
+The World Builder supports **17 terrain and relief combinations**:
+
+| Terrain | Flat | Hills | Mountains |
+|---|---|---|---|
+| Grass | Yes | Yes | Yes |
+| Plains | Yes | Yes | Yes |
+| Desert | Yes | Yes | Yes |
+| Tundra | Yes | Yes | Yes |
+| Snow | Yes | Yes | Yes |
+| Coast | Yes | — | — |
+| Ocean | Yes | — | — |
+
+The database stores terrain and relief separately.
+
+Terrain values:
+
+```ts
+type Terrain =
+  | 'ocean'
+  | 'coast'
+  | 'grass'
+  | 'plains'
+  | 'desert'
+  | 'tundra'
+  | 'snow'
+```
+
+Relief values:
+
+```ts
+type Relief = 'flat' | 'hills' | 'mountain'
+```
+
+Note that the database uses the singular value `mountain`, even though some graphic filenames and terrain-button identifiers use `mountains`.
+
+### 7.2 Painting Workflow
+
+When an authorized editor paints a hexagon:
+
+1. The editor selects a terrain button in the left panel.
+2. The editor clicks a hexagon on the SVG map.
+3. `MapGrid` reports the clicked coordinates through `onHexClick()`.
+4. The application verifies that the current user controls the editing session.
+5. The selected terrain is converted into database terrain and relief values.
+6. The frontend calls `api.hexes.setTerrain`.
+7. Convex verifies the authenticated user's editing permissions.
+8. Convex updates the corresponding hexagon record.
+9. The reactive `api.hexes.listByWorld` subscription receives the updated world data.
+10. `WorldMapController` renders the corresponding SVG terrain graphic.
+
+The authoritative terrain state is stored in Convex.
+
+The SVG map is a reactive representation of that database state.
+
+### 7.3 Backend Authorization
+
+The `hexes.setTerrain` mutation checks:
+
+- The authenticated Clerk identity.
+- The user's registered editor or administrator role.
+- Authorization to edit the selected world.
+- Ownership of the active editing session.
+- World initialization status.
+- Valid hexagon coordinates.
+- Existence of the corresponding hexagon record.
+
+The frontend also checks whether the current user controls the editing session.
+
+However, **the backend authorization is the security boundary**. A disabled frontend button alone does not prevent unauthorized database modifications.
+
+### 7.4 Real-Time Collaboration Test
+
+On **21 October 2026**, the following workflow was demonstrated:
+
+1. Legolas opened and edited a world.
+2. Terrain painting was saved successfully to Convex.
+3. Frodo accessed the application using a separate account.
+4. Frodo created a terrain map.
+5. Legolas could view Frodo's world from another browser.
+
+This demonstrated persistent terrain storage and synchronization between different authenticated users.
+
+The first demonstration worlds included a smiling face and a world displaying the name **FRODO**.
+
+### 7.5 Convex Backend Synchronization
+
+During testing, a terrain mutation initially failed because the running Convex backend still used an older terrain validator.
+
+The browser console reported an `ArgumentValidationError` when painting Plains.
+
+The updated backend was deployed using:
+
+```bash
+npx convex dev --once
+```
+
+The terminal confirmed that Convex functions were ready.
+
+After refreshing the browser, terrain painting worked successfully.
+
+**Important:** Updating TypeScript frontend code does not automatically deploy changed Convex functions unless the Convex development process is running or the backend is deployed explicitly.
+
+When the schema or backend mutations change, ensure the correct Convex deployment receives the updates.
 
 ## 8. Development and Production Environments
 
@@ -336,45 +442,51 @@ The production database must be initialized or migrated separately.
 
 Clerk development and production instances must also use matching authentication configuration for their respective environments.
 
+**Status on 21 October 2026:** The public Vercel application still uses the Convex development deployment and Clerk development instance.
+
 ## 9. Installation Checklist
 
-- [ ] npm dependencies are installed.
-- [ ] TypeScript compilation succeeds.
-- [ ] Your Convex development deployment is connected.
-- [ ] Twelve worlds exist.
-- [ ] All 14,088 hexagons are initialized.
-- [ ] The `editors` table exists.
-- [ ] Vite starts the application.
-- [ ] The Map Gallery displays twelve world cards.
-- [ ] Selecting a card opens the corresponding world.
-- [ ] The left and right panel headings update.
-- [ ] Optional: a Convex terrain change updates the SVG map automatically.
-- [ ] Clerk authentication configuration is deployed.
-- [ ] A real Google login is verified by Convex.
-
-The final authentication check remains pending.
+- [x] npm dependencies are installed.
+- [x] TypeScript compilation succeeds.
+- [x] Convex development deployment is connected.
+- [x] Twelve worlds exist.
+- [x] All 14,088 hexagons are initialized.
+- [x] The `editors` table exists.
+- [x] Vite starts the application.
+- [x] The Map Gallery displays twelve world cards.
+- [x] Selecting a card opens the corresponding world.
+- [x] The left and right panel headings update.
+- [x] Convex terrain changes update the SVG map automatically.
+- [x] Clerk authentication configuration is deployed.
+- [x] Google-authenticated users can access the application.
+- [x] Authorized editors can paint terrain.
+- [x] Terrain changes persist in Convex.
+- [x] Changes appear in another connected browser.
+- [ ] A separate production Convex deployment is configured.
+- [ ] A matching Clerk production instance is configured.
+- [ ] Public invitation and access-control testing is completed.
 
 ## 10. Current Limitations
 
 The following features are not yet complete:
 
-- Browser-based terrain editing.
-- Google sign-in interface and authenticated-session verification.
-- Administrator and editor permissions.
-- Exclusive editing sessions and administrator takeover.
+- Additional brush sizes and brush actions.
+- Features, resources, and river painting.
 - Separate production Convex deployment.
+- Matching Clerk production configuration.
 - Custom domain configuration.
+- Final production hardening and broader invitation testing.
 
-**Vercel hosting is implemented and verified.**
+**Vercel hosting and interactive terrain painting are implemented and verified.**
 
 The application is publicly accessible at:
 
 https://civ-8-world-builder.vercel.app
 
-Visitors can view the worlds, but authenticated browser editing is not yet available.
+Visitors can view worlds, while authorized editors can paint their assigned worlds through an active editing session.
 
 **Continue with [Part 3 — Vercel Deployment](INSTALLATION-GUIDE-PART-3.md).**
 
 ---
 
-*Last updated: 19 October 2026*
+*Original guide last updated: 19 October 2026; collaborative editing milestone: 21 October 2026*
