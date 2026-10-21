@@ -1,42 +1,56 @@
+
 # Test Report
 
 ## Summary
 
-Civilization of Wonders was tested manually in a browser against the public deployment at https://civ-8-world-builder.vercel.app/ on 21 October 2026, and by a local technical build. The repository has no automated test script and no application test files, so no automated functional suite was run. `npm run build` completed successfully. That build only confirms that the TypeScript project compiles and Vite produces a bundle. It is not treated as a functional pass.
+Civilization of Wonders was tested manually in a browser against the public deployment at https://civ-8-world-builder.vercel.app/ on 21 October 2026, and by a local technical build.
 
-The public checks covered view navigation, opening a stored world, the hex map, zoom, the minimap, the Google sign-in control, the anonymous editor controls, visitor statistics, geographic markers, the deployed location endpoint, and one wiki section change.
+The application was also tested manually during development, including Google authentication, authorized editing, administrator takeover, terrain painting, persistence, and synchronization between clients.
 
-Authenticated editing was the hardest area to test. Starting a session, stopping it, taking it over, painting, reloading, and watching a second client all require approved Google accounts and more than one browser. Those actions also write to the shared world data, so they were not attempted from an anonymous session. Visit registration was also difficult to verify safely: a page load can change the shared counters, the statistics panel does not refresh after navigation, and a controlled request without Vercel geolocation headers was not made.
+The repository has no automated application test suite. `npm run build` completed successfully. This confirms that TypeScript compiles and Vite produces a bundle, but is not treated as proof that the application functions correctly.
 
-An earlier manual observation of the same public application recorded 33 total visits, with Mac 22, Mobile 0, Windows 1, and Other 10. Those figures are historical. The numbers in this report are the values observed on 21 October 2026.
+The public deployment was checked for navigation, opening a world, SVG terrain rendering, zoom, minimap navigation, visitor statistics, geographic markers, the geolocation endpoint, and the wiki.
+
+Authenticated editing required additional manual testing because it involves approved accounts, editing permissions, persistent database changes, and multiple browser sessions.
+
+Some controlled tests remain unverified, particularly device classification across different user agents and registration when geolocation headers are missing.
+
+An earlier observation recorded 33 visits, with Mac 22, Mobile 0, Windows 1, and Other 10. The later public-site observation used below recorded 36 visits.
 
 ## Test Results
 
 | Test case | Requirement | Input | Expected outcome | Actual outcome |
 | --- | --- | --- | --- | --- |
-| Four application views | R1 | Open the public site. World Builder is initially unavailable. Select Legolas, then select CoW Wiki, then select Visitors & Login. | The header offers Map Gallery, World Builder, Visitors & Login, and CoW Wiki. World Builder stays unavailable until a world is selected. Each selected view becomes the visible view. | PASS. The site opened on Map Gallery with World Builder unavailable. After Legolas was selected, World Builder became available and visible. CoW Wiki and Visitors & Login each became the visible view when selected. |
-| Open a stored world | R2 | On Map Gallery, select the Legolas card. | The gallery lists the stored worlds. The selected world opens in World Builder. | PASS. Twelve cards were listed: Legolas, Gandalf, Elrond, Aragorn, Radagast, Frodo, and six unassigned worlds, each titled Unedited Map. Selecting Legolas opened World Builder with the heading Legolas. |
-| Hexagonal world map | R3 | With Legolas open, inspect the main map and the minimap. | The world is drawn as a hex grid, and each cell uses an SVG terrain graphic. | PASS. The main map rendered 2430 polygons and showed SVG terrain, including ocean, coast, grass, desert, and mountains. The minimap rendered 1174 polygons, matching the world's hex count. |
-| Zoom levels | R4 | With Legolas open, select Zoom 1 and then Zoom 2. | Zoom levels 1 through 5 are available, and selecting a level changes the map scale. | PASS. Buttons 1 through 5 were present. At zoom 2 the map view measured about 5535 by 3021 units. At zoom 1 the same view measured about 11635 by 6350 units. |
-| Minimap recentering | R4 | At zoom 2, click a point in the upper-left area of the Legolas minimap. | The main map recenters on the clicked point. | PASS. The click hit a minimap polygon. The view origin moved from about 2822, 1642 to -227.5, 1071. The view size stayed about 5535 by 3021. |
-| Google sign-in control | R5 | Select Visitors & Login without signing in. | The view offers sign-in with Google. | PASS. A Sign in with Google button was displayed, with the text "Sign in with Google to access your Civilization of Wonders account." |
-| Fantasy identity after sign-in | R5 | Sign in with Google as an approved editor, and separately as a person who is not an approved editor. | An approved editor sees that editor's fantasy name. A signed-in person who is not an approved editor is shown as a visitor and cannot edit. | NOT RUN — manual verification required. |
-| Start, stop, and take over | R6 | Sign in as an assigned editor and start, then stop, editing. Sign in as an administrator while another person holds the session and take it over. | The authorized user can start and stop. An administrator can take over. The panel shows the current editor, or viewing mode. | NOT RUN — manual verification required. |
-| Unauthorized editing | R6 | Open Legolas as an anonymous visitor while the status already shows an editor. | The visitor is not offered Edit or Take Over. | PASS. The status read "Editing: Legolas". Edit and Take Over were hidden. Like was disabled. No paint action was attempted, so server-side rejection was not tested. |
-| Administrator takeover | R6 | Sign in as an administrator while another editor holds Legolas, then choose Take Over. | The administrator can take the editing session. | NOT RUN — manual verification required. |
-| Paint one hexagon | R7 | Sign in, hold the editing session, select one of the 17 terrain graphics, and click one hexagon. | That hexagon changes to the selected terrain. | NOT RUN — manual verification required. Anonymous terrain buttons were selectable, but painting was not attempted. |
-| Terrain persistence | R7 | After the paint above, reload the same world. | The changed terrain is still shown. | NOT RUN — manual verification required. |
-| Cross-client synchronization | R7 | Leave a second client open on the same world during the paint above. | The second client shows the change without a manual refresh. | NOT RUN — manual verification required. |
-| One visit per page load | R8 | Record the counters, load the public site once, navigate between all four views, and reload once. | One visit is registered on the first load, none is added by navigation, and a reload can add one visit. | NOT RUN — manual verification required. The statistics panel loads once and does not refresh during navigation, so it cannot show whether another visit was registered. |
-| Device classification | R8 | Load the application with known Windows, Mac, mobile, and other user agents. | `visitor-module` classifies each load as Windows, Mac, Mobile, or Other. | NOT RUN — manual verification required. The stored counters contain all four categories, but no controlled user-agent matrix was executed. |
-| Permanent visitor statistics | R9 | Select Visitors & Login and read the statistics panel. | The panel shows a permanent total and, in order, Mac, Mobile, Windows, and Other. The device numbers add up to the total and are not a count of map markers. | PASS. The visible panel showed Total visitors 36, then Mac 23, Mobile 0, Windows 1, and Other 12. The four device numbers add up to 36. The map showed 16 markers, so the total is not a marker count. An earlier observation of 33, 22, 0, 1, and 10 is historical and was not the value at this check. |
-| Geographic visitor markers | R10 | On Visitors & Login, inspect the circles on the geographic map. | Each stored visit with valid coordinates has one circular marker. Mac is green, Mobile is blue, Windows is red, and Other is yellow. | PASS. Sixteen circles of radius 16 were drawn: 3 green Mac markers at latitude 56.87767, longitude 14.80906 (Sweden); 1 red Windows marker at latitude 52.45313, longitude 4.81356 (the Netherlands); and 12 yellow Other markers at latitude 37.33939, longitude -121.89496 (USA). No blue marker was present, matching Mobile 0. |
-| Coordinates from the deployed site | R11 | From the public site, request `/api/visitor-location`. | When Vercel supplies valid geolocation headers, the endpoint returns approximate coordinates. | PASS for the endpoint response. HTTP 200 returned `success: true`, latitude 56.87767, and longitude 14.80906. This request does not by itself prove that a new visit stored those coordinates. |
-| Missing visitor geolocation | R11 | Register a visit when the Vercel latitude and longitude headers are missing or invalid. | The visit is still registered, and no location marker is required for it. | NOT RUN — manual verification required. The gap between 36 visits and 16 markers is consistent with visits that have no coordinates, but it is not a controlled test. |
-| Wiki graphics catalog | R12 | Select CoW Wiki, then select Base Terrains. | The wiki shows the SVG catalog, and choosing a section changes what is displayed. | PASS. CoW Wiki opened on its welcome section. Selecting Base Terrains hid the welcome section and the other catalog panels, and showed Base terrains, including Grass, Plains, Desert, Tundra, Snow, Coast, and Ocean. |
+| Four application views | R1 | Open the public site, select Legolas, then navigate to CoW Wiki and Visitors & Login. | All four views are available. World Builder becomes available after selecting a world. | PASS. Navigation worked as expected. |
+| Open a stored world | R2 | Select Legolas in Map Gallery. | The selected world opens in World Builder. | PASS. Twelve world cards were displayed, and Legolas opened successfully. |
+| Hexagonal world map | R3 | Open Legolas and inspect the main map and minimap. | A hexagonal world is rendered using SVG terrain graphics. | PASS. The world rendered successfully with ocean, coast, grass, desert, mountains, and other terrain graphics. |
+| Zoom levels | R4 | Select zoom levels 1 and 2 and inspect the available controls. | Five zoom levels are available and the map changes scale. | PASS. Five zoom buttons were present, and the map scale changed correctly. |
+| Minimap recentering | R4 | Click a different position on the minimap. | The main map recenters on the selected location. | PASS. The main map moved to the selected position. |
+| Google sign-in control | R5 | Open Visitors & Login while signed out. | Google authentication is offered. | PASS. The Sign in with Google button appeared. |
+| Fantasy identity after sign-in | R5 | Sign in with Google using an approved editor account. | The approved editor's fantasy identity is displayed and the appropriate permissions become available. | PASS — manually verified by the application developer. Google sign-in and the approved editor experience worked. The separate unapproved-account scenario was not independently documented. |
+| Start, stop, and take over | R6 | Sign in as an assigned editor, start and stop editing, and test administrator takeover. | Authorized editors can control their sessions, and an administrator can take over. | PASS — manually verified by the application developer. Editing session controls and takeover worked. |
+| Unauthorized editing | R6 | Open Legolas as an anonymous visitor while another editor is active. | Edit and Take Over are unavailable to the anonymous visitor. | PASS. The editor status was visible, while Edit and Take Over were hidden. Server-side rejection was not separately tested. |
+| Administrator takeover | R6 | Sign in as an administrator while another editor holds Legolas, then choose Take Over. | The administrator takes control of the editing session. | PASS — manually verified by the application developer. Administrator takeover worked as intended. |
+| Paint one hexagon | R7 | Start an authorized editing session, select terrain, and click a hexagon. | The selected hexagon changes to the chosen terrain. | PASS — manually verified by the application developer. Terrain painting worked. |
+| Terrain persistence | R7 | Paint a hexagon and subsequently reload the world. | The terrain change remains after reloading. | PASS — manually verified by the application developer. Terrain changes were retained in Convex. |
+| Cross-client synchronization | R7 | Open the same world in two clients and edit terrain in one client. | The other client displays the updated terrain without a manual refresh. | PASS — manually verified by the application developer. The shared world updated across clients. |
+| One visit per page load | R8 | Record the visit counters, load the site, navigate internally, and reload. | Full page loads register visits, while internal navigation does not. | NOT RUN — a controlled before-and-after test was not documented. |
+| Device classification | R8 | Load the application with known Windows, Mac, Mobile, and Other user agents. | The visitor module classifies each device correctly. | NOT RUN — no controlled four-category user-agent test was documented. |
+| Permanent visitor statistics | R9 | Open Visitors & Login and inspect the statistics. | The permanent total and four device counters are displayed and add up correctly. | PASS. Total 36; Mac 23, Mobile 0, Windows 1, Other 12. The device counts add up to 36. |
+| Geographic visitor markers | R10 | Inspect the visitor world map. | Stored visits with valid coordinates appear as colored SVG markers. | PASS. Sixteen markers appeared in Sweden, the Netherlands, and the USA. Mac markers were green, Windows red, and Other yellow. |
+| Coordinates from the deployed site | R11 | Request `/api/visitor-location` on the deployed application. | Valid Vercel geolocation headers produce approximate coordinates. | PASS for the endpoint. HTTP 200 returned success with latitude 56.87767 and longitude 14.80906. |
+| Missing visitor geolocation | R11 | Register a visit when geolocation headers are absent or invalid. | Registration succeeds without coordinates. | NOT RUN — a controlled missing-header test was not documented. |
+| Wiki graphics catalog | R12 | Open CoW Wiki and select Base Terrains. | The selected SVG graphics category is displayed. | PASS. Base Terrains displayed Grass, Plains, Desert, Tundra, Snow, Coast, and Ocean. |
 
 ## Known Issues in Third-Party Modules
 
 None found.
 
-The application uses `midgard-hex-grid` by Niklas Herrloff and `visitor-module` by Felix. No defect was observed in Felix's visitor module during these checks. Its device classification was not exercised with a controlled set of user agents, so this section does not claim that every classification path was verified.
+The application integrates two TypeScript modules:
+
+- **midgard-hex-grid**, developed by Niklas Herrloff, provides hexagonal geometry, coordinates, positioning, and grid generation.
+- **visitor-module**, developed by Felix, provides device classification for anonymous visitor statistics.
+
+No defects were observed in Felix's module during application development and integration.
+
+The module was successfully integrated into the visitor statistics functionality. However, a controlled classification test using all four device categories was not documented, so this report does not claim complete test coverage of the module.
