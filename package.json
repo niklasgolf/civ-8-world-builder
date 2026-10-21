@@ -15,6 +15,7 @@
   "dependencies": {
     "@clerk/clerk-js": "^6.39.0",
     "convex": "^1.46.0",
-    "midgard-hex-grid": "^1.0.0"
+    "midgard-hex-grid": "^1.0.0",
+    "visitor-module": "^0.2.0"
   }
 }
