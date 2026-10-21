@@ -58,4 +58,18 @@ export default defineSchema({
     editorId: v.id('editors'),
     startedAt: v.number(),
   }).index('by_world', ['worldId']),
+
+  visitors: defineTable({
+    location: v.optional(v.object({
+      latitude: v.number(),
+      longitude: v.number(),
+    })),
+    visitedAt: v.number(),
+    deviceType: v.union(
+      v.literal('windows'),
+      v.literal('mac'),
+      v.literal('mobile'),
+      v.literal('other'),
+    ),
+  }),
 })
