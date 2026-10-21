@@ -72,4 +72,12 @@ export default defineSchema({
       v.literal('other'),
     ),
   }),
+
+  visitorStats: defineTable({
+    total: v.number(),
+    windows: v.number(),
+    mac: v.number(),
+    mobile: v.number(),
+    other: v.number(),
+  }),
 })
