@@ -26,7 +26,7 @@ export function detectVisitorDevice(
   return 'other'
 }
 
-const LOCATION_URL = 'https://ipwho.is/?fields=success,latitude,longitude'
+const LOCATION_URL = '/api/visitor-location'
 
 export type VisitorLocation = {
   latitude: number

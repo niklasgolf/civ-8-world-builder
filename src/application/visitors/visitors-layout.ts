@@ -144,7 +144,7 @@ export class VisitorsLayout {
     const notice = document.createElement('p')
     notice.className = 'visitors-layout__privacy'
     notice.textContent =
-      'Anonymous visits are counted. Approximate location is obtained from an external IP-geolocation service. No IP addresses or visitor identities are stored in our database.'
+      'Anonymous visits are counted. Approximate locations may be determined by our hosting provider, Vercel. No IP addresses or visitor identities are stored in our database.'
 
     return notice
   }
