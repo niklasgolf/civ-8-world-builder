@@ -1,8 +1,9 @@
 
+import type { ConvexClient } from 'convex/browser'
 import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 import { LoginPage } from '../authentication/login-page.ts'
 import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
-import { addVisitorMarker } from './visitor-marker.ts'
+import { loadVisitorLocations } from './visitor-locations.ts'
 
 export class VisitorsLayout {
   readonly element: HTMLElement
@@ -11,7 +12,10 @@ export class VisitorsLayout {
   readonly loginArea: HTMLElement
   readonly loginPage: LoginPage
 
-  constructor(authentication: ClerkAuthentication) {
+  constructor(
+    authentication: ClerkAuthentication,
+    client: ConvexClient,
+  ) {
     this.element = document.createElement('section')
     this.element.className = 'visitors-layout'
     this.element.setAttribute('aria-label', 'Visitors & Login')
@@ -28,7 +32,7 @@ export class VisitorsLayout {
     this.loginPage = new LoginPage(authentication)
 
     this.createStatistics()
-    this.createWorldMap()
+    this.createWorldMap(client)
     this.createLoginArea()
 
     this.element.append(
@@ -88,7 +92,7 @@ export class VisitorsLayout {
     return notes
   }
 
-  private createWorldMap(): void {
+  private createWorldMap(client: ConvexClient): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Visitor World Map'
 
@@ -104,9 +108,8 @@ export class VisitorsLayout {
     map.setAttribute('role', 'img')
     map.setAttribute('aria-label', 'Equirectangular world map')
 
-    addVisitorMarker(map, 56.87767, 14.80906, 'mac')
-
     frame.append(map)
+    loadVisitorLocations(client, map)
 
     this.mapArea.append(
       heading,

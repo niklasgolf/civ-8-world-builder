@@ -1,4 +1,4 @@
-import { mutation } from './_generated/server'
+import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
 
 const VISITOR_LIMIT = 1000
@@ -9,6 +9,24 @@ const deviceTypeValidator = v.union(
   v.literal('mobile'),
   v.literal('other'),
 )
+
+function hasValidLocation(location: {
+  latitude: number
+  longitude: number
+} | undefined): location is { latitude: number, longitude: number } {
+  if (location === undefined) {
+    return false
+  }
+
+  return (
+    Number.isFinite(location.latitude) &&
+    Number.isFinite(location.longitude) &&
+    location.latitude >= -90 &&
+    location.latitude <= 90 &&
+    location.longitude >= -180 &&
+    location.longitude <= 180
+  )
+}
 
 function validateLocation(latitude: number, longitude: number): void {
   if (
@@ -81,5 +99,37 @@ export const registerVisit = mutation({
     }
 
     return null
+  },
+})
+
+export const getVisitorLocations = query({
+  args: {},
+  returns: v.array(v.object({
+    latitude: v.number(),
+    longitude: v.number(),
+    deviceType: deviceTypeValidator,
+  })),
+  handler: async (ctx) => {
+    const visits = await ctx.db
+      .query('visitors')
+      .withIndex('by_creation_time')
+      .order('desc')
+      .take(VISITOR_LIMIT)
+
+    const locations = []
+
+    for (const visit of visits) {
+      if (!hasValidLocation(visit.location)) {
+        continue
+      }
+
+      locations.push({
+        latitude: visit.location.latitude,
+        longitude: visit.location.longitude,
+        deviceType: visit.deviceType,
+      })
+    }
+
+    return locations
   },
 })

@@ -52,7 +52,7 @@ export class ApplicationLayout {
       onSelectWorld(worldId)
     })
 
-    this.visitors = new VisitorsLayout(authentication)
+    this.visitors = new VisitorsLayout(authentication, convex.client)
     this.wiki = new CivWiki()
 
     this.header = new Header((view) => {
