@@ -17,11 +17,11 @@ const APP_VIEWS: ReadonlyArray<readonly [AppView, string]> = [
 export class Header {
   readonly element: HTMLElement
 
-  private readonly onChange: (view: AppView) => void
-  private readonly buttons = new Map<AppView, HTMLButtonElement>()
+  readonly #onChange: (view: AppView) => void
+  readonly #buttons = new Map<AppView, HTMLButtonElement>()
 
   constructor(onChange: (view: AppView) => void) {
-    this.onChange = onChange
+    this.#onChange = onChange
 
     const header = document.createElement('header')
     header.className = 'editor-header'
@@ -29,7 +29,7 @@ export class Header {
     const mark = createHeaderMark()
     mark.classList.add('editor-header__mark')
 
-    header.append(mark, this.createTitle(), this.createModes())
+    header.append(mark, this.#createTitle(), this.#createModes())
 
     this.element = header
     this.setView('map-gallery')
@@ -37,7 +37,7 @@ export class Header {
   }
 
   setView(view: AppView): void {
-    for (const [candidate, button] of this.buttons) {
+    for (const [candidate, button] of this.#buttons) {
       const selected = candidate === view
       button.classList.toggle('is-selected', selected)
       button.setAttribute('aria-pressed', selected ? 'true' : 'false')
@@ -45,7 +45,7 @@ export class Header {
   }
 
   setWorldBuilderAvailable(available: boolean): void {
-    const button = this.buttons.get('world-builder')
+    const button = this.#buttons.get('world-builder')
 
     if (button) {
       button.disabled = !available
@@ -53,7 +53,7 @@ export class Header {
     }
   }
 
-  private createTitle(): HTMLParagraphElement {
+  #createTitle(): HTMLParagraphElement {
     const title = document.createElement('p')
     title.className = 'editor-header__title'
 
@@ -73,7 +73,7 @@ export class Header {
     return title
   }
 
-  private createModes(): HTMLElement {
+  #createModes(): HTMLElement {
     const nav = document.createElement('nav')
     nav.className = 'editor-header__modes'
     nav.setAttribute('aria-label', 'Application views')
@@ -85,10 +85,10 @@ export class Header {
       button.textContent = label
 
       button.addEventListener('click', () => {
-        this.onChange(view)
+        this.#onChange(view)
       })
 
-      this.buttons.set(view, button)
+      this.#buttons.set(view, button)
       nav.append(button)
     }
 
