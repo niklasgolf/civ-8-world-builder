@@ -7,8 +7,8 @@ import {
 export class EditorActionButton {
   readonly element: HTMLButtonElement
 
-  private readonly iconContainer: HTMLSpanElement
-  private readonly labelElement: HTMLSpanElement
+  readonly #iconContainer: HTMLSpanElement
+  readonly #labelElement: HTMLSpanElement
 
   constructor(
     label: string,
@@ -19,33 +19,33 @@ export class EditorActionButton {
     this.element.className = 'tool-button editor-action-button'
     this.element.type = 'button'
 
-    this.iconContainer = document.createElement('span')
-    this.iconContainer.className = 'editor-action-button__icon'
+    this.#iconContainer = document.createElement('span')
+    this.#iconContainer.className = 'editor-action-button__icon'
 
     const svg = createEditorActionIcon(icon)
     svg.classList.add('tool-icon')
-    this.iconContainer.append(svg)
+    this.#iconContainer.append(svg)
 
-    this.labelElement = document.createElement('span')
-    this.labelElement.className = 'editor-action-button__label'
-    this.labelElement.textContent = label
+    this.#labelElement = document.createElement('span')
+    this.#labelElement.className = 'editor-action-button__label'
+    this.#labelElement.textContent = label
 
     this.element.append(
-      this.iconContainer,
-      this.labelElement,
+      this.#iconContainer,
+      this.#labelElement,
     )
 
     this.element.addEventListener('click', onClick)
   }
 
   public setLabel(label: string): void {
-    this.labelElement.textContent = label
+    this.#labelElement.textContent = label
   }
 
   public setIcon(icon: EditorActionIconName): void {
     const svg = createEditorActionIcon(icon)
     svg.classList.add('tool-icon')
-    this.iconContainer.replaceChildren(svg)
+    this.#iconContainer.replaceChildren(svg)
   }
 
   public setDisabled(disabled: boolean): void {
