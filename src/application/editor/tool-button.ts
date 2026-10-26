@@ -1,10 +1,10 @@
-
 import { createIcon, type IconName } from './icons'
 
 export class ToolButton {
   readonly element: HTMLButtonElement
-  readonly id: string
-  readonly group: string | undefined
+
+  readonly #id: string
+  readonly #group: string | undefined
 
   constructor(id: string, label: string, icon: IconName, group?: string) {
     this.element = document.createElement('button')
@@ -12,10 +12,11 @@ export class ToolButton {
     this.element.type = 'button'
     this.element.title = label
     this.element.setAttribute('aria-label', label)
-    this.id = id
-    this.group = group
 
-    if (this.group) {
+    this.#id = id
+    this.#group = group
+
+    if (this.#group) {
       this.element.setAttribute('aria-pressed', 'false')
     }
 
@@ -24,10 +25,18 @@ export class ToolButton {
     this.element.append(svg)
   }
 
+  public get id(): string {
+    return this.#id
+  }
+
+  public get group(): string | undefined {
+    return this.#group
+  }
+
   public setSelected(selected: boolean): void {
     this.element.classList.toggle('is-selected', selected)
 
-    if (this.group) {
+    if (this.#group) {
       this.element.setAttribute('aria-pressed', selected.toString())
     }
   }
