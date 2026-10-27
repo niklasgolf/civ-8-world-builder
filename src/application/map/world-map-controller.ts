@@ -1,4 +1,3 @@
-
 import type { ConvexClient } from 'convex/browser'
 import { api } from '../../../convex/_generated/api.js'
 import type { Id } from '../../../convex/_generated/dataModel.ts'
@@ -56,19 +55,19 @@ const TERRAIN_GRAPHICS: Record<string, TerrainGraphicFactory> = {
 }
 
 export class WorldMapController {
-  private readonly client: ConvexClient
-  private readonly mapGrid: MapGrid
-  private unsubscribe: (() => void) | null = null
+  readonly #client: ConvexClient
+  readonly #mapGrid: MapGrid
+  #unsubscribe: (() => void) | null = null
 
   constructor(client: ConvexClient, mapGrid: MapGrid) {
-    this.client = client
-    this.mapGrid = mapGrid
+    this.#client = client
+    this.#mapGrid = mapGrid
   }
 
   selectWorld(worldId: Id<'worlds'>): void {
     this.stop()
 
-    this.unsubscribe = this.client.onUpdate(
+    this.#unsubscribe = this.#client.onUpdate(
       api.hexes.listByWorld,
       { worldId },
       (hexes) => {
@@ -85,7 +84,7 @@ export class WorldMapController {
             continue
           }
 
-          this.mapGrid.setHexGraphic(
+          this.#mapGrid.setHexGraphic(
             coordinate,
             createGraphic(),
           )
@@ -98,7 +97,7 @@ export class WorldMapController {
   }
 
   stop(): void {
-    this.unsubscribe?.()
-    this.unsubscribe = null
+    this.#unsubscribe?.()
+    this.#unsubscribe = null
   }
 }
