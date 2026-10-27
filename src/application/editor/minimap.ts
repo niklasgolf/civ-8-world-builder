@@ -1,4 +1,3 @@
-
 import { HexGrid } from 'midgard-hex-grid'
 import {
   ZOOM_LEVELS,
@@ -20,14 +19,18 @@ const SKELETON_WIDTH = 42
 const SKELETON_HEIGHT = 13
 
 export class Minimap {
-  readonly element: HTMLElement
+  readonly #element: HTMLElement
 
-  private readonly svg: SVGSVGElement
-  private readonly viewport: SVGRectElement
-  private readonly zoomButtons = new Map<ZoomLevel, HTMLButtonElement>()
+  get element(): HTMLElement {
+    return this.#element
+  }
 
-  private zoomListener: ((level: ZoomLevel) => void) | undefined
-  private centerListener: ((x: number, y: number) => void) | undefined
+  readonly #svg: SVGSVGElement
+  readonly #viewport: SVGRectElement
+  readonly #zoomButtons = new Map<ZoomLevel, HTMLButtonElement>()
+
+  #zoomListener: ((level: ZoomLevel) => void) | undefined
+  #centerListener: ((x: number, y: number) => void) | undefined
 
   constructor(world: MapFrame) {
     const section = document.createElement('section')
@@ -77,10 +80,10 @@ export class Minimap {
       }
 
       button.addEventListener('click', () => {
-        this.zoomListener?.(level)
+        this.#zoomListener?.(level)
       })
 
-      this.zoomButtons.set(level, button)
+      this.#zoomButtons.set(level, button)
       levels.append(button)
     }
 
@@ -89,10 +92,10 @@ export class Minimap {
     const frame = document.createElement('div')
     frame.className = 'minimap__frame'
 
-    this.svg = createMinimapCanvas(world)
-    this.svg.classList.add('minimap__grid')
+    this.#svg = createMinimapCanvas(world)
+    this.#svg.classList.add('minimap__grid')
 
-    this.svg.appendChild(createMinimapBackground(world))
+    this.#svg.appendChild(createMinimapBackground(world))
 
     // Use the same Midgard geometry as the main world map.
     const grid = new HexGrid('x-dominated')
@@ -105,7 +108,7 @@ export class Minimap {
 
     const hexGroup = createSvg('g')
     hexGroup.classList.add('minimap__hexagons')
-    this.svg.appendChild(hexGroup)
+    this.#svg.appendChild(hexGroup)
 
     for (const hexagon of hexagons) {
       hexGroup.appendChild(createMinimapHexagonPolygon(
@@ -118,51 +121,51 @@ export class Minimap {
     }
 
     // The viewport must be drawn above the hexagons.
-    this.viewport = createMinimapViewport(world)
-    this.viewport.classList.add('minimap__viewport')
-    this.svg.appendChild(this.viewport)
+    this.#viewport = createMinimapViewport(world)
+    this.#viewport.classList.add('minimap__viewport')
+    this.#svg.appendChild(this.#viewport)
 
-    this.svg.addEventListener('click', (event) => {
+    this.#svg.addEventListener('click', (event) => {
       const point = clientToSvg(
-        this.svg,
+        this.#svg,
         event.clientX,
         event.clientY,
       )
 
       if (!point) return
 
-      this.centerListener?.(point.x, point.y)
+      this.#centerListener?.(point.x, point.y)
     })
 
-    frame.append(this.svg)
+    frame.append(this.#svg)
     section.append(heading, zoom, frame)
 
-    this.element = section
+    this.#element = section
   }
 
   connect(map: MapViewport): void {
-    this.zoomListener = (level) => {
+    this.#zoomListener = (level) => {
       map.setZoomLevel(level)
     }
 
-    this.centerListener = (x, y) => {
+    this.#centerListener = (x, y) => {
       map.centerOn(x, y)
     }
 
     map.onViewChange((view) => {
-      this.showView(view)
+      this.#showView(view)
     })
 
-    this.showView(map.getView())
+    this.#showView(map.getView())
   }
 
-  private showView(view: MapView): void {
-    this.viewport.setAttribute('x', String(view.x))
-    this.viewport.setAttribute('y', String(view.y))
-    this.viewport.setAttribute('width', String(view.width))
-    this.viewport.setAttribute('height', String(view.height))
+  #showView(view: MapView): void {
+    this.#viewport.setAttribute('x', String(view.x))
+    this.#viewport.setAttribute('y', String(view.y))
+    this.#viewport.setAttribute('width', String(view.width))
+    this.#viewport.setAttribute('height', String(view.height))
 
-    for (const [level, button] of this.zoomButtons) {
+    for (const [level, button] of this.#zoomButtons) {
       const selected = level === view.zoomLevel
 
       button.classList.toggle('is-selected', selected)
