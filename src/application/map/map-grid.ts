@@ -1,4 +1,3 @@
-
 import { HexGrid, type Coordinate } from 'midgard-hex-grid'
 
 import {
@@ -96,22 +95,26 @@ function frameOf(frame: MapFrame): MapFrame {
 }
 
 export class MapGrid implements MapViewport {
-  readonly element: SVGSVGElement
+  readonly #element: SVGSVGElement
 
-  private readonly polygons = new Map<string, SVGPolygonElement>()
-  private readonly graphics = new Map<string, SVGSVGElement>()
-  private readonly placements = new Map<string, HexPlacement>()
-  private readonly coordinates: Coordinate[]
-  private readonly world: MapFrame
-  private readonly viewListeners: Array<(view: MapView) => void> = []
-  private readonly hexClickListeners: Array<(coordinate: Coordinate) => void> = []
+  get element(): SVGSVGElement {
+    return this.#element
+  }
 
-  private centerX: number
-  private centerY: number
-  private zoomLevel: ZoomLevel = 1
-  private view: MapView
-  private viewportWidth = 0
-  private viewportHeight = 0
+  readonly #polygons = new Map<string, SVGPolygonElement>()
+  readonly #graphics = new Map<string, SVGSVGElement>()
+  readonly #placements = new Map<string, HexPlacement>()
+  readonly #coordinates: Coordinate[]
+  readonly #world: MapFrame
+  readonly #viewListeners: Array<(view: MapView) => void> = []
+  readonly #hexClickListeners: Array<(coordinate: Coordinate) => void> = []
+
+  #centerX: number
+  #centerY: number
+  #zoomLevel: ZoomLevel = 1
+  #view: MapView
+  #viewportWidth = 0
+  #viewportHeight = 0
 
   constructor() {
     const grid = new HexGrid('x-dominated')
@@ -122,7 +125,7 @@ export class MapGrid implements MapViewport {
       skeletonHeight: SKELETON_HEIGHT,
     })
 
-    this.coordinates = hexagons.map((hexagon) => ({
+    this.#coordinates = hexagons.map((hexagon) => ({
       x: hexagon.coordinate.x,
       y: hexagon.coordinate.y,
     }))
@@ -132,22 +135,22 @@ export class MapGrid implements MapViewport {
       HEX_WORLD_WIDTH,
     )
 
-    this.world = {
+    this.#world = {
       x: bounds.minX - WORLD_VIEW_PADDING,
       y: bounds.minY - WORLD_VIEW_PADDING,
       width: bounds.width + WORLD_VIEW_PADDING * 2,
       height: bounds.height + WORLD_VIEW_PADDING * 2,
     }
 
-    this.centerX = this.world.x + this.world.width / 2
-    this.centerY = this.world.y + this.world.height / 2
+    this.#centerX = this.#world.x + this.#world.width / 2
+    this.#centerY = this.#world.y + this.#world.height / 2
 
-    this.view = {
-      ...frameOf(this.world),
+    this.#view = {
+      ...frameOf(this.#world),
       zoomLevel: 1,
     }
 
-    const canvas = createMapCanvas(this.view)
+    const canvas = createMapCanvas(this.#view)
     canvas.classList.add('map-area__grid')
 
     for (const hexagon of hexagons) {
@@ -162,11 +165,11 @@ export class MapGrid implements MapViewport {
       })
 
       polygon.addEventListener('pointerenter', () => {
-        this.graphics.get(key)?.classList.add('map-hex--hovered')
+        this.#graphics.get(key)?.classList.add('map-hex--hovered')
       })
 
       polygon.addEventListener('pointerleave', () => {
-        this.graphics.get(key)?.classList.remove('map-hex--hovered')
+        this.#graphics.get(key)?.classList.remove('map-hex--hovered')
       })
 
       polygon.addEventListener('click', () => {
@@ -175,61 +178,61 @@ export class MapGrid implements MapViewport {
           y: hexagon.coordinate.y,
         }
 
-        for (const listener of this.hexClickListeners) {
+        for (const listener of this.#hexClickListeners) {
           listener(coordinate)
         }
       })
 
       canvas.appendChild(polygon)
 
-      this.polygons.set(key, polygon)
+      this.#polygons.set(key, polygon)
 
-      this.placements.set(key, {
+      this.#placements.set(key, {
         x: hexagon.center.x - HEX_BOUNDS.width / 2,
         y: hexagon.center.y - HEX_BOUNDS.height / 2,
       })
     }
 
-    this.element = canvas
+    this.#element = canvas
 
     new ResizeObserver(() => {
-      this.applyView()
+      this.#applyView()
     }).observe(canvas)
   }
 
   getCoordinates(): Coordinate[] {
-    return this.coordinates.map((coordinate) => ({ ...coordinate }))
+    return this.#coordinates.map((coordinate) => ({ ...coordinate }))
   }
 
   getWorldFrame(): MapFrame {
-    return frameOf(this.world)
+    return frameOf(this.#world)
   }
 
   getView(): MapView {
-    return { ...this.view }
+    return { ...this.#view }
   }
 
   setZoomLevel(level: ZoomLevel): void {
-    this.zoomLevel = level
-    this.applyView()
+    this.#zoomLevel = level
+    this.#applyView()
   }
 
   centerOn(x: number, y: number): void {
-    this.centerX = x
-    this.centerY = y
-    this.applyView()
+    this.#centerX = x
+    this.#centerY = y
+    this.#applyView()
   }
 
   onViewChange(listener: (view: MapView) => void): void {
-    this.viewListeners.push(listener)
+    this.#viewListeners.push(listener)
   }
 
   onHexClick(listener: (coordinate: Coordinate) => void): void {
-    this.hexClickListeners.push(listener)
+    this.#hexClickListeners.push(listener)
   }
 
   setHexFill(coordinate: Coordinate, fill: string): void {
-    const polygon = this.polygons.get(coordinateKey(coordinate))
+    const polygon = this.#polygons.get(coordinateKey(coordinate))
 
     if (!polygon) {
       throw new Error(
@@ -242,8 +245,8 @@ export class MapGrid implements MapViewport {
 
   setHexGraphic(coordinate: Coordinate, graphic: SVGSVGElement): void {
     const key = coordinateKey(coordinate)
-    const polygon = this.polygons.get(key)
-    const placement = this.placements.get(key)
+    const polygon = this.#polygons.get(key)
+    const placement = this.#placements.get(key)
 
     if (!polygon || !placement) {
       throw new Error(
@@ -257,7 +260,7 @@ export class MapGrid implements MapViewport {
     graphic.setAttribute('height', String(HEX_BOUNDS.height))
     graphic.setAttribute('data-hex-graphic', key)
 
-    const previousGraphic = this.graphics.get(key)
+    const previousGraphic = this.#graphics.get(key)
 
     if (previousGraphic?.classList.contains('map-hex--hovered')) {
       graphic.classList.add('map-hex--hovered')
@@ -269,80 +272,80 @@ export class MapGrid implements MapViewport {
       polygon.after(graphic)
     }
 
-    this.graphics.set(key, graphic)
+    this.#graphics.set(key, graphic)
   }
 
-  private applyView(): void {
-    const viewport = this.element.getBoundingClientRect()
+  #applyView(): void {
+    const viewport = this.#element.getBoundingClientRect()
 
-    this.viewportWidth = viewport.width
-    this.viewportHeight = viewport.height
+    this.#viewportWidth = viewport.width
+    this.#viewportHeight = viewport.height
 
-    const fitted = this.fittedViewSize()
+    const fitted = this.#fittedViewSize()
 
-    const center = this.clampCenter(
-      this.centerX,
-      this.centerY,
+    const center = this.#clampCenter(
+      this.#centerX,
+      this.#centerY,
       fitted.width,
       fitted.height,
     )
 
-    this.centerX = center.x
-    this.centerY = center.y
+    this.#centerX = center.x
+    this.#centerY = center.y
 
-    this.view = {
+    this.#view = {
       x: center.x - fitted.width / 2,
       y: center.y - fitted.height / 2,
       width: fitted.width,
       height: fitted.height,
-      zoomLevel: this.zoomLevel,
+      zoomLevel: this.#zoomLevel,
     }
 
-    this.element.setAttribute('viewBox', this.viewBoxOf(this.view))
+    this.#element.setAttribute('viewBox', this.#viewBoxOf(this.#view))
 
     const view = this.getView()
 
-    for (const listener of this.viewListeners) {
+    for (const listener of this.#viewListeners) {
       listener(view)
     }
   }
 
-  private fittedViewSize(): { width: number; height: number } {
-    if (this.viewportWidth <= 0 || this.viewportHeight <= 0) {
+  #fittedViewSize(): { width: number; height: number } {
+    if (this.#viewportWidth <= 0 || this.#viewportHeight <= 0) {
       return {
-        width: this.world.width,
-        height: this.world.height,
+        width: this.#world.width,
+        height: this.#world.height,
       }
     }
 
-    const scale = zoomScales(this.fitScale())[this.zoomLevel - 1]
+    const scale = zoomScales(this.#fitScale())[this.#zoomLevel - 1]
 
     return {
-      width: this.viewportWidth / scale,
-      height: this.viewportHeight / scale,
+      width: this.#viewportWidth / scale,
+      height: this.#viewportHeight / scale,
     }
   }
 
-  private fitScale(): number {
+  #fitScale(): number {
     return Math.min(
-      this.viewportWidth / this.world.width,
-      this.viewportHeight / this.world.height,
+      this.#viewportWidth / this.#world.width,
+      this.#viewportHeight / this.#world.height,
     )
   }
 
-  private clampCenter(
+  #clampCenter(
     centerX: number,
     centerY: number,
     viewWidth: number,
     viewHeight: number,
   ): { x: number; y: number } {
     return {
-      x: clampAxis(centerX, this.world.x, this.world.width, viewWidth),
-      y: clampAxis(centerY, this.world.y, this.world.height, viewHeight),
+      x: clampAxis(centerX, this.#world.x, this.#world.width, viewWidth),
+      y: clampAxis(centerY, this.#world.y, this.#world.height, viewHeight),
     }
   }
 
-  private viewBoxOf(frame: MapFrame): string {
+  #viewBoxOf(frame: MapFrame): string {
     return `${frame.x} ${frame.y} ${frame.width} ${frame.height}`
   }
 }
