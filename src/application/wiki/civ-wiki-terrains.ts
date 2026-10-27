@@ -1,4 +1,3 @@
-
 import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
 import { createDesertFlat } from '../../library-svg-graphics/terrain/desert.ts'
 import { createDesertHills } from '../../library-svg-graphics/terrain/desert-hills.ts'
@@ -140,7 +139,7 @@ export class CivWikiTerrain {
     const body = document.createElement('tbody')
 
     for (const terrain of BASE_TERRAINS) {
-      body.append(this.createTerrainRow(terrain))
+      body.append(this.#createTerrainRow(terrain))
     }
 
     table.append(head, body)
@@ -149,7 +148,7 @@ export class CivWikiTerrain {
     return section
   }
 
-  private createTerrainRow(terrain: TerrainEntry): HTMLTableRowElement {
+  #createTerrainRow(terrain: TerrainEntry): HTMLTableRowElement {
     const row = document.createElement('tr')
 
     const name = document.createElement('th')
@@ -158,7 +157,7 @@ export class CivWikiTerrain {
     name.textContent = terrain.name
 
     const graphicCell = document.createElement('td')
-    graphicCell.append(this.createGraphic(terrain.createGraphic))
+    graphicCell.append(this.#createGraphic(terrain.createGraphic))
 
     const description = document.createElement('td')
     description.textContent = terrain.description
@@ -168,7 +167,7 @@ export class CivWikiTerrain {
     return row
   }
 
-  private createGraphic(createGraphic: () => SVGSVGElement): SVGSVGElement {
+  #createGraphic(createGraphic: () => SVGSVGElement): SVGSVGElement {
     const graphic = createGraphic()
     graphic.classList.add('civ-wiki__graphic')
 

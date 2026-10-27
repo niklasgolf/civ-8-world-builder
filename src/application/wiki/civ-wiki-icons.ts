@@ -8,7 +8,7 @@ export class CivWikiIcons {
     grid.className = 'civ-wiki__grid'
 
     for (const name of names) {
-      grid.append(this.createCard(name))
+      grid.append(this.#createCard(name))
     }
 
     return grid
@@ -38,7 +38,7 @@ export class CivWikiIcons {
     return section
   }
 
-  private createCard(name: IconName): HTMLElement {
+  #createCard(name: IconName): HTMLElement {
     const card = document.createElement('article')
     card.className = 'civ-wiki__card'
 
