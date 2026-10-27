@@ -1,4 +1,3 @@
-
 import {
   WIKI_GROUPS,
   type WikiCategory,
@@ -10,11 +9,11 @@ export type WikiPageId = 'home' | WikiCategoryId
 export class CivWikiNavigation {
   readonly element: HTMLElement
 
-  private readonly buttons = new Map<WikiPageId, HTMLButtonElement>()
-  private readonly onSelect: (page: WikiPageId) => void
+  readonly #buttons = new Map<WikiPageId, HTMLButtonElement>()
+  readonly #onSelect: (page: WikiPageId) => void
 
   constructor(onSelect: (page: WikiPageId) => void) {
-    this.onSelect = onSelect
+    this.#onSelect = onSelect
 
     const nav = document.createElement('nav')
     nav.className = 'civ-wiki__nav'
@@ -26,7 +25,7 @@ export class CivWikiNavigation {
     const homeList = document.createElement('div')
     homeList.className = 'civ-wiki__nav-list'
 
-    homeList.append(this.createButton('home', 'Home'))
+    homeList.append(this.#createButton('home', 'Home'))
     homeSection.append(homeList)
     nav.append(homeSection)
 
@@ -42,7 +41,7 @@ export class CivWikiNavigation {
       list.className = 'civ-wiki__nav-list'
 
       for (const category of group.categories) {
-        list.append(this.createCategoryButton(category))
+        list.append(this.#createCategoryButton(category))
       }
 
       section.append(label, list)
@@ -53,7 +52,7 @@ export class CivWikiNavigation {
   }
 
   setSelected(page: WikiPageId): void {
-    for (const [id, button] of this.buttons) {
+    for (const [id, button] of this.#buttons) {
       const selected = id === page
 
       button.classList.toggle('is-selected', selected)
@@ -61,11 +60,11 @@ export class CivWikiNavigation {
     }
   }
 
-  private createCategoryButton(category: WikiCategory): HTMLButtonElement {
-    return this.createButton(category.id, category.label)
+  #createCategoryButton(category: WikiCategory): HTMLButtonElement {
+    return this.#createButton(category.id, category.label)
   }
 
-  private createButton(
+  #createButton(
     id: WikiPageId,
     label: string,
   ): HTMLButtonElement {
@@ -75,10 +74,10 @@ export class CivWikiNavigation {
     button.textContent = label
 
     button.addEventListener('click', () => {
-      this.onSelect(id)
+      this.#onSelect(id)
     })
 
-    this.buttons.set(id, button)
+    this.#buttons.set(id, button)
 
     return button
   }

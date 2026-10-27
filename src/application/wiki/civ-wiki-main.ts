@@ -1,4 +1,3 @@
-
 import {
   WIKI_GROUPS,
   iconsFor,
@@ -15,11 +14,11 @@ import { CivWikiTerrain } from './civ-wiki-terrains.ts'
 export class CivWikiMain {
   readonly element: HTMLElement
 
-  private readonly navigation: CivWikiNavigation
-  private readonly panels = new Map<WikiPageId, HTMLElement>()
-  private readonly home = new CivWikiHome()
-  private readonly icons = new CivWikiIcons()
-  private readonly terrain = new CivWikiTerrain()
+  readonly #navigation: CivWikiNavigation
+  readonly #panels = new Map<WikiPageId, HTMLElement>()
+  readonly #home = new CivWikiHome()
+  readonly #icons = new CivWikiIcons()
+  readonly #terrain = new CivWikiTerrain()
 
   constructor() {
     const wiki = document.createElement('section')
@@ -32,27 +31,27 @@ export class CivWikiMain {
     const layout = document.createElement('div')
     layout.className = 'civ-wiki__layout'
 
-    this.navigation = new CivWikiNavigation((pageId) => {
-      this.showPage(pageId)
+    this.#navigation = new CivWikiNavigation((pageId) => {
+      this.#showPage(pageId)
     })
 
     layout.append(
-      this.navigation.element,
-      this.createContent(),
+      this.#navigation.element,
+      this.#createContent(),
     )
 
     page.append(
-      this.createIntro(),
+      this.#createIntro(),
       layout,
     )
 
     wiki.append(page)
     this.element = wiki
 
-    this.showPage('home')
+    this.#showPage('home')
   }
 
-  private createIntro(): HTMLElement {
+  #createIntro(): HTMLElement {
     const intro = document.createElement('header')
     intro.className = 'civ-wiki__intro'
 
@@ -69,24 +68,24 @@ export class CivWikiMain {
     return intro
   }
 
-  private createContent(): HTMLElement {
+  #createContent(): HTMLElement {
     const content = document.createElement('div')
     content.className = 'civ-wiki__content'
 
     const homePanel = document.createElement('div')
     homePanel.className = 'civ-wiki__panel'
-    homePanel.append(this.home.createElement())
+    homePanel.append(this.#home.createElement())
 
-    this.panels.set('home', homePanel)
+    this.#panels.set('home', homePanel)
     content.append(homePanel)
 
     for (const group of WIKI_GROUPS) {
       for (const category of group.categories) {
         const panel = category.id === 'base-terrains'
-          ? this.createTerrainPanel()
-          : this.createCategoryPanel(category)
+          ? this.#createTerrainPanel()
+          : this.#createCategoryPanel(category)
 
-        this.panels.set(category.id, panel)
+        this.#panels.set(category.id, panel)
         content.append(panel)
       }
     }
@@ -94,19 +93,19 @@ export class CivWikiMain {
     return content
   }
 
-  private createTerrainPanel(): HTMLElement {
+  #createTerrainPanel(): HTMLElement {
     const panel = document.createElement('div')
     panel.className = 'civ-wiki__panel'
 
     panel.append(
-      this.terrain.createElement(),
-      this.icons.createTerrainIcons(),
+      this.#terrain.createElement(),
+      this.#icons.createTerrainIcons(),
     )
 
     return panel
   }
 
-  private createCategoryPanel(category: WikiCategory): HTMLElement {
+  #createCategoryPanel(category: WikiCategory): HTMLElement {
     const panel = document.createElement('section')
     panel.className = 'civ-wiki__panel'
 
@@ -119,16 +118,16 @@ export class CivWikiMain {
 
     panel.append(
       heading,
-      this.icons.createGrid(iconsFor(category.id)),
+      this.#icons.createGrid(iconsFor(category.id)),
     )
 
     return panel
   }
 
-  private showPage(pageId: WikiPageId): void {
-    this.navigation.setSelected(pageId)
+  #showPage(pageId: WikiPageId): void {
+    this.#navigation.setSelected(pageId)
 
-    for (const [id, panel] of this.panels) {
+    for (const [id, panel] of this.#panels) {
       panel.hidden = id !== pageId
     }
 
