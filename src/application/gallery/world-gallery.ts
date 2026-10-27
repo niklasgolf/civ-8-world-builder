@@ -1,4 +1,3 @@
-
 import type { Id } from '../../../convex/_generated/dataModel.ts'
 
 export interface GalleryWorld {
@@ -11,11 +10,11 @@ export interface GalleryWorld {
 export class WorldGallery {
   readonly element: HTMLElement
 
-  private readonly cards: HTMLElement
-  private readonly onSelectWorld: (worldId: Id<'worlds'>) => void
+  readonly #cards: HTMLElement
+  readonly #onSelectWorld: (worldId: Id<'worlds'>) => void
 
   constructor(onSelectWorld: (worldId: Id<'worlds'>) => void) {
-    this.onSelectWorld = onSelectWorld
+    this.#onSelectWorld = onSelectWorld
 
     const section = document.createElement('section')
     section.className = 'world-gallery'
@@ -45,10 +44,10 @@ export class WorldGallery {
     const description = document.createElement('p')
     description.textContent = 'Choose a world to explore.'
 
-    this.cards = document.createElement('div')
-    this.cards.className = 'world-gallery__grid'
+    this.#cards = document.createElement('div')
+    this.#cards.className = 'world-gallery__grid'
 
-    center.append(heading, description, this.cards)
+    center.append(heading, description, this.#cards)
 
     const information = document.createElement('aside')
     information.className = 'world-gallery__right-panel'
@@ -69,32 +68,36 @@ export class WorldGallery {
   }
 
   setWorlds(worlds: readonly GalleryWorld[]): void {
-    this.cards.replaceChildren()
+    this.#cards.replaceChildren()
 
     const sortedWorlds = [...worlds].sort(
-      (first, second) => first.number - second.number,
+      (first, second) => first.number - second.number
     )
 
     for (const world of sortedWorlds) {
-      const card = document.createElement('button')
-      card.type = 'button'
-      card.className = 'world-gallery__card'
-
-      const title = document.createElement('span')
-      title.className = 'world-gallery__title'
-      title.textContent = 'Unedited Map'
-
-      const editor = document.createElement('span')
-      editor.className = 'world-gallery__editor'
-      editor.textContent = world.fantasyName ?? 'Unassigned'
-
-      card.append(title, editor)
-
-      card.addEventListener('click', () => {
-        this.onSelectWorld(world._id)
-      })
-
-      this.cards.append(card)
+      this.#cards.append(this.#createWorldCard(world))
     }
+  }
+
+  #createWorldCard(world: GalleryWorld): HTMLButtonElement {
+    const card = document.createElement('button')
+    card.type = 'button'
+    card.className = 'world-gallery__card'
+
+    const title = document.createElement('span')
+    title.className = 'world-gallery__title'
+    title.textContent = 'Unedited Map'
+
+    const editor = document.createElement('span')
+    editor.className = 'world-gallery__editor'
+    editor.textContent = world.fantasyName ?? 'Unassigned'
+
+    card.append(title, editor)
+
+    card.addEventListener('click', () => {
+      this.#onSelectWorld(world._id)
+    })
+
+    return card
   }
 }
