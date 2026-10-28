@@ -10,9 +10,9 @@ import { createVisitorStatistics } from './visitor-statistics.ts'
 
 export class VisitorsLayout {
   readonly element: HTMLElement
-  readonly statisticsArea: HTMLElement
-  readonly mapArea: HTMLElement
-  readonly loginArea: HTMLElement
+  readonly #statisticsArea: HTMLElement
+  readonly #mapArea: HTMLElement
+  readonly #loginArea: HTMLElement
   readonly loginPage: LoginPage
 
   constructor(
@@ -23,14 +23,14 @@ export class VisitorsLayout {
     this.element.className = 'visitors-layout'
     this.element.setAttribute('aria-label', 'Visitors & Login')
 
-    this.statisticsArea = document.createElement('aside')
-    this.statisticsArea.className = 'visitors-layout__left-panel'
+    this.#statisticsArea = document.createElement('aside')
+    this.#statisticsArea.className = 'visitors-layout__left-panel'
 
-    this.mapArea = document.createElement('div')
-    this.mapArea.className = 'visitors-layout__map-area'
+    this.#mapArea = document.createElement('div')
+    this.#mapArea.className = 'visitors-layout__map-area'
 
-    this.loginArea = document.createElement('aside')
-    this.loginArea.className = 'visitors-layout__right-panel'
+    this.#loginArea = document.createElement('aside')
+    this.#loginArea.className = 'visitors-layout__right-panel'
 
     this.loginPage = new LoginPage(authentication)
 
@@ -39,9 +39,9 @@ export class VisitorsLayout {
     this.#createLoginArea()
 
     this.element.append(
-      this.statisticsArea,
-      this.mapArea,
-      this.loginArea,
+      this.#statisticsArea,
+      this.#mapArea,
+      this.#loginArea,
     )
   }
 
@@ -56,7 +56,7 @@ export class VisitorsLayout {
     const description = document.createElement('p')
     description.textContent = 'All recorded visits, by device.'
 
-    this.statisticsArea.append(
+    this.#statisticsArea.append(
       heading,
       description,
       createVisitorStatistics(client),
@@ -117,7 +117,7 @@ export class VisitorsLayout {
       kalmar: kalmarMap,
     })
 
-    this.mapArea.append(
+    this.#mapArea.append(
       heading,
       description,
       frame,
@@ -169,7 +169,7 @@ export class VisitorsLayout {
     description.textContent =
       'Sign in with Google to access your Civilization of Wonders account.'
 
-    this.loginArea.append(
+    this.#loginArea.append(
       heading,
       description,
       this.loginPage.element,
