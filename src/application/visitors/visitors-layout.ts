@@ -34,9 +34,9 @@ export class VisitorsLayout {
 
     this.loginPage = new LoginPage(authentication)
 
-    this.createStatistics(client)
-    this.createWorldMap(client)
-    this.createLoginArea()
+    this.#createStatistics(client)
+    this.#createWorldMap(client)
+    this.#createLoginArea()
 
     this.element.append(
       this.statisticsArea,
@@ -49,7 +49,7 @@ export class VisitorsLayout {
     this.loginPage.initialize()
   }
 
-  private createStatistics(client: ConvexClient): void {
+  #createStatistics(client: ConvexClient): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Visitor Statistics'
 
@@ -60,18 +60,18 @@ export class VisitorsLayout {
       heading,
       description,
       createVisitorStatistics(client),
-      this.createPanelNotes(),
+      this.#createPanelNotes(),
     )
   }
 
-  private createPanelNotes(): HTMLElement {
+  #createPanelNotes(): HTMLElement {
     const notes = document.createElement('div')
     notes.className = 'visitors-layout__notes'
-    notes.append(this.createMapCredit(), this.createPrivacyNotice())
+    notes.append(this.#createMapCredit(), this.#createPrivacyNotice())
     return notes
   }
 
-  private createWorldMap(client: ConvexClient): void {
+  #createWorldMap(client: ConvexClient): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Visitor World Map'
 
@@ -124,7 +124,7 @@ export class VisitorsLayout {
     )
   }
 
-  private createMapCredit(): HTMLElement {
+  #createMapCredit(): HTMLElement {
     const credit = document.createElement('p')
     credit.className = 'visitors-layout__map-credit'
 
@@ -152,7 +152,7 @@ export class VisitorsLayout {
     return credit
   }
 
-  private createPrivacyNotice(): HTMLElement {
+  #createPrivacyNotice(): HTMLElement {
     const notice = document.createElement('p')
     notice.className = 'visitors-layout__privacy'
     notice.textContent =
@@ -161,7 +161,7 @@ export class VisitorsLayout {
     return notice
   }
 
-  private createLoginArea(): void {
+  #createLoginArea(): void {
     const heading = document.createElement('h1')
     heading.textContent = 'Login & Account'
 
