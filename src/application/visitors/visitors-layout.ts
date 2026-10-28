@@ -2,8 +2,8 @@
 import type { ConvexClient } from 'convex/browser'
 import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 import { LoginPage } from '../authentication/login-page.ts'
-import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
-import { createVisitorKalmarMap } from '../../library-svg-graphics/kalmar-map/kalmar-map.ts'
+import { createVisitorWorldMap } from '../../library-svg-graphics/visitor-map-world/world-map.ts'
+import { createVisitorKalmarMap } from '../../library-svg-graphics/visitor-map-kalmar/kalmar-map.ts'
 import { loadVisitorLocations } from './visitor-locations.ts'
 import { createVisitorStatistics } from './visitor-statistics.ts'
 
