@@ -22,18 +22,35 @@ export function projectVisitorLocation(
   }
 }
 
+const WORLD_MARKER_RADIUS = 16
+
+export type VisitorMarkerPlacement = {
+  project: (
+    latitude: number,
+    longitude: number,
+  ) => { x: number, y: number } | null
+  radius: number
+}
+
 export function addVisitorMarker(
   map: SVGSVGElement,
   latitude: number,
   longitude: number,
   deviceType: VisitorMarkerDevice,
-): SVGCircleElement {
-  const point = projectVisitorLocation(latitude, longitude)
+  placement?: VisitorMarkerPlacement,
+): SVGCircleElement | null {
+  const point = placement
+    ? placement.project(latitude, longitude)
+    : projectVisitorLocation(latitude, longitude)
+
+  if (!point) {
+    return null
+  }
 
   const marker = appendSvg(map, 'circle', {
     cx: String(point.x),
     cy: String(point.y),
-    r: '16',
+    r: String(placement ? placement.radius : WORLD_MARKER_RADIUS),
     fill: VISITOR_COLORS[deviceType],
     stroke: '#0B2941',
     'stroke-width': '0.5',

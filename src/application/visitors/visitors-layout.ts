@@ -4,6 +4,7 @@ import type { ClerkAuthentication } from '../authentication/clerk-authentication
 import { LoginPage } from '../authentication/login-page.ts'
 import { createVisitorWorldMap } from '../../library-svg-graphics/visitor-map-world/world-map.ts'
 import { createVisitorKalmarMap } from '../../library-svg-graphics/visitor-map-kalmar/kalmar-map.ts'
+import { createVisitorSverigeMap } from '../../library-svg-graphics/visitor-map-sverige/sverige-map.ts'
 import { loadVisitorLocations } from './visitor-locations.ts'
 import { createVisitorStatistics } from './visitor-statistics.ts'
 
@@ -99,7 +100,22 @@ export class VisitorsLayout {
     kalmarContainer.append(kalmarMap)
     frame.append(kalmarContainer)
 
-    loadVisitorLocations(client, map)
+    const sverigeContainer = document.createElement('div')
+    sverigeContainer.className = 'visitors-layout__sverige-map-container'
+
+    const sverigeMap = createVisitorSverigeMap()
+    sverigeMap.classList.add('visitors-layout__sverige-map')
+    sverigeMap.setAttribute('role', 'img')
+    sverigeMap.setAttribute('aria-label', 'Map of southern Sweden')
+
+    sverigeContainer.append(sverigeMap)
+    frame.append(sverigeContainer)
+
+    loadVisitorLocations(client, {
+      world: map,
+      sverige: sverigeMap,
+      kalmar: kalmarMap,
+    })
 
     this.mapArea.append(
       heading,

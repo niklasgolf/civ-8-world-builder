@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { projectVisitorOnKalmarMap } from '../src/library-svg-graphics/visitor-map-kalmar/kalmar-map.ts'
+import { projectVisitorOnSverigeMap } from '../src/library-svg-graphics/visitor-map-sverige/sverige-map.ts'
 import {
   addVisitorMarker,
   projectVisitorLocation,
@@ -56,6 +58,21 @@ describe('Visitor SVG markers', () => {
     ).toBe(true)
   })
 
+  it('skips a marker when the placement is outside that map', () => {
+    const map = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    )
+
+    const marker = addVisitorMarker(map, 55.6761, 12.5683, 'other', {
+      project: projectVisitorOnSverigeMap,
+      radius: 9.58
+    })
+
+    expect(marker).toBeNull()
+    expect(map.children.length).toBe(0)
+  })
+
   it('returns the exact SVG element added to the map', () => {
     const map = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -66,5 +83,43 @@ describe('Visitor SVG markers', () => {
 
     expect(map.children.length).toBe(1)
     expect(map.firstElementChild).toBe(marker)
+  })
+})
+
+describe('Detailed visitor map projections', () => {
+  it('places Kalmar inside both detailed maps', () => {
+    const kalmar = projectVisitorOnKalmarMap(56.6634, 16.3616)
+    const sweden = projectVisitorOnSverigeMap(56.6634, 16.3616)
+
+    expect(kalmar).not.toBeNull()
+    expect(sweden).not.toBeNull()
+    expect(kalmar?.x).toBeCloseTo(1246.3982, 4)
+    expect(kalmar?.y).toBeCloseTo(588.8056, 4)
+    expect(sweden?.x).toBeCloseTo(522.6904, 4)
+    expect(sweden?.y).toBeCloseTo(751.0466, 4)
+  })
+
+  it('places Stockholm, Göteborg and Malmö on Sweden only', () => {
+    for (const [latitude, longitude] of [
+      [59.3293, 18.0686],
+      [57.7089, 11.9746],
+      [55.605, 13.0007]
+    ]) {
+      expect(projectVisitorOnSverigeMap(latitude, longitude)).not.toBeNull()
+      expect(projectVisitorOnKalmarMap(latitude, longitude)).toBeNull()
+    }
+  })
+
+  it('keeps Kalmarsund on the Kalmar map and off the Sweden land', () => {
+    expect(projectVisitorOnKalmarMap(56.66, 16.45)).not.toBeNull()
+    expect(projectVisitorOnSverigeMap(56.66, 16.45)).toBeNull()
+  })
+
+  it('excludes Denmark, Norway and a point north of the Sweden crop', () => {
+    expect(projectVisitorOnSverigeMap(55.6761, 12.5683)).toBeNull()
+    expect(projectVisitorOnKalmarMap(55.6761, 12.5683)).toBeNull()
+    expect(projectVisitorOnSverigeMap(59.124, 11.387)).toBeNull()
+    expect(projectVisitorOnSverigeMap(61.2, 17.1)).toBeNull()
+    expect(projectVisitorOnKalmarMap(59.9139, 10.7522)).toBeNull()
   })
 })
