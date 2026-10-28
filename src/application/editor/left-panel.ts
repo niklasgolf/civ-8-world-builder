@@ -1,4 +1,3 @@
-
 import { ToolSection } from './tool-section'
 import { ToolButton } from './tool-button'
 import { TerrainButton } from './terrain-button'
@@ -27,25 +26,25 @@ import { createCoast } from '../../library-svg-graphics/terrain/coast.ts'
 import { createOcean } from '../../library-svg-graphics/terrain/ocean.ts'
 
 export class LeftPanel {
-  readonly element: HTMLDivElement
-  readonly scroll: HTMLDivElement
-  private readonly heading: HTMLHeadingElement
-  private selectedTerrain = 'grass'
+  readonly #element: HTMLDivElement
+  readonly #scroll: HTMLDivElement
+  readonly #heading: HTMLHeadingElement
+  #selectedTerrain = 'grass'
 
   constructor() {
-    this.element = document.createElement('div')
-    this.element.className = 'editor-layout__left-panel'
+    this.#element = document.createElement('div')
+    this.#element.className = 'editor-layout__left-panel'
 
-    this.scroll = document.createElement('div')
-    this.scroll.className = 'tool-panel__scroll'
+    this.#scroll = document.createElement('div')
+    this.#scroll.className = 'tool-panel__scroll'
 
-    this.heading = document.createElement('h2')
-    this.heading.className = 'tool-section__title'
-    this.heading.textContent = 'Unedited Map'
+    this.#heading = document.createElement('h2')
+    this.#heading.className = 'tool-section__title'
+    this.#heading.textContent = 'Unedited Map'
 
     const headingContainer = document.createElement('div')
     headingContainer.className = 'tool-section world-panel__info'
-    headingContainer.append(this.heading)
+    headingContainer.append(this.#heading)
 
     const brushSection = new ToolSection('Brush')
     const terrainSection = new ToolSection('Terrain')
@@ -326,7 +325,7 @@ export class LeftPanel {
 
     for (const button of terrainButtons) {
       button.element.addEventListener('click', () => {
-        this.selectedTerrain = button.id
+        this.#selectedTerrain = button.id
       })
     }
 
@@ -357,7 +356,7 @@ export class LeftPanel {
     resourcesSection.setUnavailable()
     riversSection.setUnavailable()
 
-    this.scroll.append(
+    this.#scroll.append(
       brushSection.element,
       terrainSection.element,
       featuresSection.element,
@@ -365,14 +364,22 @@ export class LeftPanel {
       riversSection.element,
     )
 
-    this.element.append(headingContainer, this.scroll)
+    this.#element.append(headingContainer, this.#scroll)
+  }
+
+  get element(): HTMLDivElement {
+    return this.#element
+  }
+
+  get scroll(): HTMLDivElement {
+    return this.#scroll
   }
 
   getSelectedTerrain(): string {
-    return this.selectedTerrain
+    return this.#selectedTerrain
   }
 
   setWorldTitle(title: string): void {
-    this.heading.textContent = title
+    this.#heading.textContent = title
   }
 }
