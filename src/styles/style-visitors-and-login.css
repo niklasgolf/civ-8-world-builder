@@ -139,6 +139,7 @@
 /* Visitor world map */
 
 .visitors-layout__map-frame {
+  position: relative;
   width: 100%;
   margin: 0 auto;
   padding: 12px;
@@ -150,17 +151,64 @@
   width: 100%;
   height: auto;
   aspect-ratio: 2 / 1;
-  background: #0B2941;
+  background: var(--map-ocean);
   shape-rendering: geometricPrecision;
 }
 
 .visitors-layout__world-map path {
-  fill: #28536B;
-  stroke: #56839A;
+  fill: var(--map-land);
+  stroke: var(--map-coast);
   stroke-width: 1.25;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
+
+/* Kalmar map overlay */
+
+.visitors-layout__kalmar-map-container {
+  position: absolute;
+  z-index: 2;
+  left: 54%;
+  bottom: 12px;
+  height: calc((100% - 24px) * 0.29);
+  aspect-ratio: 5 / 2;
+  transform: translateX(-50%);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.visitors-layout__kalmar-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  shape-rendering: geometricPrecision;
+}
+
+.visitors-layout__kalmar-map rect {
+  fill: var(--map-ocean);
+}
+
+.visitors-layout__kalmar-map path {
+  fill: var(--map-land);
+  stroke: var(--map-coast);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Subtle pink outline above the SVG */
+
+.visitors-layout__kalmar-map-container::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border: 1.5px solid rgba(255, 155, 194, 0.4);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* Map credits and privacy */
 
 .visitors-layout p.visitors-layout__map-credit,
 .visitors-layout p.visitors-layout__privacy {
@@ -196,9 +244,8 @@
   font-size: 28px;
   font-weight: 600;
   line-height: 1.3;
-  letter-spacing: 0.04em;
-  text-align: center;
   overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .login-page__role {

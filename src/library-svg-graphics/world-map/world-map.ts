@@ -15,5 +15,9 @@ export function createVisitorWorldMap(): SVGSVGElement {
   svg.removeAttribute('width')
   svg.removeAttribute('height')
 
+  svg.style.setProperty('--map-ocean', '#061827')
+  svg.style.setProperty('--map-land', '#193748')
+  svg.style.setProperty('--map-coast', '#3C6578')
+
   return svg
 }

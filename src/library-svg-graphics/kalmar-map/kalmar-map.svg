@@ -1,0 +1,42 @@
+
+<!--
+  Kalmar area, for visitor markers on the Civilization of Wonders visitors map.
+  Map colors are not stored in this file. The Kalmar map module sets
+  map-ocean, map-land, and map-coast on the root element.
+
+  Geographic coverage is centered 2 km north of Kalmar city (56.661389 N, 16.362778 E).
+  The window is 50 km east-west and 20 km north-south, so the ground aspect is 2.5:1.
+  It includes central Kalmar, Lindsdal, the nearby countryside, Kalmarsund, and the
+  facing part of Öland. Natural Earth 1:10m was inspected and not used: in that dataset
+  the west shore of Öland opposite Kalmar is a single segment about 26 km long.
+
+  Source: European Commission, Eurostat, GISCO, Coastlines 2016, scale 1:1,000,000.
+  File: COAS_RG_01M_2016_4326.geojson
+  CRS: EPSG:4326 (WGS 84).
+  Download: https://gisco-services.ec.europa.eu/distribution/v2/coas/geojson/COAS_RG_01M_2016_4326.geojson
+  Dataset page: https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/coastlines
+  License: Eurostat reuse policy. Attribution is required. Downloaded 2026-10-28.
+  Geometry is clipped from the published polygons. No coastline was drawn by hand.
+
+  Projection: equirectangular. Longitude is linear in x and latitude is linear in y.
+  The longitude span is scaled by cos(center latitude), so one ground kilometer has
+  the same length east-west and north-south at the center of the map.
+
+  Bounds, WGS 84 decimal degrees:
+    west  = 15.953952
+    east  = 16.771604
+    south = 56.589524
+    north = 56.769186
+  viewBox = 0 0 2500 1000
+
+  Marker position for a visitor latitude and longitude:
+    x = (longitude - west) / (east - west) * 2500
+    y = (north - latitude) / (north - south) * 1000
+  A location outside these bounds is outside this map.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2500 1000">
+  <title>Kalmar area</title>
+  <desc>Equirectangular map of the Kalmar area from Eurostat GISCO Coastlines 2016 at 1:1,000,000.</desc>
+  <rect x="0" y="0" width="2500" height="1000"/>
+  <path stroke-width="1.25" stroke-linejoin="round" vector-effect="non-scaling-stroke" d="M1567.9,0.0 L1511.8,37.2 L1460.6,0.0 L1314.4,0.0 L1319.9,13.8 L1263.1,31.8 L1283.1,63.1 L1265.7,82.3 L1253.4,148.5 L1264.5,169.4 L1264.2,205.1 L1287.4,253.2 L1273.0,268.8 L1234.0,274.1 L1221.6,289.4 L1251.3,306.0 L1253.3,326.5 L1291.4,336.2 L1287.4,379.2 L1263.9,419.9 L1260.0,457.3 L1302.5,492.0 L1287.3,509.4 L1269.3,493.9 L1258.1,498.3 L1278.8,546.4 L1269.6,594.3 L1256.4,613.3 L1227.6,621.2 L1164.2,664.4 L1118.8,731.4 L1111.5,709.4 L1124.6,655.1 L1097.0,620.3 L1053.1,615.2 L1003.2,634.0 L990.7,645.3 L991.1,690.0 L959.4,759.5 L947.3,762.5 L935.0,740.4 L898.2,766.8 L881.3,824.8 L868.9,867.6 L838.9,895.7 L827.2,926.0 L840.2,976.5 L839.9,1000.0 L0.0,1000.0 L0.0,0.0 Z M2500.0,0.0 L2500.0,15.4 L2474.9,76.4 L2474.4,141.9 L2458.7,226.3 L2416.3,292.2 L2397.8,339.8 L2396.4,457.6 L2363.1,543.7 L2334.5,573.8 L2328.2,594.4 L2321.0,661.2 L2326.8,684.4 L2309.2,699.9 L2311.7,724.5 L2299.8,748.0 L2304.6,768.3 L2284.3,777.0 L2271.6,850.1 L2285.4,941.5 L2275.4,982.8 L2267.1,1000.0 L1402.8,1000.0 L1405.6,993.7 L1401.4,977.5 L1383.6,949.6 L1357.3,924.8 L1367.0,920.5 L1383.6,932.0 L1422.7,935.9 L1456.2,919.1 L1463.2,883.3 L1480.2,873.4 L1544.7,745.8 L1552.8,664.0 L1584.5,626.7 L1576.7,594.9 L1585.6,580.7 L1578.9,571.8 L1594.2,534.5 L1593.7,489.4 L1606.3,424.9 L1646.2,355.4 L1651.9,320.5 L1676.4,298.5 L1718.8,186.2 L1724.4,154.1 L1718.5,136.1 L1735.1,121.8 L1753.8,78.0 L1757.2,60.2 L1791.8,16.9 L1795.6,12.1 L1800.0,0.0 Z M1053.7,681.3 L1056.4,693.1 L1048.9,703.2 L1036.8,692.7 L1039.1,685.5 L1049.7,679.6 L1042.8,671.1 L1047.2,645.6 L1055.8,645.8 L1058.3,659.4 L1053.2,665.4 L1058.2,675.8 Z M1279.2,636.9 L1255.2,641.3 L1247.4,636.0 L1258.7,631.0 L1282.2,606.7 L1297.6,610.9 L1295.0,619.6 Z M933.5,851.1 L936.1,858.9 L923.8,880.9 L909.6,876.6 L906.4,867.9 L918.0,857.2 L918.3,850.4 Z M1012.4,654.6 L1014.1,664.8 L996.2,657.3 L1013.8,635.2 L1022.1,641.4 Z M896.7,853.2 L902.8,862.2 L893.6,881.7 L881.1,878.1 Z M854.0,920.2 L860.8,923.4 L854.0,936.2 L834.7,935.9 L838.8,928.9 Z"/>
+</svg>

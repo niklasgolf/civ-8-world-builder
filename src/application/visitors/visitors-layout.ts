@@ -3,6 +3,7 @@ import type { ConvexClient } from 'convex/browser'
 import type { ClerkAuthentication } from '../authentication/clerk-authentication.ts'
 import { LoginPage } from '../authentication/login-page.ts'
 import { createVisitorWorldMap } from '../../library-svg-graphics/world-map/world-map.ts'
+import { createVisitorKalmarMap } from '../../library-svg-graphics/kalmar-map/kalmar-map.ts'
 import { loadVisitorLocations } from './visitor-locations.ts'
 import { createVisitorStatistics } from './visitor-statistics.ts'
 
@@ -86,6 +87,18 @@ export class VisitorsLayout {
     map.setAttribute('aria-label', 'Equirectangular world map')
 
     frame.append(map)
+
+    const kalmarContainer = document.createElement('div')
+    kalmarContainer.className = 'visitors-layout__kalmar-map-container'
+
+    const kalmarMap = createVisitorKalmarMap()
+    kalmarMap.classList.add('visitors-layout__kalmar-map')
+    kalmarMap.setAttribute('role', 'img')
+    kalmarMap.setAttribute('aria-label', 'Map of Kalmar and surrounding area')
+
+    kalmarContainer.append(kalmarMap)
+    frame.append(kalmarContainer)
+
     loadVisitorLocations(client, map)
 
     this.mapArea.append(
