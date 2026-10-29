@@ -6,12 +6,12 @@ import type { VisitorsLayout } from '../application/visitors/visitors-layout.ts'
 import type { ApplicationState } from './application-state.ts'
 
 export class Navigation {
-  private readonly header: Header
-  private readonly gallery: WorldGallery
-  private readonly worldBuilder: HTMLElement
-  private readonly visitors: VisitorsLayout
-  private readonly wiki: CivWiki
-  private readonly state: ApplicationState
+  readonly #header: Header
+  readonly #gallery: WorldGallery
+  readonly #worldBuilder: HTMLElement
+  readonly #visitors: VisitorsLayout
+  readonly #wiki: CivWiki
+  readonly #state: ApplicationState
 
   constructor(
     header: Header,
@@ -21,39 +21,39 @@ export class Navigation {
     wiki: CivWiki,
     state: ApplicationState,
   ) {
-    this.header = header
-    this.gallery = gallery
-    this.worldBuilder = worldBuilder
-    this.visitors = visitors
-    this.wiki = wiki
-    this.state = state
+    this.#header = header
+    this.#gallery = gallery
+    this.#worldBuilder = worldBuilder
+    this.#visitors = visitors
+    this.#wiki = wiki
+    this.#state = state
   }
 
   public showView(view: AppView): void {
-    if (view === 'world-builder' && this.state.selectedWorldId === null) {
+    if (view === 'world-builder' && this.#state.selectedWorldId === null) {
       view = 'map-gallery'
     }
 
-    this.gallery.element.classList.toggle(
+    this.#gallery.element.classList.toggle(
       'is-active',
       view === 'map-gallery',
     )
 
-    this.worldBuilder.classList.toggle(
+    this.#worldBuilder.classList.toggle(
       'is-active',
       view === 'world-builder',
     )
 
-    this.visitors.element.classList.toggle(
+    this.#visitors.element.classList.toggle(
       'is-active',
       view === 'visitors-login',
     )
 
-    this.wiki.element.classList.toggle(
+    this.#wiki.element.classList.toggle(
       'is-active',
       view === 'civ-wiki',
     )
 
-    this.header.setView(view)
+    this.#header.setView(view)
   }
 }
