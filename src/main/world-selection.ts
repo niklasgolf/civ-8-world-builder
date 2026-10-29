@@ -12,15 +12,15 @@ import type { EditingSessionController } from './editing-session.ts'
 import type { Navigation } from './navigation.ts'
 
 export class WorldSelection {
-  private readonly convex: ConvexConnection
-  private readonly gallery: WorldGallery
-  private readonly editorLayout: EditorLayout
-  private readonly worldMapController: WorldMapController
-  private readonly header: Header
-  private readonly state: ApplicationState
-  private readonly assignedEditor: AssignedEditor
-  private readonly editingSession: EditingSessionController
-  private readonly navigation: Navigation
+  readonly #convex: ConvexConnection
+  readonly #gallery: WorldGallery
+  readonly #editorLayout: EditorLayout
+  readonly #worldMapController: WorldMapController
+  readonly #header: Header
+  readonly #state: ApplicationState
+  readonly #assignedEditor: AssignedEditor
+  readonly #editingSession: EditingSessionController
+  readonly #navigation: Navigation
 
   constructor(
     convex: ConvexConnection,
@@ -33,28 +33,28 @@ export class WorldSelection {
     editingSession: EditingSessionController,
     navigation: Navigation,
   ) {
-    this.convex = convex
-    this.gallery = gallery
-    this.editorLayout = editorLayout
-    this.worldMapController = worldMapController
-    this.header = header
-    this.state = state
-    this.assignedEditor = assignedEditor
-    this.editingSession = editingSession
-    this.navigation = navigation
+    this.#convex = convex
+    this.#gallery = gallery
+    this.#editorLayout = editorLayout
+    this.#worldMapController = worldMapController
+    this.#header = header
+    this.#state = state
+    this.#assignedEditor = assignedEditor
+    this.#editingSession = editingSession
+    this.#navigation = navigation
   }
 
   public async initializeGallery(): Promise<void> {
-    this.state.setWorlds(await this.convex.client.query(
+    this.#state.setWorlds(await this.#convex.client.query(
       api.worlds.list,
       {},
     ))
 
-    this.gallery.setWorlds(this.state.getWorlds())
+    this.#gallery.setWorlds(this.#state.getWorlds())
   }
 
   public selectWorld(worldId: Id<'worlds'>): void {
-    const selectedWorld = this.state.getWorlds().find(
+    const selectedWorld = this.#state.getWorlds().find(
       (world) => world._id === worldId,
     )
 
@@ -63,19 +63,19 @@ export class WorldSelection {
       return
     }
 
-    this.state.selectWorld(worldId)
+    this.#state.selectWorld(worldId)
 
-    this.editorLayout.setWorldInformation(
+    this.#editorLayout.setWorldInformation(
       'Unedited Map',
       'Loading...',
     )
 
-    this.header.setWorldBuilderAvailable(true)
-    this.worldMapController.selectWorld(worldId)
+    this.#header.setWorldBuilderAvailable(true)
+    this.#worldMapController.selectWorld(worldId)
 
-    this.editingSession.subscribe(worldId)
-    this.navigation.showView('world-builder')
+    this.#editingSession.subscribe(worldId)
+    this.#navigation.showView('world-builder')
 
-    void this.assignedEditor.refresh(worldId)
+    void this.#assignedEditor.refresh(worldId)
   }
 }
