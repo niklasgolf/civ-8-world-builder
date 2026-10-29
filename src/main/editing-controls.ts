@@ -1,4 +1,3 @@
-
 import type { EditorLayout } from '../application/editor/editor-layout.ts'
 import type { ApplicationState } from './application-state.ts'
 
@@ -15,35 +14,42 @@ export class EditingControls {
   }
 
   public isCurrentEditor(): boolean {
-    return this.#state.activeSession?.isMine === true
+    return this.#state.getActiveSession()?.isMine === true
   }
 
   public canEditSelectedWorld(): boolean {
+    const selectedWorldId = this.#state.getSelectedWorldId()
+    const identity = this.#state.getCurrentIdentity()
+
     if (
-      !this.#state.selectedWorldId ||
-      !this.#state.currentIdentity ||
-      this.#state.currentIdentity.role === 'visitor'
+      !selectedWorldId ||
+      !identity ||
+      identity.role === 'visitor'
     ) {
       return false
     }
 
     return (
-      this.#state.currentIdentity.role === 'admin' ||
-      this.#state.currentIdentity.worldId === this.#state.selectedWorldId
+      identity.role === 'admin' ||
+      identity.worldId === selectedWorldId
     )
   }
 
   public update(): void {
     const panel = this.#editorLayout.rightPanel
-    const isAdmin = this.#state.currentIdentity?.role === 'admin'
+    const identity = this.#state.getCurrentIdentity()
+    const session = this.#state.getActiveSession()
+    const sessionLoaded = this.#state.isSessionLoaded()
+
+    const isAdmin = identity?.role === 'admin'
     const ownsSession = this.isCurrentEditor()
     const canEdit = this.canEditSelectedWorld()
 
-    if (!this.#state.sessionLoaded) {
+    if (!sessionLoaded) {
       panel.setEditingStatus('Loading status...')
-    } else if (this.#state.activeSession) {
+    } else if (session) {
       panel.setEditingStatus(
-        `Editing: ${this.#state.activeSession.fantasyName}`,
+        `Editing: ${session.fantasyName}`,
       )
     } else {
       panel.setEditingStatus('Viewing mode')
@@ -53,25 +59,25 @@ export class EditingControls {
 
     const showEdit = (
       canEdit &&
-      (this.#state.activeSession === null || ownsSession)
+      (session === null || ownsSession)
     )
 
     const showTakeover = (
       isAdmin &&
-      this.#state.activeSession !== null &&
+      session !== null &&
       !ownsSession
     )
 
     panel.setEditButtonVisible(
-      this.#state.sessionLoaded && showEdit,
+      sessionLoaded && showEdit,
     )
 
     panel.setTakeoverButtonVisible(
-      this.#state.sessionLoaded && showTakeover,
+      sessionLoaded && showTakeover,
     )
 
     panel.setEditingButtonsDisabled(
-      this.#state.editingActionPending,
+      this.#state.isEditingActionPending(),
     )
   }
 }

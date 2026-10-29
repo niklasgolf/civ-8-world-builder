@@ -3,7 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { api } from '../convex/_generated/api.js'
 import type { Id } from '../convex/_generated/dataModel.ts'
 import type { ConvexConnection } from '../src/application/database/convex-client.ts'
-import type { ApplicationState } from '../src/main/application-state.ts'
+import { ApplicationState } from '../src/main/application-state.ts'
+import type { EditingSession, FantasyIdentity } from '../src/main/application-state.ts'
 import type { EditingControls } from '../src/main/editing-controls.ts'
 import { EditingSessionController } from '../src/main/editing-session.ts'
 
@@ -12,33 +13,37 @@ const world2 = 'world_2' as Id<'worlds'>
 
 type Role = 'visitor' | 'editor' | 'admin'
 
-type TestState = {
-  selectedWorldId: Id<'worlds'> | null
-  currentIdentity: { role: Role } | null
-  activeSession: {
-    fantasyName: string
-    isMine: boolean
-  } | null
-  sessionLoaded: boolean
-  editingActionPending: boolean
-  unsubscribeEditingSession: (() => void) | null
-}
-
-type SessionCallback = (
-  session: TestState['activeSession'],
-) => void
-
+type SessionCallback = (session: EditingSession | null) => void
 type ErrorCallback = (error: Error) => void
 
-function createController() {
-  const state: TestState = {
-    selectedWorldId: world1,
-    currentIdentity: { role: 'editor' },
-    activeSession: null,
-    sessionLoaded: true,
-    editingActionPending: false,
-    unsubscribeEditingSession: null,
+function identity(role: Role): FantasyIdentity {
+  return {
+    authenticated: true,
+    role,
+    fantasyName: 'Test User',
+    worldId: role === 'editor' ? world1 : null,
   }
+}
+
+function session(
+  fantasyName: string,
+  isMine: boolean,
+): EditingSession {
+  return {
+    worldId: world1,
+    fantasyName,
+    role: 'editor',
+    startedAt: 123,
+    isMine,
+  }
+}
+
+function createController() {
+  const state = new ApplicationState()
+
+  state.selectWorld(world1)
+  state.setCurrentIdentity(identity('editor'))
+  state.setSessionLoaded(true)
 
   const mutation = vi.fn().mockResolvedValue(undefined)
   const unsubscribe = vi.fn()
@@ -76,7 +81,7 @@ function createController() {
 
   const controller = new EditingSessionController(
     convex,
-    state as unknown as ApplicationState,
+    state,
     controls,
   )
 
@@ -89,8 +94,8 @@ function createController() {
     update,
     canEditSelectedWorld,
     isCurrentEditor,
-    emitSession: (session: TestState['activeSession']) => {
-      onSession(session)
+    emitSession: (activeSession: EditingSession | null) => {
+      onSession(activeSession)
     },
     emitError: (error: Error) => {
       onError(error)
@@ -120,15 +125,12 @@ describe('EditingSessionController — subscriptions', () => {
   it('clears the previous session when subscribing', () => {
     const app = createController()
 
-    app.state.activeSession = {
-      fantasyName: 'Previous Editor',
-      isMine: true,
-    }
+    app.state.setActiveSession(session('Previous Editor', true))
 
     app.controller.subscribe(world1)
 
-    expect(app.state.activeSession).toBeNull()
-    expect(app.state.sessionLoaded).toBe(false)
+    expect(app.state.getActiveSession()).toBeNull()
+    expect(app.state.isSessionLoaded()).toBe(false)
     expect(app.update).toHaveBeenCalled()
   })
 
@@ -136,28 +138,23 @@ describe('EditingSessionController — subscriptions', () => {
     const app = createController()
     const previousUnsubscribe = vi.fn()
 
-    app.state.unsubscribeEditingSession = previousUnsubscribe
+    app.state.setEditingSessionUnsubscribe(previousUnsubscribe)
 
     app.controller.subscribe(world1)
 
     expect(previousUnsubscribe).toHaveBeenCalledOnce()
-    expect(app.state.unsubscribeEditingSession).toBe(app.unsubscribe)
+    expect(app.state.getEditingSessionUnsubscribe()).toBe(app.unsubscribe)
   })
 
   it('updates the active session when Convex sends data', () => {
     const app = createController()
+    const activeSession = session('World Builder', false)
 
     app.controller.subscribe(world1)
-    app.emitSession({
-      fantasyName: 'World Builder',
-      isMine: false,
-    })
+    app.emitSession(activeSession)
 
-    expect(app.state.activeSession).toEqual({
-      fantasyName: 'World Builder',
-      isMine: false,
-    })
-    expect(app.state.sessionLoaded).toBe(true)
+    expect(app.state.getActiveSession()).toEqual(activeSession)
+    expect(app.state.isSessionLoaded()).toBe(true)
     expect(app.update).toHaveBeenCalledTimes(2)
   })
 
@@ -165,15 +162,12 @@ describe('EditingSessionController — subscriptions', () => {
     const app = createController()
 
     app.controller.subscribe(world1)
-    app.state.selectedWorldId = world2
+    app.state.selectWorld(world2)
 
-    app.emitSession({
-      fantasyName: 'Old World Editor',
-      isMine: false,
-    })
+    app.emitSession(session('Old World Editor', false))
 
-    expect(app.state.activeSession).toBeNull()
-    expect(app.state.sessionLoaded).toBe(false)
+    expect(app.state.getActiveSession()).toBeNull()
+    expect(app.state.isSessionLoaded()).toBe(false)
     expect(app.update).toHaveBeenCalledOnce()
   })
 
@@ -184,8 +178,8 @@ describe('EditingSessionController — subscriptions', () => {
     app.controller.subscribe(world1)
     app.emitError(new Error('Connection failed'))
 
-    expect(app.state.activeSession).toBeNull()
-    expect(app.state.sessionLoaded).toBe(false)
+    expect(app.state.getActiveSession()).toBeNull()
+    expect(app.state.isSessionLoaded()).toBe(false)
     expect(consoleSpy).toHaveBeenCalledOnce()
   })
 
@@ -194,7 +188,7 @@ describe('EditingSessionController — subscriptions', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
 
     app.controller.subscribe(world1)
-    app.state.selectedWorldId = world2
+    app.state.selectWorld(world2)
 
     app.emitError(new Error('Old subscription failed'))
 
@@ -213,16 +207,13 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
       api.editingSessions.startEditing,
       { worldId: world1 },
     )
-    expect(app.state.editingActionPending).toBe(false)
+    expect(app.state.isEditingActionPending()).toBe(false)
   })
 
   it('stops editing when the current editor clicks Stop Editing', async () => {
     const app = createController()
 
-    app.state.activeSession = {
-      fantasyName: 'Current Editor',
-      isMine: true,
-    }
+    app.state.setActiveSession(session('Current Editor', true))
     app.isCurrentEditor.mockReturnValue(true)
 
     await app.controller.handleEditAction()
@@ -246,7 +237,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
   it('prevents editing before the session has loaded', async () => {
     const app = createController()
 
-    app.state.sessionLoaded = false
+    app.state.setSessionLoaded(false)
 
     await app.controller.handleEditAction()
 
@@ -256,7 +247,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
   it('prevents editing when no world is selected', async () => {
     const app = createController()
 
-    app.state.selectedWorldId = null
+    app.state.selectWorld(null)
 
     await app.controller.handleEditAction()
 
@@ -266,10 +257,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
   it('prevents starting a session when another editor is active', async () => {
     const app = createController()
 
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    app.state.setActiveSession(session('Other Editor', false))
 
     await app.controller.handleEditAction()
 
@@ -279,7 +267,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
   it('prevents a second editing action while one is pending', async () => {
     const app = createController()
 
-    app.state.editingActionPending = true
+    app.state.setEditingActionPending(true)
 
     await app.controller.handleEditAction()
 
@@ -297,7 +285,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
 
     const action = app.controller.handleEditAction()
 
-    expect(app.state.editingActionPending).toBe(true)
+    expect(app.state.isEditingActionPending()).toBe(true)
     expect(app.update).toHaveBeenCalledOnce()
 
     expect(finishMutation).toBeDefined()
@@ -305,7 +293,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
 
     await action
 
-    expect(app.state.editingActionPending).toBe(false)
+    expect(app.state.isEditingActionPending()).toBe(false)
     expect(app.update).toHaveBeenCalledTimes(2)
   })
 
@@ -320,7 +308,7 @@ describe('EditingSessionController — Edit and Stop Editing', () => {
 
     await app.controller.handleEditAction()
 
-    expect(app.state.editingActionPending).toBe(false)
+    expect(app.state.isEditingActionPending()).toBe(false)
     expect(consoleSpy).toHaveBeenCalledOnce()
     expect(alertMock).toHaveBeenCalledWith('Editing failed')
   })
@@ -330,11 +318,8 @@ describe('EditingSessionController — Take Over', () => {
   it('allows an administrator to take over another editor session', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'admin' }
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    app.state.setCurrentIdentity(identity('admin'))
+    app.state.setActiveSession(session('Other Editor', false))
 
     await app.controller.handleTakeoverAction()
 
@@ -345,17 +330,14 @@ describe('EditingSessionController — Take Over', () => {
         takeover: true,
       },
     )
-    expect(app.state.editingActionPending).toBe(false)
+    expect(app.state.isEditingActionPending()).toBe(false)
   })
 
   it('prevents editors from taking over', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'editor' }
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    app.state.setCurrentIdentity(identity('editor'))
+    app.state.setActiveSession(session('Other Editor', false))
 
     await app.controller.handleTakeoverAction()
 
@@ -365,11 +347,8 @@ describe('EditingSessionController — Take Over', () => {
   it('prevents visitors from taking over', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'visitor' }
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    app.state.setCurrentIdentity(identity('visitor'))
+    app.state.setActiveSession(session('Other Editor', false))
 
     await app.controller.handleTakeoverAction()
 
@@ -379,7 +358,7 @@ describe('EditingSessionController — Take Over', () => {
   it('prevents takeover without an active session', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'admin' }
+    app.state.setCurrentIdentity(identity('admin'))
 
     await app.controller.handleTakeoverAction()
 
@@ -389,11 +368,8 @@ describe('EditingSessionController — Take Over', () => {
   it('prevents takeover of the administrator own session', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'admin' }
-    app.state.activeSession = {
-      fantasyName: 'Administrator',
-      isMine: true,
-    }
+    app.state.setCurrentIdentity(identity('admin'))
+    app.state.setActiveSession(session('Administrator', true))
     app.isCurrentEditor.mockReturnValue(true)
 
     await app.controller.handleTakeoverAction()
@@ -404,12 +380,9 @@ describe('EditingSessionController — Take Over', () => {
   it('prevents takeover while another action is pending', async () => {
     const app = createController()
 
-    app.state.currentIdentity = { role: 'admin' }
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
-    app.state.editingActionPending = true
+    app.state.setCurrentIdentity(identity('admin'))
+    app.state.setActiveSession(session('Other Editor', false))
+    app.state.setEditingActionPending(true)
 
     await app.controller.handleTakeoverAction()
 
@@ -423,16 +396,13 @@ describe('EditingSessionController — Take Over', () => {
 
     vi.stubGlobal('alert', alertMock)
 
-    app.state.currentIdentity = { role: 'admin' }
-    app.state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    app.state.setCurrentIdentity(identity('admin'))
+    app.state.setActiveSession(session('Other Editor', false))
     app.mutation.mockRejectedValue(new Error('Takeover failed'))
 
     await app.controller.handleTakeoverAction()
 
-    expect(app.state.editingActionPending).toBe(false)
+    expect(app.state.isEditingActionPending()).toBe(false)
     expect(consoleSpy).toHaveBeenCalledOnce()
     expect(alertMock).toHaveBeenCalledWith('Takeover failed')
   })

@@ -1,39 +1,21 @@
 
 import { describe, expect, it, vi } from 'vitest'
+import type { Id } from '../convex/_generated/dataModel.ts'
 import type { EditorLayout } from '../src/application/editor/editor-layout.ts'
-import type { ApplicationState } from '../src/main/application-state.ts'
+import { ApplicationState } from '../src/main/application-state.ts'
+import type { FantasyIdentity, EditingSession } from '../src/main/application-state.ts'
 import { EditingControls } from '../src/main/editing-controls.ts'
 
 type Role = 'visitor' | 'editor' | 'admin'
 
-type TestIdentity = {
-  authenticated: boolean
-  role: Role
-  fantasyName: string | null
-  worldId: string | null
-}
-
-type TestSession = {
-  fantasyName: string
-  isMine: boolean
-}
-
-type TestState = {
-  selectedWorldId: string | null
-  currentIdentity: TestIdentity | null
-  activeSession: TestSession | null
-  sessionLoaded: boolean
-  editingActionPending: boolean
-}
+const world1 = 'world_1' as Id<'worlds'>
+const world2 = 'world_2' as Id<'worlds'>
 
 function createControls() {
-  const state: TestState = {
-    selectedWorldId: 'world_1',
-    currentIdentity: null,
-    activeSession: null,
-    sessionLoaded: true,
-    editingActionPending: false,
-  }
+  const state = new ApplicationState()
+
+  state.selectWorld(world1)
+  state.setSessionLoaded(true)
 
   const panel = {
     setEditingStatus: vi.fn(),
@@ -49,18 +31,34 @@ function createControls() {
 
   const controls = new EditingControls(
     editorLayout,
-    state as unknown as ApplicationState,
+    state,
   )
 
   return { controls, state, panel }
 }
 
-function identity(role: Role, worldId: string | null = null): TestIdentity {
+function identity(
+  role: Role,
+  worldId: Id<'worlds'> | null = null,
+): FantasyIdentity {
   return {
     authenticated: true,
     role,
     fantasyName: 'Test User',
     worldId,
+  }
+}
+
+function session(
+  fantasyName: string,
+  isMine: boolean,
+): EditingSession {
+  return {
+    worldId: world1,
+    fantasyName,
+    role: 'editor',
+    startedAt: 123,
+    isMine,
   }
 }
 
@@ -74,7 +72,7 @@ describe('EditingControls — permissions', () => {
   it('prevents signed-in visitors from editing', () => {
     const { controls, state } = createControls()
 
-    state.currentIdentity = identity('visitor')
+    state.setCurrentIdentity(identity('visitor'))
 
     expect(controls.canEditSelectedWorld()).toBe(false)
   })
@@ -82,7 +80,7 @@ describe('EditingControls — permissions', () => {
   it('allows editors to edit their assigned world', () => {
     const { controls, state } = createControls()
 
-    state.currentIdentity = identity('editor', 'world_1')
+    state.setCurrentIdentity(identity('editor', world1))
 
     expect(controls.canEditSelectedWorld()).toBe(true)
   })
@@ -90,7 +88,7 @@ describe('EditingControls — permissions', () => {
   it('prevents editors from editing other worlds', () => {
     const { controls, state } = createControls()
 
-    state.currentIdentity = identity('editor', 'world_2')
+    state.setCurrentIdentity(identity('editor', world2))
 
     expect(controls.canEditSelectedWorld()).toBe(false)
   })
@@ -98,7 +96,7 @@ describe('EditingControls — permissions', () => {
   it('allows administrators to edit any selected world', () => {
     const { controls, state } = createControls()
 
-    state.currentIdentity = identity('admin')
+    state.setCurrentIdentity(identity('admin'))
 
     expect(controls.canEditSelectedWorld()).toBe(true)
   })
@@ -106,8 +104,8 @@ describe('EditingControls — permissions', () => {
   it('prevents editing when no world is selected', () => {
     const { controls, state } = createControls()
 
-    state.currentIdentity = identity('admin')
-    state.selectedWorldId = null
+    state.setCurrentIdentity(identity('admin'))
+    state.selectWorld(null)
 
     expect(controls.canEditSelectedWorld()).toBe(false)
   })
@@ -123,10 +121,7 @@ describe('EditingControls — session ownership', () => {
   it('recognizes the current session owner', () => {
     const { controls, state } = createControls()
 
-    state.activeSession = {
-      fantasyName: 'Test Editor',
-      isMine: true,
-    }
+    state.setActiveSession(session('Test Editor', true))
 
     expect(controls.isCurrentEditor()).toBe(true)
   })
@@ -134,10 +129,7 @@ describe('EditingControls — session ownership', () => {
   it('recognizes a session owned by someone else', () => {
     const { controls, state } = createControls()
 
-    state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    state.setActiveSession(session('Other Editor', false))
 
     expect(controls.isCurrentEditor()).toBe(false)
   })
@@ -147,7 +139,7 @@ describe('EditingControls — button states', () => {
   it('shows loading status before session data arrives', () => {
     const { controls, state, panel } = createControls()
 
-    state.sessionLoaded = false
+    state.setSessionLoaded(false)
     controls.update()
 
     expect(panel.setEditingStatus).toHaveBeenCalledWith('Loading status...')
@@ -167,7 +159,7 @@ describe('EditingControls — button states', () => {
   it('shows Edit for an eligible editor without an active session', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('editor', 'world_1')
+    state.setCurrentIdentity(identity('editor', world1))
     controls.update()
 
     expect(panel.setEditButtonVisible).toHaveBeenCalledWith(true)
@@ -177,7 +169,7 @@ describe('EditingControls — button states', () => {
   it('hides Edit from visitors', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('visitor')
+    state.setCurrentIdentity(identity('visitor'))
     controls.update()
 
     expect(panel.setEditButtonVisible).toHaveBeenCalledWith(false)
@@ -186,11 +178,7 @@ describe('EditingControls — button states', () => {
   it('shows the editing session owner', () => {
     const { controls, state, panel } = createControls()
 
-    state.activeSession = {
-      fantasyName: 'World Builder',
-      isMine: false,
-    }
-
+    state.setActiveSession(session('World Builder', false))
     controls.update()
 
     expect(panel.setEditingStatus).toHaveBeenCalledWith(
@@ -201,11 +189,8 @@ describe('EditingControls — button states', () => {
   it('shows Stop Editing for the current authorized editor', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('editor', 'world_1')
-    state.activeSession = {
-      fantasyName: 'Test Editor',
-      isMine: true,
-    }
+    state.setCurrentIdentity(identity('editor', world1))
+    state.setActiveSession(session('Test Editor', true))
 
     controls.update()
 
@@ -217,11 +202,8 @@ describe('EditingControls — button states', () => {
   it('hides Edit when someone else owns the session', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('editor', 'world_1')
-    state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    state.setCurrentIdentity(identity('editor', world1))
+    state.setActiveSession(session('Other Editor', false))
 
     controls.update()
 
@@ -232,11 +214,8 @@ describe('EditingControls — button states', () => {
   it('shows Take Over to an administrator when another editor owns the session', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('admin')
-    state.activeSession = {
-      fantasyName: 'Other Editor',
-      isMine: false,
-    }
+    state.setCurrentIdentity(identity('admin'))
+    state.setActiveSession(session('Other Editor', false))
 
     controls.update()
 
@@ -247,11 +226,8 @@ describe('EditingControls — button states', () => {
   it('hides Take Over when the administrator owns the session', () => {
     const { controls, state, panel } = createControls()
 
-    state.currentIdentity = identity('admin')
-    state.activeSession = {
-      fantasyName: 'Administrator',
-      isMine: true,
-    }
+    state.setCurrentIdentity(identity('admin'))
+    state.setActiveSession(session('Administrator', true))
 
     controls.update()
 
@@ -262,7 +238,7 @@ describe('EditingControls — button states', () => {
   it('disables editing buttons while an action is pending', () => {
     const { controls, state, panel } = createControls()
 
-    state.editingActionPending = true
+    state.setEditingActionPending(true)
     controls.update()
 
     expect(panel.setEditingButtonsDisabled).toHaveBeenCalledWith(true)

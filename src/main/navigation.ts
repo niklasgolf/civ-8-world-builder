@@ -30,7 +30,7 @@ export class Navigation {
   }
 
   public showView(view: AppView): void {
-    if (view === 'world-builder' && this.#state.selectedWorldId === null) {
+    if (view === 'world-builder' && this.#state.getSelectedWorldId() === null) {
       view = 'map-gallery'
     }
 

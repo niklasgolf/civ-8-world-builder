@@ -4,16 +4,11 @@ import { api } from '../convex/_generated/api.js'
 import type { Id } from '../convex/_generated/dataModel.ts'
 import type { ConvexConnection } from '../src/application/database/convex-client.ts'
 import type { EditorLayout } from '../src/application/editor/editor-layout.ts'
-import type { ApplicationState } from '../src/main/application-state.ts'
+import { ApplicationState } from '../src/main/application-state.ts'
 import { AssignedEditor } from '../src/main/assigned-editor.ts'
 
 const world1 = 'world_1' as Id<'worlds'>
 const world2 = 'world_2' as Id<'worlds'>
-
-type TestState = {
-  selectedWorldId: Id<'worlds'> | null
-  assignedEditorRequest: number
-}
 
 type AssignedEditorResult = {
   fantasyName: string | null
@@ -32,10 +27,8 @@ function deferred<T>() {
 }
 
 function createAssignedEditor() {
-  const state: TestState = {
-    selectedWorldId: world1,
-    assignedEditorRequest: 0,
-  }
+  const state = new ApplicationState()
+  state.selectWorld(world1)
 
   const query = vi.fn().mockResolvedValue({
     fantasyName: 'Test Editor',
@@ -54,7 +47,7 @@ function createAssignedEditor() {
   const assignedEditor = new AssignedEditor(
     convex,
     editorLayout,
-    state as unknown as ApplicationState,
+    state,
   )
 
   return {
@@ -124,15 +117,15 @@ describe('AssignedEditor — existing behavior', () => {
   it('increments the request counter for each refresh', async () => {
     const app = createAssignedEditor()
 
-    expect(app.state.assignedEditorRequest).toBe(0)
+    expect(app.state.getAssignedEditorRequest()).toBe(0)
 
     await app.assignedEditor.refresh(world1)
 
-    expect(app.state.assignedEditorRequest).toBe(1)
+    expect(app.state.getAssignedEditorRequest()).toBe(1)
 
     await app.assignedEditor.refresh(world1)
 
-    expect(app.state.assignedEditorRequest).toBe(2)
+    expect(app.state.getAssignedEditorRequest()).toBe(2)
   })
 
   it('ignores a response when another world is selected', async () => {
@@ -143,7 +136,7 @@ describe('AssignedEditor — existing behavior', () => {
 
     const refresh = app.assignedEditor.refresh(world1)
 
-    app.state.selectedWorldId = world2
+    app.state.selectWorld(world2)
 
     request.resolve({ fantasyName: 'Old World Editor' })
     await refresh
@@ -172,7 +165,7 @@ describe('AssignedEditor — existing behavior', () => {
     expect(app.setEditorTitle).toHaveBeenCalledExactlyOnceWith(
       'New Editor',
     )
-    expect(app.state.assignedEditorRequest).toBe(2)
+    expect(app.state.getAssignedEditorRequest()).toBe(2)
   })
 
   it('displays Unassigned when the query fails', async () => {
@@ -204,7 +197,7 @@ describe('AssignedEditor — existing behavior', () => {
 
     const refresh = app.assignedEditor.refresh(world1)
 
-    app.state.selectedWorldId = world2
+    app.state.selectWorld(world2)
 
     request.reject(new Error('Old world query failed'))
     await refresh
@@ -247,7 +240,7 @@ describe('AssignedEditor — existing behavior', () => {
 
     const refresh = app.assignedEditor.refresh(world1)
 
-    app.state.selectedWorldId = null
+    app.state.selectWorld(null)
 
     request.resolve({ fantasyName: 'Former Editor' })
     await refresh

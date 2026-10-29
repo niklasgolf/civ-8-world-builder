@@ -45,16 +45,16 @@ export class WorldSelection {
   }
 
   public async initializeGallery(): Promise<void> {
-    this.state.worlds = await this.convex.client.query(
+    this.state.setWorlds(await this.convex.client.query(
       api.worlds.list,
       {},
-    )
+    ))
 
-    this.gallery.setWorlds(this.state.worlds)
+    this.gallery.setWorlds(this.state.getWorlds())
   }
 
   public selectWorld(worldId: Id<'worlds'>): void {
-    const selectedWorld = this.state.worlds.find(
+    const selectedWorld = this.state.getWorlds().find(
       (world) => world._id === worldId,
     )
 
@@ -63,7 +63,7 @@ export class WorldSelection {
       return
     }
 
-    this.state.selectedWorldId = worldId
+    this.state.selectWorld(worldId)
 
     this.editorLayout.setWorldInformation(
       'Unedited Map',

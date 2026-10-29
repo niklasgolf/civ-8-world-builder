@@ -1,13 +1,16 @@
 
 import { describe, expect, it, vi } from 'vitest'
+import type { Id } from '../convex/_generated/dataModel.ts'
 import type { Header } from '../src/application/editor/header.ts'
 import type { WorldGallery } from '../src/application/gallery/world-gallery.ts'
 import type { CivWiki } from '../src/application/wiki/civ-wiki.ts'
 import type { VisitorsLayout } from '../src/application/visitors/visitors-layout.ts'
-import type { ApplicationState } from '../src/main/application-state.ts'
+import { ApplicationState } from '../src/main/application-state.ts'
 import { Navigation } from '../src/main/navigation.ts'
 
-function createNavigation(selectedWorldId: string | null = null) {
+const world1 = 'world_1' as Id<'worlds'>
+
+function createNavigation(selectedWorldId: Id<'worlds'> | null = null) {
   const galleryElement = document.createElement('div')
   const worldBuilderElement = document.createElement('div')
   const visitorsElement = document.createElement('div')
@@ -31,10 +34,8 @@ function createNavigation(selectedWorldId: string | null = null) {
     element: wikiElement,
   } as unknown as CivWiki
 
-  // Mutable test state, independent of ApplicationState's readonly API.
-  const testState: { selectedWorldId: string | null } = {
-    selectedWorldId,
-  }
+  const state = new ApplicationState()
+  state.selectWorld(selectedWorldId)
 
   const navigation = new Navigation(
     header,
@@ -42,7 +43,7 @@ function createNavigation(selectedWorldId: string | null = null) {
     worldBuilderElement,
     visitors,
     wiki,
-    testState as unknown as ApplicationState,
+    state,
   )
 
   return {
@@ -52,7 +53,7 @@ function createNavigation(selectedWorldId: string | null = null) {
     visitorsElement,
     wikiElement,
     setView,
-    testState,
+    state,
   }
 }
 
@@ -89,7 +90,7 @@ describe('Navigation — existing behavior', () => {
   })
 
   it('shows the World Builder when a world is selected', () => {
-    const app = createNavigation('world_1')
+    const app = createNavigation(world1)
 
     app.navigation.showView('world-builder')
 
@@ -125,7 +126,7 @@ describe('Navigation — existing behavior', () => {
   })
 
   it('deactivates the previous view when navigating', () => {
-    const app = createNavigation('world_1')
+    const app = createNavigation(world1)
 
     app.navigation.showView('map-gallery')
     app.navigation.showView('world-builder')
@@ -140,7 +141,7 @@ describe('Navigation — existing behavior', () => {
     const app = createNavigation()
 
     app.navigation.showView('world-builder')
-    app.testState.selectedWorldId = 'world_1'
+    app.state.selectWorld(world1)
     app.navigation.showView('world-builder')
 
     expectActiveView(app, 'builder')
@@ -148,10 +149,10 @@ describe('Navigation — existing behavior', () => {
   })
 
   it('prevents World Builder after deselecting a world', () => {
-    const app = createNavigation('world_1')
+    const app = createNavigation(world1)
 
     app.navigation.showView('world-builder')
-    app.testState.selectedWorldId = null
+    app.state.selectWorld(null)
     app.navigation.showView('world-builder')
 
     expectActiveView(app, 'gallery')

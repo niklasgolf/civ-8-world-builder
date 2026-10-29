@@ -21,58 +21,60 @@ export class EditingSessionController {
   }
 
   public subscribe(worldId: Id<'worlds'>): void {
-    this.#state.unsubscribeEditingSession?.()
-    this.#state.unsubscribeEditingSession = null
+    this.#state.getEditingSessionUnsubscribe()?.()
+    this.#state.setEditingSessionUnsubscribe(null)
 
-    this.#state.activeSession = null
-    this.#state.sessionLoaded = false
+    this.#state.setActiveSession(null)
+    this.#state.setSessionLoaded(false)
     this.#controls.update()
 
-    this.#state.unsubscribeEditingSession = this.#convex.client.onUpdate(
-      api.editingSessions.getActiveSession,
-      { worldId },
-      (session) => {
-        if (this.#state.selectedWorldId !== worldId) {
-          return
-        }
+    this.#state.setEditingSessionUnsubscribe(
+      this.#convex.client.onUpdate(
+        api.editingSessions.getActiveSession,
+        { worldId },
+        (session) => {
+          if (this.#state.getSelectedWorldId() !== worldId) {
+            return
+          }
 
-        this.#state.activeSession = session
-        this.#state.sessionLoaded = true
-        this.#controls.update()
-      },
-      (error) => {
-        if (this.#state.selectedWorldId !== worldId) {
-          return
-        }
+          this.#state.setActiveSession(session)
+          this.#state.setSessionLoaded(true)
+          this.#controls.update()
+        },
+        (error) => {
+          if (this.#state.getSelectedWorldId() !== worldId) {
+            return
+          }
 
-        console.error('Editing session subscription failed:', error)
+          console.error('Editing session subscription failed:', error)
 
-        this.#state.activeSession = null
-        this.#state.sessionLoaded = false
-        this.#controls.update()
-      },
+          this.#state.setActiveSession(null)
+          this.#state.setSessionLoaded(false)
+          this.#controls.update()
+        },
+      ),
     )
   }
 
   public async handleEditAction(): Promise<void> {
-    const worldId = this.#state.selectedWorldId
+    const worldId = this.#state.getSelectedWorldId()
 
     if (
       !worldId ||
-      !this.#state.sessionLoaded ||
+      !this.#state.isSessionLoaded() ||
       !this.#controls.canEditSelectedWorld() ||
-      this.#state.editingActionPending
+      this.#state.isEditingActionPending()
     ) {
       return
     }
 
     const stopping = this.#controls.isCurrentEditor()
 
-    if (!stopping && this.#state.activeSession !== null) {
+    if (!stopping && this.#state.getActiveSession() !== null) {
       return
     }
 
-    this.#state.editingActionPending = true
+    this.#state.setEditingActionPending(true)
     this.#controls.update()
 
     try {
@@ -96,26 +98,26 @@ export class EditingSessionController {
           : 'Unable to change the editing session',
       )
     } finally {
-      this.#state.editingActionPending = false
+      this.#state.setEditingActionPending(false)
       this.#controls.update()
     }
   }
 
   public async handleTakeoverAction(): Promise<void> {
-    const worldId = this.#state.selectedWorldId
+    const worldId = this.#state.getSelectedWorldId()
 
     if (
       !worldId ||
-      !this.#state.sessionLoaded ||
-      this.#state.currentIdentity?.role !== 'admin' ||
-      this.#state.activeSession === null ||
+      !this.#state.isSessionLoaded() ||
+      this.#state.getCurrentIdentity()?.role !== 'admin' ||
+      this.#state.getActiveSession() === null ||
       this.#controls.isCurrentEditor() ||
-      this.#state.editingActionPending
+      this.#state.isEditingActionPending()
     ) {
       return
     }
 
-    this.#state.editingActionPending = true
+    this.#state.setEditingActionPending(true)
     this.#controls.update()
 
     try {
@@ -135,7 +137,7 @@ export class EditingSessionController {
           : 'Unable to take over the editing session',
       )
     } finally {
-      this.#state.editingActionPending = false
+      this.#state.setEditingActionPending(false)
       this.#controls.update()
     }
   }

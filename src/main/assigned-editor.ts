@@ -1,4 +1,3 @@
-
 import { api } from '../../convex/_generated/api.js'
 import type { Id } from '../../convex/_generated/dataModel.ts'
 import type { ConvexConnection } from '../application/database/convex-client.ts'
@@ -21,7 +20,7 @@ export class AssignedEditor {
   }
 
   public async refresh(worldId: Id<'worlds'>): Promise<void> {
-    const request = ++this.#state.assignedEditorRequest
+    const request = this.#state.nextAssignedEditorRequest()
 
     try {
       const assignedEditor = await this.#convex.client.query(
@@ -30,8 +29,8 @@ export class AssignedEditor {
       )
 
       if (
-        request !== this.#state.assignedEditorRequest ||
-        this.#state.selectedWorldId !== worldId
+        request !== this.#state.getAssignedEditorRequest() ||
+        this.#state.getSelectedWorldId() !== worldId
       ) {
         return
       }
@@ -41,8 +40,8 @@ export class AssignedEditor {
       )
     } catch (error: unknown) {
       if (
-        request !== this.#state.assignedEditorRequest ||
-        this.#state.selectedWorldId !== worldId
+        request !== this.#state.getAssignedEditorRequest() ||
+        this.#state.getSelectedWorldId() !== worldId
       ) {
         return
       }

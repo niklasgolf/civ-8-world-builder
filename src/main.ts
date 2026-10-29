@@ -1,4 +1,3 @@
-
 import './styles/style-main.css'
 import './styles/style-map-gallery.css'
 import './styles/style-world-builder-main.css'
@@ -149,7 +148,7 @@ layout.editorLayout.mapArea.mapGrid.onHexClick((coordinate) => {
     return
   }
 
-  const worldId = state.selectedWorldId
+  const worldId = state.getSelectedWorldId()
 
   if (!worldId) {
     return
