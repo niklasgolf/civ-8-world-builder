@@ -10,7 +10,8 @@ describe('Header', () => {
     { view: 'map-gallery', label: 'Map Gallery' },
     { view: 'world-builder', label: 'World Builder' },
     { view: 'visitors-login', label: 'Visitors & Login' },
-    { view: 'civ-wiki', label: 'CoW Wiki' }
+    { view: 'civ-wiki', label: 'CoW Wiki' },
+    { view: 'code-wiki', label: 'Code Wiki' }
   ]
 
   const getButton = (view: AppView): HTMLButtonElement => {
@@ -46,10 +47,10 @@ describe('Header', () => {
     expect(mode?.textContent).toBe('World Builder')
   })
 
-  it('creates all four navigation buttons in the correct order', () => {
+  it('creates all five navigation buttons in the correct order', () => {
     const buttons = header.element.querySelectorAll('.mode-button')
 
-    expect(buttons).toHaveLength(4)
+    expect(buttons).toHaveLength(5)
 
     views.forEach(({ label }, index) => {
       expect(buttons[index]?.textContent).toBe(label)

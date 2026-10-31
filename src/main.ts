@@ -8,6 +8,7 @@ import './styles/style-world-builder-editor-actions.css'
 import './styles/style-world-builder-minimap.css'
 import './styles/style-visitors-and-login.css'
 import './styles/style-civ-wiki.css'
+import './styles/style-code-wiki.css'
 
 import type { Id } from '../convex/_generated/dataModel.ts'
 import { api } from '../convex/_generated/api.js'
@@ -44,7 +45,15 @@ const layout = new ApplicationLayout(
     worldSelection.selectWorld(worldId)
   },
   (view: AppView) => {
+    if (view !== 'code-wiki' && location.hash.startsWith('#code-wiki/')) {
+      history.replaceState(null, '', `${location.pathname}${location.search}`)
+    }
+
     navigation.showView(view)
+
+    if (view === 'code-wiki') {
+      void layout.codeWiki.reveal(null)
+    }
   },
 )
 
@@ -56,6 +65,7 @@ navigation = new Navigation(
   layout.worldBuilder,
   layout.visitors,
   layout.wiki,
+  layout.codeWiki,
   state,
 )
 
@@ -150,7 +160,27 @@ layout.editorLayout.mapArea.mapGrid.onHexClick((coordinate) => {
 // Start the application
 
 editingControls.update()
-navigation.showView('map-gallery')
+
+if (isCodeWikiHash(location.hash)) {
+  navigation.showView('code-wiki')
+  void layout.codeWiki.reveal(location.hash)
+} else {
+  navigation.showView('map-gallery')
+}
+
+window.addEventListener('hashchange', openCodeWikiFromHash)
+window.addEventListener('popstate', openCodeWikiFromHash)
+
+function openCodeWikiFromHash(): void {
+  if (!isCodeWikiHash(location.hash)) return
+
+  navigation.showView('code-wiki')
+  void layout.codeWiki.reveal(location.hash)
+}
+
+function isCodeWikiHash(hash: string): boolean {
+  return hash.startsWith('#code-wiki/')
+}
 
 registerAnonymousVisit(convex.client)
 

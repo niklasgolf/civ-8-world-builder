@@ -6,12 +6,14 @@ export type AppView =
   | 'world-builder'
   | 'visitors-login'
   | 'civ-wiki'
+  | 'code-wiki'
 
 const APP_VIEWS: ReadonlyArray<readonly [AppView, string]> = [
   ['map-gallery', 'Map Gallery'],
   ['world-builder', 'World Builder'],
   ['visitors-login', 'Visitors & Login'],
   ['civ-wiki', 'CoW Wiki'],
+  ['code-wiki', 'Code Wiki'],
 ]
 
 export class Header {

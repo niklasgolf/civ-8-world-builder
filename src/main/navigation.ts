@@ -1,6 +1,7 @@
 
 import type { AppView, Header } from '../application/editor/header.ts'
 import type { WorldGallery } from '../application/gallery/world-gallery.ts'
+import type { CodeWiki } from '../application/codewiki/code-wiki.ts'
 import type { CivWiki } from '../application/wiki/civ-wiki.ts'
 import type { VisitorsLayout } from '../application/visitors/visitors-layout.ts'
 import type { ApplicationState } from './application-state.ts'
@@ -11,6 +12,7 @@ export class Navigation {
   readonly #worldBuilder: HTMLElement
   readonly #visitors: VisitorsLayout
   readonly #wiki: CivWiki
+  readonly #codeWiki: CodeWiki
   readonly #state: ApplicationState
 
   constructor(
@@ -19,6 +21,7 @@ export class Navigation {
     worldBuilder: HTMLElement,
     visitors: VisitorsLayout,
     wiki: CivWiki,
+    codeWiki: CodeWiki,
     state: ApplicationState,
   ) {
     this.#header = header
@@ -26,6 +29,7 @@ export class Navigation {
     this.#worldBuilder = worldBuilder
     this.#visitors = visitors
     this.#wiki = wiki
+    this.#codeWiki = codeWiki
     this.#state = state
   }
 
@@ -52,6 +56,11 @@ export class Navigation {
     this.#wiki.element.classList.toggle(
       'is-active',
       view === 'civ-wiki',
+    )
+
+    this.#codeWiki.element.classList.toggle(
+      'is-active',
+      view === 'code-wiki',
     )
 
     this.#header.setView(view)

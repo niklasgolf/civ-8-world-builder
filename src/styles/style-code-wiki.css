@@ -1,0 +1,302 @@
+/* Code Wiki layout. These selectors are scoped to .code-wiki. */
+
+.civ-wiki.code-wiki {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.civ-wiki.code-wiki.is-active {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-wiki .civ-wiki__page {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: min(100%, 1800px);
+  max-width: 1800px;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 36px 40px 28px;
+  overflow: hidden;
+}
+
+.code-wiki .civ-wiki__intro {
+  flex: 0 0 auto;
+  margin-bottom: 22px;
+}
+
+.code-wiki .civ-wiki__layout {
+  flex: 1 1 auto;
+  align-items: stretch;
+  min-height: 0;
+  gap: 28px;
+}
+
+.code-wiki .civ-wiki__nav {
+  flex: 0 0 400px;
+  width: 400px;
+  max-height: none;
+  overflow: auto;
+  padding-right: 8px;
+}
+
+.code-wiki .civ-wiki__content {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 8px;
+  overflow-wrap: anywhere;
+}
+
+.code-wiki__home {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  background: #c7a47f;
+}
+
+.code-wiki__tree-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.code-wiki__folder {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 6px;
+  padding-bottom: 2px;
+  color: #5c3b24;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.code-wiki__file {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.code-wiki__glyph {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+}
+
+.code-wiki__document {
+  display: block;
+  min-width: 0;
+}
+
+.code-wiki__path {
+  margin: -6px 0 18px;
+  color: #5c4030;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.code-wiki__function {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #7a4e2d;
+}
+
+.code-wiki__function-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+  color: #2a1a0e;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  scroll-margin-top: 8px;
+}
+
+.code-wiki__function-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.code-wiki__permalink {
+  flex: 0 0 auto;
+  color: #7a4e2d;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.code-wiki__permalink:hover,
+.code-wiki__permalink:focus-visible {
+  color: #2a1a0e;
+}
+
+.code-wiki__line {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #5c4030;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.code-wiki__prose > :first-child {
+  margin-top: 0;
+}
+
+.code-wiki__prose p,
+.code-wiki__prose li {
+  margin: 0 0 10px;
+}
+
+.code-wiki__prose ul,
+.code-wiki__prose ol {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.code-wiki__markdown-heading {
+  margin: 18px 0 8px;
+  color: #2a1a0e;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.code-wiki__prose code {
+  padding: 0 0.2em;
+  background: rgba(122, 78, 45, 0.12);
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+
+.code-wiki__prose hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid #7a4e2d;
+}
+
+.code-wiki__table {
+  width: 100%;
+  margin: 0 0 16px;
+  border-collapse: collapse;
+  background: #d4b48c;
+}
+
+.code-wiki__table th,
+.code-wiki__table td {
+  padding: 8px 12px;
+  border: 1px solid #7a4e2d;
+  text-align: left;
+  vertical-align: top;
+}
+
+.code-wiki__table thead th {
+  background: #b58b62;
+}
+
+.code-wiki__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 8px;
+}
+
+.code-wiki__stat {
+  padding: 14px 16px;
+  background: #d4b48c;
+  border: 1px solid #7a4e2d;
+}
+
+.code-wiki__stat-value {
+  margin: 0;
+  color: #2a1a0e;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.code-wiki__stat-label {
+  margin: 4px 0 0;
+  color: #4a3120;
+  font-size: 15px;
+}
+
+.code-wiki__notes,
+.code-wiki__areas,
+.code-wiki__concepts,
+.code-wiki__home-note {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #7a4e2d;
+}
+
+.code-wiki__area,
+.code-wiki__concept {
+  margin-top: 16px;
+}
+
+.code-wiki .civ-wiki__nav,
+.code-wiki .civ-wiki__content {
+  scrollbar-color: #7a4e2d #d4b48c;
+}
+
+@media (max-width: 860px) {
+  .code-wiki .civ-wiki__layout {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .code-wiki .civ-wiki__nav {
+    flex: 0 0 auto;
+    width: 100%;
+    max-height: 38vh;
+  }
+
+  .code-wiki .civ-wiki__nav-list,
+  .code-wiki .code-wiki__tree-list {
+    flex-direction: column;
+  }
+
+  .code-wiki .civ-wiki__nav-button {
+    width: 100%;
+  }
+
+  .code-wiki .civ-wiki__content {
+    width: 100%;
+  }
+
+  .code-wiki__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .code-wiki__function-heading {
+    flex-wrap: wrap;
+  }
+
+  .code-wiki__line {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .code-wiki .civ-wiki__page {
+    padding: 28px 18px 24px;
+  }
+}

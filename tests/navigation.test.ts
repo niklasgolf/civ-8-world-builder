@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { Id } from '../convex/_generated/dataModel.ts'
 import type { Header } from '../src/application/editor/header.ts'
 import type { WorldGallery } from '../src/application/gallery/world-gallery.ts'
+import type { CodeWiki } from '../src/application/codewiki/code-wiki.ts'
 import type { CivWiki } from '../src/application/wiki/civ-wiki.ts'
 import type { VisitorsLayout } from '../src/application/visitors/visitors-layout.ts'
 import { ApplicationState } from '../src/main/application-state.ts'
@@ -15,6 +16,7 @@ function createNavigation(selectedWorldId: Id<'worlds'> | null = null) {
   const worldBuilderElement = document.createElement('div')
   const visitorsElement = document.createElement('div')
   const wikiElement = document.createElement('div')
+  const codeWikiElement = document.createElement('div')
 
   const setView = vi.fn()
 
@@ -34,6 +36,10 @@ function createNavigation(selectedWorldId: Id<'worlds'> | null = null) {
     element: wikiElement,
   } as unknown as CivWiki
 
+  const codeWiki = {
+    element: codeWikiElement,
+  } as unknown as CodeWiki
+
   const state = new ApplicationState()
   state.selectWorld(selectedWorldId)
 
@@ -43,6 +49,7 @@ function createNavigation(selectedWorldId: Id<'worlds'> | null = null) {
     worldBuilderElement,
     visitors,
     wiki,
+    codeWiki,
     state,
   )
 
@@ -52,6 +59,7 @@ function createNavigation(selectedWorldId: Id<'worlds'> | null = null) {
     worldBuilderElement,
     visitorsElement,
     wikiElement,
+    codeWikiElement,
     setView,
     state,
   }
@@ -63,8 +71,9 @@ function expectActiveView(
     worldBuilderElement: HTMLElement
     visitorsElement: HTMLElement
     wikiElement: HTMLElement
+    codeWikiElement: HTMLElement
   },
-  active: 'gallery' | 'builder' | 'visitors' | 'wiki',
+  active: 'gallery' | 'builder' | 'visitors' | 'wiki' | 'code-wiki',
 ): void {
   expect(elements.galleryElement.classList.contains('is-active'))
     .toBe(active === 'gallery')
@@ -77,6 +86,9 @@ function expectActiveView(
 
   expect(elements.wikiElement.classList.contains('is-active'))
     .toBe(active === 'wiki')
+
+  expect(elements.codeWikiElement.classList.contains('is-active'))
+    .toBe(active === 'code-wiki')
 }
 
 describe('Navigation — existing behavior', () => {
@@ -125,6 +137,15 @@ describe('Navigation — existing behavior', () => {
     expect(app.setView).toHaveBeenCalledWith('civ-wiki')
   })
 
+  it('shows the Code Wiki', () => {
+    const app = createNavigation()
+
+    app.navigation.showView('code-wiki')
+
+    expectActiveView(app, 'code-wiki')
+    expect(app.setView).toHaveBeenCalledWith('code-wiki')
+  })
+
   it('deactivates the previous view when navigating', () => {
     const app = createNavigation(world1)
 
@@ -161,7 +182,7 @@ describe('Navigation — existing behavior', () => {
 })
 
 describe('Navigation — encapsulation', () => {
-  it('does not expose its six internal fields', () => {
+  it('does not expose its seven internal fields', () => {
     const { navigation } = createNavigation()
     const properties = Object.getOwnPropertyNames(navigation)
 
@@ -171,6 +192,7 @@ describe('Navigation — encapsulation', () => {
       'worldBuilder',
       'visitors',
       'wiki',
+      'codeWiki',
       'state',
     ]) {
       expect(properties).not.toContain(field)

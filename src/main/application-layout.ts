@@ -1,6 +1,7 @@
 
 import type { Id } from '../../convex/_generated/dataModel.ts'
 import { Header, type AppView } from '../application/editor/header.ts'
+import { CodeWiki } from '../application/codewiki/code-wiki.ts'
 import { CivWiki } from '../application/wiki/civ-wiki.ts'
 import { EditorLayout } from '../application/editor/editor-layout.ts'
 import { WorldGallery } from '../application/gallery/world-gallery.ts'
@@ -15,6 +16,7 @@ export class ApplicationLayout {
   readonly editorLayout: EditorLayout
   readonly visitors: VisitorsLayout
   readonly wiki: CivWiki
+  readonly codeWiki: CodeWiki
   readonly worldMapController: WorldMapController
   readonly worldBuilder: HTMLElement
 
@@ -54,6 +56,7 @@ export class ApplicationLayout {
 
     this.visitors = new VisitorsLayout(authentication, convex.client)
     this.wiki = new CivWiki()
+    this.codeWiki = new CodeWiki()
 
     this.header = new Header((view) => {
       onShowView(view)
@@ -64,6 +67,7 @@ export class ApplicationLayout {
       this.worldBuilder,
       this.visitors.element,
       this.wiki.element,
+      this.codeWiki.element,
     )
 
     editor.append(this.header.element, content)
